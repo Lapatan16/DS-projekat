@@ -139,7 +139,7 @@ VALUES (@fn, @ln, @pn, @bd, @em, @ph)";
                 pkg.Name = name;
                 pkg.Price = price;
                 pkg.Type = type;
-                pkg.Details = details;
+                pkg.Details = pkg.ToString();
 
                 result.Add(pkg);
             }

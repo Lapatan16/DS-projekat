@@ -15,38 +15,54 @@ namespace TouristAgencyApp.Models
         public string Details { get; set; } = ""; // JSON za specifična polja
     }
 
-    // More
     public class SeaPackage : TravelPackage
     {
         public string Destination { get; set; } = "";
         public string Accommodation { get; set; } = "";
         public string Transport { get; set; } = "";
+
+        public override string ToString()
+        {
+            return $"Destinacija: {Destination}, Smeštaj: {Accommodation}, Prevoz: {Transport}";
+        }
     }
 
-    // Planine
     public class MountainPackage : TravelPackage
     {
         public string Destination { get; set; } = "";
         public string Accommodation { get; set; } = "";
         public string Transport { get; set; } = "";
         public string Activities { get; set; } = "";
+
+        public override string ToString()
+        {
+            return $"Destinacija: {Destination}, Smeštaj: {Accommodation}, Prevoz: {Transport}, Aktivnosti: {Activities}";
+        }
     }
 
-    // Ekskurzija
     public class ExcursionPackage : TravelPackage
     {
         public string Destination { get; set; } = "";
         public string Transport { get; set; } = "";
         public string Guide { get; set; } = "";
         public int Duration { get; set; }
+
+        public override string ToString()
+        {
+            return $"Destinacija: {Destination}, Prevoz: {Transport}, Vodič: {Guide}, Trajanje: {Duration} dana";
+        }
     }
 
-    // Krstarenje
     public class CruisePackage : TravelPackage
     {
         public string Ship { get; set; } = "";
         public string Route { get; set; } = "";
         public DateTime DepartureDate { get; set; }
         public string CabinType { get; set; } = "";
+
+        public override string ToString()
+        {
+            return $"Brod: {Ship}, Ruta: {Route}, Polazak: {DepartureDate:dd.MM.yyyy}, Kabina: {CabinType}";
+        }
     }
 }

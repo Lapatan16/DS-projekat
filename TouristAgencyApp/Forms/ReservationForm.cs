@@ -8,138 +8,165 @@ using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Forms
 {
-    //public partial class ReservationsForm : Form
-    //{
-    //    private readonly IDatabaseService _db;
-    //    private DataGridView grid;
-    //    private ComboBox cbClients;
-    //    private Button btnAdd;
-
-    //    public ReservationsForm(IDatabaseService dbService)
-    //    {
-    //        _db = dbService;
-    //        //InitializeComponent();
-    //        this.Text = "Rezervacije";
-    //        this.Width = 900; this.Height = 500;
-
-    //        cbClients = new ComboBox { Left = 20, Top = 20, Width = 300, DropDownStyle = ComboBoxStyle.DropDownList };
-    //        cbClients.DataSource = _db.GetAllClients();
-    //        cbClients.DisplayMember = "FirstName";
-    //        cbClients.SelectedIndexChanged += (s, e) => LoadReservations();
-
-    //        btnAdd = new Button { Text = "Nova rezervacija", Left = 350, Top = 20, Width = 150 };
-    //        btnAdd.Click += (s, e) => DodajRezervaciju();
-
-    //        grid = new DataGridView
-    //        {
-    //            Dock = DockStyle.Bottom,
-    //            ReadOnly = true,
-    //            AutoGenerateColumns = true,
-    //            Height = 400
-    //        };
-
-    //        this.Controls.Add(cbClients);
-    //        this.Controls.Add(btnAdd);
-    //        this.Controls.Add(grid);
-
-    //        LoadReservations();
-    //    }
-
-    //    private void LoadReservations()
-    //    {
-    //        if (cbClients.SelectedItem is Client c)
-    //            grid.DataSource = _db.GetReservationsByClient(c.Id).ToList();
-    //    }
-
-    //    private void DodajRezervaciju()
-    //    {
-    //        if (!(cbClients.SelectedItem is Client c)) return;
-
-    //        var f = new Form { Text = "Nova rezervacija", Width = 380, Height = 340 };
-    //        var cbPackages = new ComboBox { Left = 20, Top = 20, Width = 300, DropDownStyle = ComboBoxStyle.DropDownList };
-    //        cbPackages.DataSource = _db.GetAllPackages();
-    //        cbPackages.DisplayMember = "Name";
-    //        var numPersons = new NumericUpDown { Left = 20, Top = 70, Width = 80, Minimum = 1, Maximum = 30 };
-    //        var txtExtra = new TextBox { Left = 20, Top = 110, Width = 300, PlaceholderText = "Dodatne usluge" };
-    //        var btnSave = new Button { Text = "Sačuvaj", Left = 20, Top = 150 };
-
-    //        btnSave.Click += (ss, ee) =>
-    //        {
-    //            if (cbPackages.SelectedItem is TravelPackage pkg)
-    //            {
-    //                _db.AddReservation(new Reservation
-    //                {
-    //                    ClientId = c.Id,
-    //                    PackageId = pkg.Id,
-    //                    NumPersons = (int)numPersons.Value,
-    //                    ReservationDate = DateTime.Now,
-    //                    ExtraServices = txtExtra.Text
-    //                });
-    //                f.Close();
-    //                LoadReservations();
-    //            }
-    //        };
-
-    //        f.Controls.AddRange(new Control[] { cbPackages, numPersons, txtExtra, btnSave });
-    //        f.ShowDialog();
-    //    }
-    //}
     public partial class ReservationsForm : Form
     {
         private readonly IDatabaseService _db;
         private DataGridView grid;
         private ComboBox cbClients;
+        private Button btnAdd;
+        private Button btnRemove;
 
         public ReservationsForm(IDatabaseService dbService)
         {
             _db = dbService;
             this.Text = "Rezervacije";
-            this.Width = 900; this.Height = 500;
+            this.Width = 1000;
+            this.Height = 600;
+            this.StartPosition = FormStartPosition.CenterParent;
 
-            cbClients = new ComboBox { Left = 20, Top = 20, Width = 300, DropDownStyle = ComboBoxStyle.DropDownList };
-            cbClients.DataSource = _db.GetAllClients();
-            cbClients.DisplayMember = "FirstName";
+            var headerPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Top,
+                Height = 40, // PROMENI SA 60 na 40 (ili čak na 36)
+                FlowDirection = FlowDirection.LeftToRight,
+                Padding = new Padding(0, 0, 0, 0) // PROMENI SA (10, 10, 10, 10) na (0, 0, 0, 0)
+            };
+
+            cbClients = new ComboBox
+            {
+                Width = 300,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Segoe UI", 12)
+            };
+
+            var clientsList = _db.GetAllClients();
+            cbClients.DataSource = clientsList;
+            cbClients.DisplayMember = "FullName";
+            cbClients.ValueMember = "Id";
             cbClients.SelectedIndexChanged += (s, e) => LoadReservations();
 
-            var btnAdd = new Button { Text = "Nova rezervacija", Left = 350, Top = 20, Width = 150 };
+            var btnAdd = new Button
+            {
+                Text = "Nova rezervacija",
+                Width = 180,
+                Height = 40,
+                Font = new Font("Segoe UI", 11, FontStyle.Regular),
+                Margin = new Padding(16, 0, 0, 0)
+            };
             btnAdd.Click += (s, e) => DodajRezervaciju();
 
-            var btnRemove = new Button { Text = "Otkaži rezervaciju", Left = 520, Top = 20, Width = 180 };
+            var btnRemove = new Button
+            {
+                Text = "Otkaži rezervaciju",
+                Width = 180,
+                Height = 40,
+                Font = new Font("Segoe UI", 11, FontStyle.Regular),
+                Margin = new Padding(16, 0, 0, 0)
+            };
             btnRemove.Click += (s, e) => OtkaziRezervaciju();
+
+            headerPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove });
+            
 
             grid = new DataGridView
             {
-                Dock = DockStyle.Bottom,
+                Dock = DockStyle.Fill,
                 ReadOnly = true,
-                AutoGenerateColumns = true,
-                Height = 400
+                AutoGenerateColumns = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                Font = new Font("Segoe UI", 11, FontStyle.Regular),
+                RowTemplate = { Height = 36 },
+                AllowUserToAddRows = false,
+                MultiSelect = false
             };
-
-            this.Controls.Add(cbClients);
-            this.Controls.Add(btnAdd);
-            this.Controls.Add(btnRemove);
             this.Controls.Add(grid);
+            this.Controls.Add(headerPanel);
 
+
+            // Definiši kolone ručno da budu jasne i široke
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Id",
+                HeaderText = "ID",
+                Width = 60
+            });
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "PackageName",
+                HeaderText = "Paket",
+                Width = 200
+            });
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "NumPersons",
+                HeaderText = "Broj osoba",
+                Width = 120
+            });
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "ReservationDate",
+                HeaderText = "Datum rezervacije",
+                Width = 160
+            });
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "ExtraServices",
+                HeaderText = "Dodatne usluge",
+                Width = 200
+            });
+
+            // Na kraju:
             LoadReservations();
         }
+
 
         private void LoadReservations()
         {
             if (cbClients.SelectedItem is Client c)
-                grid.DataSource = _db.GetReservationsByClient(c.Id).ToList();
+            {
+                var reservations = _db.GetReservationsByClient(c.Id).ToList();
+
+                // Popuni naziv paketa za prikaz u gridu
+                var packages = _db.GetAllPackages();
+                foreach (var r in reservations)
+                {
+                    var pkg = packages.FirstOrDefault(p => p.Id == r.PackageId);
+                    r.PackageName = pkg != null ? pkg.Name : "(nepoznato)";
+                }
+
+                // OVDE JE TRIK:
+                grid.DataSource = null;
+                grid.Rows.Clear(); // <--- Dodaj i ovo za svaki slučaj
+                grid.DataSource = reservations;
+
+                grid.ClearSelection(); // Opciono: da ništa nije selektovano na početku
+                grid.AutoResizeColumns();
+            }
         }
 
         private void DodajRezervaciju()
         {
             if (!(cbClients.SelectedItem is Client c)) return;
 
-            var f = new Form { Text = "Nova rezervacija", Width = 380, Height = 340 };
-            var cbPackages = new ComboBox { Left = 20, Top = 20, Width = 300, DropDownStyle = ComboBoxStyle.DropDownList };
-            cbPackages.DataSource = _db.GetAllPackages();
+            var f = new Form { Text = "Nova rezervacija", Width = 420, Height = 350, StartPosition = FormStartPosition.CenterParent };
+            var cbPackages = new ComboBox
+            {
+                Left = 20,
+                Top = 25,
+                Width = 340,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Segoe UI", 11)
+            };
+            var packages = _db.GetAllPackages();
+            cbPackages.DataSource = packages;
             cbPackages.DisplayMember = "Name";
-            var numPersons = new NumericUpDown { Left = 20, Top = 70, Width = 80, Minimum = 1, Maximum = 30 };
-            var txtExtra = new TextBox { Left = 20, Top = 110, Width = 300, PlaceholderText = "Dodatne usluge" };
-            var btnSave = new Button { Text = "Sačuvaj", Left = 20, Top = 150 };
+
+            var lblPackages = new Label { Text = "Paket:", Left = 20, Top = 0, Width = 180 };
+            var numPersons = new NumericUpDown { Left = 20, Top = 80, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
+            var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 60, Width = 120 };
+            var txtExtra = new TextBox { Left = 20, Top = 140, Width = 340, PlaceholderText = "Dodatne usluge", Font = new Font("Segoe UI", 11) };
+            var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 120, Width = 180 };
+            var btnSave = new Button { Text = "Sačuvaj", Left = 20, Top = 190, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold) };
 
             btnSave.Click += (ss, ee) =>
             {
@@ -158,7 +185,7 @@ namespace TouristAgencyApp.Forms
                 }
             };
 
-            f.Controls.AddRange(new Control[] { cbPackages, numPersons, txtExtra, btnSave });
+            f.Controls.AddRange(new Control[] { lblPackages, cbPackages, lblPersons, numPersons, lblExtra, txtExtra, btnSave });
             f.ShowDialog();
         }
 
@@ -166,15 +193,14 @@ namespace TouristAgencyApp.Forms
         {
             if (grid.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Prvo izaberi rezervaciju za otkazivanje!");
+                MessageBox.Show("Prvo izaberi rezervaciju za otkazivanje!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            var reservation = grid.SelectedRows[0].DataBoundItem as Reservation;
-            if (reservation == null) return;
-            var confirm = MessageBox.Show("Da li ste sigurni da želite da otkažete ovu rezervaciju?", "Potvrda", MessageBoxButtons.YesNo);
+            var id = Convert.ToInt32(grid.SelectedRows[0].Cells[0].Value);
+            var confirm = MessageBox.Show("Da li ste sigurni da želite da otkažete ovu rezervaciju?", "Potvrda", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                _db.RemoveReservation(reservation.Id);
+                _db.RemoveReservation(id);
                 LoadReservations();
             }
         }

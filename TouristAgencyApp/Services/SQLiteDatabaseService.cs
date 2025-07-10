@@ -139,7 +139,7 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph)";
                 pkg.Name = name;
                 pkg.Price = price;
                 pkg.Type = type;
-                pkg.Details = details;
+                pkg.Details = pkg.ToString();
 
                 result.Add(pkg);
             }
@@ -156,8 +156,10 @@ VALUES ($n, $p, $t, $d)";
             cmd.Parameters.AddWithValue("$n", package.Name);
             cmd.Parameters.AddWithValue("$p", package.Price);
             cmd.Parameters.AddWithValue("$t", package.Type);
-            cmd.Parameters.AddWithValue("$d", JsonSerializer.Serialize(package));
+            // Ovde koristi JsonSerializer!
+            cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize(package));
             cmd.ExecuteNonQuery();
+            MessageBox.Show(System.Text.Json.JsonSerializer.Serialize(package), "Šta šaljem u bazu kao Details");
         }
 
         public void UpdatePackage(TravelPackage package)
