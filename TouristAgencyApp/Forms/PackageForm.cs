@@ -12,7 +12,7 @@ public partial class PackagesForm : Form
         this.Text = "Paketi";
         this.Width = 1100;
         this.Height = 560;
-
+        this.StartPosition = FormStartPosition.CenterScreen;
         grid = new DataGridView
         {
             Dock = DockStyle.Fill,

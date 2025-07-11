@@ -19,7 +19,7 @@ namespace TouristAgencyApp.Forms
             this.Text = "Klijenti";
             this.Width = 1400; // povecano
             this.Height = 600; // povecano
-
+            this.StartPosition = FormStartPosition.CenterScreen;
             // Panel za dugmad i pretragu, sada viši da grid ne bude zalepljen gore
             var panel = new FlowLayoutPanel
             {
