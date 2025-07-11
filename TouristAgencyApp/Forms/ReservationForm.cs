@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace TouristAgencyApp.Forms
             this.Width = 1000;
             this.Height = 600;
             this.StartPosition = FormStartPosition.CenterParent;
-
+               
             var headerPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
@@ -43,8 +44,8 @@ namespace TouristAgencyApp.Forms
             cbClients.DataSource = clientsList;
             cbClients.DisplayMember = "FullName";
             cbClients.ValueMember = "Id";
+        
             cbClients.SelectedIndexChanged += (s, e) => LoadReservations();
-
             var btnAdd = new Button
             {
                 Text = "Nova rezervacija",
@@ -74,11 +75,12 @@ namespace TouristAgencyApp.Forms
                 ReadOnly = true,
                 AutoGenerateColumns = false,
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                Font = new Font("Segoe UI", 11, FontStyle.Regular),
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 RowTemplate = { Height = 36 },
                 AllowUserToAddRows = false,
                 MultiSelect = false
             };
+            
             this.Controls.Add(grid);
             this.Controls.Add(headerPanel);
 
@@ -116,12 +118,19 @@ namespace TouristAgencyApp.Forms
             });
 
             // Na kraju:
+            //if (clientsList.Count > 0) cbClients.SelectedIndex = 0;
             LoadReservations();
+            this.Shown += (s, e) =>
+            {
+                if(clientsList.Count > 0)cbClients.SelectedIndex = 0;
+                LoadReservations();
+            };
         }
 
 
         private void LoadReservations()
         {
+            //if (cbClients.SelectedIndex == -1) cbClients.SelectedIndex = 0;
             if (cbClients.SelectedItem is Client c)
             {
                 var reservations = _db.GetReservationsByClient(c.Id).ToList();
@@ -136,9 +145,11 @@ namespace TouristAgencyApp.Forms
 
                 // OVDE JE TRIK:
                 grid.DataSource = null;
-                grid.Rows.Clear(); // <--- Dodaj i ovo za svaki slučaj
+                //grid.Rows.Clear(); // <--- Dodaj i ovo za svaki slučaj
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                 grid.DataSource = reservations;
-
+                grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
+                grid.ColumnHeadersHeight = 40;
                 grid.ClearSelection(); // Opciono: da ništa nije selektovano na početku
                 grid.AutoResizeColumns();
             }

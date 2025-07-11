@@ -156,7 +156,11 @@ VALUES (@n, @p, @t, @d)";
             cmd.Parameters.AddWithValue("@n", package.Name);
             cmd.Parameters.AddWithValue("@p", package.Price);
             cmd.Parameters.AddWithValue("@t", package.Type);
-            cmd.Parameters.AddWithValue("@d", JsonSerializer.Serialize(package));
+            if (package is ExcursionPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((ExcursionPackage)package));
+            if (package is SeaPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((SeaPackage)package));
+            if (package is MountainPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((MountainPackage)package));
+            if (package is CruisePackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((CruisePackage)package));
+
             cmd.ExecuteNonQuery();
         }
 

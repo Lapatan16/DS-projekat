@@ -48,7 +48,7 @@ namespace TouristAgencyApp.Forms
             this.Controls.Add(btnPackages);
             this.Controls.Add(btnReservations);
             this.Controls.Add(btnBackup);
-
+            this.StartPosition = FormStartPosition.CenterScreen;
             // Automatski backup na 24h
             backupTimer = new System.Windows.Forms.Timer();
             backupTimer.Interval = 24 * 60 * 60 * 1000; // 24h u ms
