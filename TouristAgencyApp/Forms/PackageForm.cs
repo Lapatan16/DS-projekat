@@ -73,7 +73,7 @@ public partial class PackagesForm : Form
         foreach (var pkg in data)
             pkg.Details = pkg.ToString(); // Ovo se prikazuje u gridu
         foreach (var pkg in data)
-            MessageBox.Show("Details je: " + pkg.Details);
+            //MessageBox.Show("Details je: " + pkg.Details);
 
         grid.AutoGenerateColumns = true;
         grid.DataSource = data;
@@ -81,8 +81,8 @@ public partial class PackagesForm : Form
         grid.AutoResizeColumns();
         grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
         grid.ColumnHeadersHeight = 40;
-        foreach (DataGridViewColumn col in grid.Columns)
-            MessageBox.Show(col.DataPropertyName + " / " + col.HeaderText);
+        //foreach (DataGridViewColumn col in grid.Columns)
+            //MessageBox.Show(col.DataPropertyName + " / " + col.HeaderText);
     }
 
     private void DodajPaket()
@@ -179,7 +179,7 @@ public partial class PackagesForm : Form
             //MessageBox.Show(pkg.GetType().FullName, "Tip objekta koji dodajem");
             //MessageBox.Show(System.Text.Json.JsonSerializer.Serialize(pkg), "Sadržaj objekta koji šaljem");
             //MessageBox.Show((ExcursionPackage)pkg.)
-            MessageBox.Show("Vodic: " + txtGuide.Text);
+            //MessageBox.Show("Vodic: " + txtGuide.Text);
             _db.AddPackage(pkg);
             f.Close();
             LoadPackages();
