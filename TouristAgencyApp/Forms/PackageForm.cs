@@ -5,14 +5,34 @@ public partial class PackagesForm : Form
 {
     private readonly IDatabaseService _db;
     private DataGridView grid;
-
+    string type;
     public PackagesForm(IDatabaseService dbService)
     {
+        type = "Svi Paketi";
         _db = dbService;
         this.Text = "Paketi";
         this.Width = 1100;
         this.Height = 560;
         this.StartPosition = FormStartPosition.CenterScreen;
+        var comboBox = new ComboBox
+        {
+            DropDownStyle = ComboBoxStyle.DropDownList,
+            Width = 100,
+            Height = 200,
+            Margin = new Padding(10, 10, 10, 10),
+            Font = new Font("Segoe UI", 11, FontStyle.Regular)
+
+        };
+        comboBox.Items.AddRange(new String[]
+        {
+            "Svi Paketi", "Sea", "Excursion", "Mountain", "Cruise"
+        });
+        comboBox.SelectedIndex = 0;
+        comboBox.SelectedIndexChanged += (s, e) =>
+        {
+            type = comboBox.SelectedItem.ToString();
+            LoadPackages();
+        };
         grid = new DataGridView
         {
             Dock = DockStyle.Fill,
@@ -56,7 +76,7 @@ public partial class PackagesForm : Form
         };
         btnEdit.Click += (s, e) => IzmeniPaket();
         panel.Controls.Add(btnEdit);
-
+        panel.Controls.Add(comboBox);
         this.Controls.Add(panel);
 
         LoadPackages();
@@ -68,15 +88,20 @@ public partial class PackagesForm : Form
         grid.Columns.Clear();
 
         var data = _db.GetAllPackages().ToList();
-
+        List<TravelPackage> lista = new List<TravelPackage>();
+        
         // OBRATI PAŽNJU: Sada Details popunjavaš samo za prikaz!
         foreach (var pkg in data)
             pkg.Details = pkg.ToString(); // Ovo se prikazuje u gridu
         foreach (var pkg in data)
+        {
+            if (type == "Svi Paketi" || type == pkg.Type) lista.Add(pkg);
+        }
+        foreach (var pkg in data)
             //MessageBox.Show("Details je: " + pkg.Details);
-
+        
         grid.AutoGenerateColumns = true;
-        grid.DataSource = data;
+        grid.DataSource = lista;
         grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         grid.AutoResizeColumns();
         grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
