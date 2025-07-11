@@ -125,7 +125,7 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph)";
                 decimal price = reader.GetDecimal(2);
                 string type = reader.GetString(3);
                 string details = reader.GetString(4);
-
+                MessageBox.Show("Detalji: == =" + details);
                 TravelPackage pkg = type switch
                 {
                     "Sea" => JsonSerializer.Deserialize<SeaPackage>(details) ?? new SeaPackage(),
@@ -140,7 +140,7 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph)";
                 pkg.Price = price;
                 pkg.Type = type;
                 pkg.Details = pkg.ToString();
-
+                MessageBox.Show("LALALA" + pkg.ToString());
                 result.Add(pkg);
             }
             return result;
@@ -157,13 +157,19 @@ VALUES ($n, $p, $t, $d)";
             cmd.Parameters.AddWithValue("$p", package.Price);
             cmd.Parameters.AddWithValue("$t", package.Type);
             // Ovde koristi JsonSerializer!
-            cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize(package));
+            MessageBox.Show("Test213:= " + package.Details);
+            if(package is ExcursionPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((ExcursionPackage)package));
+            if(package is SeaPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((SeaPackage)package));
+            if(package is MountainPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((MountainPackage)package));
+            if(package is CruisePackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((CruisePackage)package));
+
             cmd.ExecuteNonQuery();
             MessageBox.Show(System.Text.Json.JsonSerializer.Serialize(package), "Šta šaljem u bazu kao Details");
         }
 
         public void UpdatePackage(TravelPackage package)
         {
+
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
             var cmd = connection.CreateCommand();

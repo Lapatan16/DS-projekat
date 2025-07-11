@@ -176,8 +176,10 @@ public partial class PackagesForm : Form
                     CabinType = txtCabin.Text
                 };
 
-            MessageBox.Show(pkg.GetType().FullName, "Tip objekta koji dodajem");
-            MessageBox.Show(System.Text.Json.JsonSerializer.Serialize(pkg), "Sadržaj objekta koji šaljem");
+            //MessageBox.Show(pkg.GetType().FullName, "Tip objekta koji dodajem");
+            //MessageBox.Show(System.Text.Json.JsonSerializer.Serialize(pkg), "Sadržaj objekta koji šaljem");
+            //MessageBox.Show((ExcursionPackage)pkg.)
+            MessageBox.Show("Vodic: " + txtGuide.Text);
             _db.AddPackage(pkg);
             f.Close();
             LoadPackages();
