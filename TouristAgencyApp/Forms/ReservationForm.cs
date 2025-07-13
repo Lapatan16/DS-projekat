@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Services;
+using TouristAgencyApp.Patterns;
 
 namespace TouristAgencyApp.Forms
 {
     public partial class ReservationsForm : Form
     {
         private readonly IDatabaseService _db;
+        private readonly ReservationSubject _reservationSubject;
         private DataGridView grid;
         private ComboBox cbClients;
         private Button btnAdd;
@@ -20,6 +22,12 @@ namespace TouristAgencyApp.Forms
         public ReservationsForm(IDatabaseService dbService)
         {
             _db = dbService;
+            _reservationSubject = new ReservationSubject();
+            
+            // Dodaj observerse
+            _reservationSubject.Attach(new ReservationLogger());
+            _reservationSubject.Attach(new ReservationNotifier());
+            _reservationSubject.Attach(new ReservationStatistics());
             this.Text = "Rezervacije";
             this.Width = 1000;
             this.Height = 600;
@@ -183,14 +191,17 @@ namespace TouristAgencyApp.Forms
             {
                 if (cbPackages.SelectedItem is TravelPackage pkg)
                 {
-                    _db.AddReservation(new Reservation
+                    var reservation = new Reservation
                     {
                         ClientId = c.Id,
                         PackageId = pkg.Id,
                         NumPersons = (int)numPersons.Value,
                         ReservationDate = DateTime.Now,
                         ExtraServices = txtExtra.Text
-                    });
+                    };
+                    
+                    _db.AddReservation(reservation);
+                    _reservationSubject.AddReservation(reservation);
                     f.Close();
                     LoadReservations();
                 }
@@ -212,6 +223,7 @@ namespace TouristAgencyApp.Forms
             if (confirm == DialogResult.Yes)
             {
                 _db.RemoveReservation(id);
+                _reservationSubject.RemoveReservation(id);
                 LoadReservations();
             }
         }
