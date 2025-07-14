@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Services;
 using TouristAgencyApp.Patterns;
@@ -23,81 +22,113 @@ namespace TouristAgencyApp.Forms
         {
             _db = dbService;
             _reservationSubject = new ReservationSubject();
-            
-            // Dodaj observerse
+
+           
             _reservationSubject.Attach(new ReservationLogger());
             _reservationSubject.Attach(new ReservationNotifier());
             _reservationSubject.Attach(new ReservationStatistics());
-            this.Text = "Rezervacije";
+
+            InitializeForm();
+            CreateModernUI();
+            LoadClients();
+        }
+
+        private void InitializeForm()
+        {
+            this.Text = "🛎️ Upravljanje rezervacijama";
             this.Width = 1000;
             this.Height = 600;
-            this.StartPosition = FormStartPosition.CenterParent;
-               
-            var headerPanel = new FlowLayoutPanel
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.FromArgb(248, 249, 250);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+        }
+
+        private void CreateModernUI()
+        {
+         
+            var headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 40, // PROMENI SA 60 na 40 (ili čak na 36)
-                FlowDirection = FlowDirection.LeftToRight,
-                Padding = new Padding(0, 0, 0, 0) // PROMENI SA (10, 10, 10, 10) na (0, 0, 0, 0)
+                Height = 80,
+                BackColor = Color.FromArgb(155, 89, 182) 
             };
 
+            var lblTitle = new Label
+            {
+                Text = "Upravljanje rezervacijama",
+                Font = new Font("Segoe UI", 18, FontStyle.Bold),
+                ForeColor = Color.White,
+                AutoSize = false,
+                Width = this.Width,
+                Height = 50,
+                Top = 15,
+                Left = 0,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            headerPanel.Controls.Add(lblTitle);
+
+            
+            var toolbarPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 70,
+                BackColor = Color.White,
+                Padding = new Padding(20, 10, 20, 10)
+            };
+
+           
             cbClients = new ComboBox
             {
                 Width = 300,
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 12)
-            };
-
-            var clientsList = _db.GetAllClients();
-            cbClients.DataSource = clientsList;
-            cbClients.DisplayMember = "FullName";
-            cbClients.ValueMember = "Id";
-        
-            cbClients.SelectedIndexChanged += (s, e) => LoadReservations();
-            var btnAdd = new Button
-            {
-                Text = "Nova rezervacija",
-                Width = 180,
-                Height = 40,
                 Font = new Font("Segoe UI", 11, FontStyle.Regular),
-                Margin = new Padding(16, 0, 0, 0)
+                Location = new Point(20, 20)
             };
+            cbClients.SelectedIndexChanged += (s, e) => LoadReservations();
+
+          
+            btnAdd = CreateModernButton("➕ Nova rezervacija", Color.FromArgb(46, 204, 113));
+            btnAdd.Location = new Point(340, 15);
             btnAdd.Click += (s, e) => DodajRezervaciju();
 
-            var btnRemove = new Button
-            {
-                Text = "Otkaži rezervaciju",
-                Width = 180,
-                Height = 40,
-                Font = new Font("Segoe UI", 11, FontStyle.Regular),
-                Margin = new Padding(16, 0, 0, 0)
-            };
+            
+            btnRemove = CreateModernButton("✕ Otkaži rezervaciju", Color.FromArgb(231, 76, 60));
+            btnRemove.Location = new Point(520, 15);
+            btnRemove.TextAlign = ContentAlignment.MiddleCenter;
+
             btnRemove.Click += (s, e) => OtkaziRezervaciju();
 
-            headerPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove });
-            
+            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove });
 
+           
+            var contentPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.White
+            };
+
+           
             grid = new DataGridView
             {
                 Dock = DockStyle.Fill,
                 ReadOnly = true,
                 AutoGenerateColumns = false,
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                RowTemplate = { Height = 36 },
+                Font = new Font("Segoe UI", 11, FontStyle.Regular),
+                RowTemplate = { Height = 35 },
                 AllowUserToAddRows = false,
-                MultiSelect = false
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                GridColor = Color.FromArgb(224, 224, 224),
+                EnableHeadersVisualStyles = false
             };
+
             
-            this.Controls.Add(grid);
-            this.Controls.Add(headerPanel);
-
-
-            // Definiši kolone ručno da budu jasne i široke
             grid.Columns.Add(new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "Id",
-                HeaderText = "ID",
+                HeaderText = "Id",
                 Width = 60
             });
             grid.Columns.Add(new DataGridViewTextBoxColumn
@@ -125,25 +156,100 @@ namespace TouristAgencyApp.Forms
                 Width = 200
             });
 
-            // Na kraju:
-            //if (clientsList.Count > 0) cbClients.SelectedIndex = 0;
-            LoadReservations();
-            this.Shown += (s, e) =>
+            
+            var headerStyle = new DataGridViewCellStyle
             {
-                if(clientsList.Count > 0)cbClients.SelectedIndex = 0;
-                LoadReservations();
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Alignment = DataGridViewContentAlignment.MiddleCenter,
+                BackColor = Color.FromArgb(52, 73, 94),
+                ForeColor = Color.White
             };
+            grid.ColumnHeadersDefaultCellStyle = headerStyle;
+            grid.ColumnHeadersHeight = 45;
+
+            grid.DefaultCellStyle.BackColor = Color.White;
+            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219); 
+            grid.DefaultCellStyle.SelectionForeColor = Color.White;
+            grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
+
+            contentPanel.Controls.Add(grid);
+
+            
+            var statusBar = new Panel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 30,
+                BackColor = Color.FromArgb(52, 73, 94)
+            };
+
+            var lblStatus = new Label
+            {
+                Text = "Spreman za rad",
+                Font = new Font("Segoe UI", 9, FontStyle.Regular),
+                ForeColor = Color.White,
+                AutoSize = false,
+                Width = this.Width,
+                Height = 30,
+                Top = 0,
+                Left = 0,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(10, 0, 0, 0)
+            };
+            statusBar.Controls.Add(lblStatus);
+
+            this.Controls.Add(statusBar);
+            this.Controls.Add(contentPanel);
+            this.Controls.Add(toolbarPanel);
+            this.Controls.Add(headerPanel);
         }
 
+        private Button CreateModernButton(string text, Color baseColor)
+        {
+            var button = new Button
+            {
+                Text = text,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = baseColor,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                Width = 160,
+                Height = 40,
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleCenter 
+            };
+
+            button.MouseEnter += (s, e) =>
+            {
+                button.BackColor = ControlPaint.Light(baseColor);
+            };
+
+            button.MouseLeave += (s, e) =>
+            {
+                button.BackColor = baseColor;
+            };
+
+            return button;
+        }
+
+        private void LoadClients()
+        {
+            var clientsList = _db.GetAllClients();
+            cbClients.DataSource = clientsList;
+            cbClients.DisplayMember = "FullName";
+            cbClients.ValueMember = "Id";
+
+            if (cbClients.Items.Count > 0)
+                cbClients.SelectedIndex = 0;
+            LoadReservations();
+        }
 
         private void LoadReservations()
         {
-            //if (cbClients.SelectedIndex == -1) cbClients.SelectedIndex = 0;
             if (cbClients.SelectedItem is Client c)
             {
                 var reservations = _db.GetReservationsByClient(c.Id).ToList();
 
-                // Popuni naziv paketa za prikaz u gridu
                 var packages = _db.GetAllPackages();
                 foreach (var r in reservations)
                 {
@@ -151,14 +257,10 @@ namespace TouristAgencyApp.Forms
                     r.PackageName = pkg != null ? pkg.Name : "(nepoznato)";
                 }
 
-                // OVDE JE TRIK:
                 grid.DataSource = null;
-                //grid.Rows.Clear(); // <--- Dodaj i ovo za svaki slučaj
                 grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                 grid.DataSource = reservations;
-                grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
-                grid.ColumnHeadersHeight = 40;
-                grid.ClearSelection(); // Opciono: da ništa nije selektovano na početku
+                grid.ClearSelection();
                 grid.AutoResizeColumns();
             }
         }
@@ -167,12 +269,24 @@ namespace TouristAgencyApp.Forms
         {
             if (!(cbClients.SelectedItem is Client c)) return;
 
-            var f = new Form { Text = "Nova rezervacija", Width = 420, Height = 350, StartPosition = FormStartPosition.CenterParent };
+            var f = new Form
+            {
+                Text = "Nova rezervacija",
+                Width = 420,
+                Height = 350,
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                BackColor = Color.FromArgb(248, 249, 250)
+            };
+
+            var lblPackages = new Label { Text = "Paket:", Left = 20, Top = 20, Width = 180, Font = new Font("Segoe UI", 11) };
             var cbPackages = new ComboBox
             {
                 Left = 20,
-                Top = 25,
-                Width = 340,
+                Top = 50,
+                Width = 360,
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 11)
             };
@@ -180,12 +294,27 @@ namespace TouristAgencyApp.Forms
             cbPackages.DataSource = packages;
             cbPackages.DisplayMember = "Name";
 
-            var lblPackages = new Label { Text = "Paket:", Left = 20, Top = 0, Width = 180 };
-            var numPersons = new NumericUpDown { Left = 20, Top = 80, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
-            var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 60, Width = 120 };
-            var txtExtra = new TextBox { Left = 20, Top = 140, Width = 340, PlaceholderText = "Dodatne usluge", Font = new Font("Segoe UI", 11) };
-            var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 120, Width = 180 };
-            var btnSave = new Button { Text = "Sačuvaj", Left = 20, Top = 190, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold) };
+            var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 95, Width = 180, Font = new Font("Segoe UI", 11) };
+            var numPersons = new NumericUpDown { Left = 20, Top = 125, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
+
+            var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 165, Width = 180, Font = new Font("Segoe UI", 11) };
+            var txtExtra = new TextBox { Left = 20, Top = 195, Width = 360, Font = new Font("Segoe UI", 11) };
+
+            var btnSave = new Button
+            {
+                Text = "Sačuvaj",
+                Left = 20,
+                Top = 240,
+                Width = 150,
+                Height = 40,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                BackColor = Color.FromArgb(46, 204, 113),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+
+            btnSave.FlatAppearance.BorderSize = 0;
 
             btnSave.Click += (ss, ee) =>
             {
@@ -199,7 +328,7 @@ namespace TouristAgencyApp.Forms
                         ReservationDate = DateTime.Now,
                         ExtraServices = txtExtra.Text
                     };
-                    
+
                     _db.AddReservation(reservation);
                     _reservationSubject.AddReservation(reservation);
                     f.Close();

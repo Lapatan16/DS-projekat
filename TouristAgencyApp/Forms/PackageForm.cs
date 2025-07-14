@@ -8,7 +8,7 @@ public partial class PackagesForm : Form
     string type;
     public PackagesForm(IDatabaseService dbService)
     {
-        type = "Svi Paketi";
+        type = "Svi paketi";
         _db = dbService;
         this.Text = "Paketi";
         this.Width = 1100;
@@ -25,7 +25,7 @@ public partial class PackagesForm : Form
         };
         comboBox.Items.AddRange(new String[]
         {
-            "Svi Paketi", "Sea", "Excursion", "Mountain", "Cruise"
+            "Svi paketi", "Sea", "Excursion", "Mountain", "Cruise"
         });
         comboBox.SelectedIndex = 0;
         comboBox.SelectedIndexChanged += (s, e) =>
@@ -77,37 +77,139 @@ public partial class PackagesForm : Form
         btnEdit.Click += (s, e) => IzmeniPaket();
         panel.Controls.Add(btnEdit);
         panel.Controls.Add(comboBox);
-        this.Controls.Add(panel);
+        CreateModernUI();
 
         LoadPackages();
+    }
+
+   
+
+private void CreateModernUI()
+{
+    
+    var headerPanel = new Panel
+    {
+        Dock = DockStyle.Top,
+        Height = 80,
+        BackColor = Color.FromArgb(52, 152, 219)
+    };
+
+    var lblTitle = new Label
+    {
+        Text = "Upravljanje paketima",
+        Font = new Font("Segoe UI", 18, FontStyle.Bold),
+        ForeColor = Color.White,
+        AutoSize = false,
+        Dock = DockStyle.Fill,
+        TextAlign = ContentAlignment.MiddleCenter
+    };
+    headerPanel.Controls.Add(lblTitle);
+
+    
+    var toolbarPanel = new Panel
+    {
+        Dock = DockStyle.Top,
+        Height = 60,
+        BackColor = Color.White,
+        Padding = new Padding(20, 10, 20, 10)
+    };
+
+    var btnAdd = CreateModernButton("➕ Dodaj paket", Color.FromArgb(46, 204, 113));
+    btnAdd.Click += (s, e) => DodajPaket();
+
+    var btnEdit = CreateModernButton("✏️ Izmeni paket", Color.FromArgb(52, 152, 219));
+    btnEdit.Click += (s, e) => IzmeniPaket();
+
+    var comboBox = new ComboBox
+    {
+        DropDownStyle = ComboBoxStyle.DropDownList,
+        Width = 180,
+        Font = new Font("Segoe UI", 10),
+        Left = 380,
+        Top = 15
+    };
+    comboBox.Items.AddRange(new string[] { "Svi paketi", "Sea", "Excursion", "Mountain", "Cruise" });
+    comboBox.SelectedIndex = 0;
+    comboBox.SelectedIndexChanged += (s, e) =>
+    {
+        type = comboBox.SelectedItem.ToString();
+        LoadPackages();
+    };
+
+    btnAdd.Location = new Point(20, 10);
+    btnEdit.Location = new Point(200, 10);
+
+    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox });
+
+    
+    grid.Dock = DockStyle.Fill;
+    grid.BackgroundColor = Color.White;
+    grid.BorderStyle = BorderStyle.None;
+    grid.Font = new Font("Segoe UI", 10);
+    grid.RowTemplate.Height = 35;
+    grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+    grid.GridColor = Color.LightGray;
+    grid.EnableHeadersVisualStyles = false;
+    grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
+    grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+    grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+    grid.ColumnHeadersHeight = 40;
+
+    
+    this.Controls.Add(grid);
+    this.Controls.Add(toolbarPanel);
+    this.Controls.Add(headerPanel);
+    }
+
+    private Button CreateModernButton(string text, Color color)
+    {
+    return new Button
+    {
+        Text = text,
+        BackColor = color,
+        ForeColor = Color.White,
+        Font = new Font("Segoe UI", 10, FontStyle.Bold),
+        Width = 160,
+        Height = 35,
+        FlatStyle = FlatStyle.Flat,
+        FlatAppearance = { BorderSize = 0 },
+        Cursor = Cursors.Hand
+    };
     }
 
     private void LoadPackages()
     {
         grid.DataSource = null;
-        grid.Columns.Clear();
+    grid.Columns.Clear();
 
-        var data = _db.GetAllPackages().ToList();
-        List<TravelPackage> lista = new List<TravelPackage>();
-        
-        // OBRATI PAŽNJU: Sada Details popunjavaš samo za prikaz!
-        foreach (var pkg in data)
-            pkg.Details = pkg.ToString(); // Ovo se prikazuje u gridu
-        foreach (var pkg in data)
-        {
-            if (type == "Svi Paketi" || type == pkg.Type) lista.Add(pkg);
-        }
-        foreach (var pkg in data)
-            //MessageBox.Show("Details je: " + pkg.Details);
-        
-        grid.AutoGenerateColumns = true;
-        grid.DataSource = lista;
-        grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-        grid.AutoResizeColumns();
-        grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
-        grid.ColumnHeadersHeight = 40;
-        //foreach (DataGridViewColumn col in grid.Columns)
-            //MessageBox.Show(col.DataPropertyName + " / " + col.HeaderText);
+    var data = _db.GetAllPackages().ToList();
+    List<TravelPackage> lista = new List<TravelPackage>();
+
+    foreach (var pkg in data)
+        pkg.Details = pkg.ToString();
+
+    foreach (var pkg in data)
+    {
+        if (type == "Svi paketi" || type == pkg.Type)
+            lista.Add(pkg);
+    }
+
+    grid.AutoGenerateColumns = true;
+    grid.DataSource = lista;
+    grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+    grid.AutoResizeColumns();
+    grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
+    grid.ColumnHeadersHeight = 40;
+
+
+    if (grid.Columns.Contains("Name"))
+    grid.Columns["Name"].HeaderText = "Naziv";
+if (grid.Columns.Contains("Price"))
+    grid.Columns["Price"].HeaderText = "Cena";
+if (grid.Columns.Contains("Type"))
+    grid.Columns["Type"].HeaderText = "Tip";
+if (grid.Columns.Contains("Details"))
+    grid.Columns["Details"].HeaderText = "Detalji";
     }
 
     private void DodajPaket()
@@ -165,7 +267,7 @@ public partial class PackagesForm : Form
                     Destination = txtDestination.Text,
                     Accommodation = txtAcc.Text,
                     Transport = txtTransport.Text
-                    // Ne postavljaš Details!
+                    
                 };
             else if (cbType.SelectedItem.ToString() == "Mountain")
                 pkg = new MountainPackage
@@ -189,7 +291,7 @@ public partial class PackagesForm : Form
                     Guide = txtGuide.Text,
                     Duration = (int)numDuration.Value
                 };
-            else // Cruise
+            else 
                 pkg = new CruisePackage
                 {
                     Type = "Cruise",

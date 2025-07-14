@@ -35,14 +35,13 @@ namespace TouristAgencyApp.Forms
 
         private void CreateModernUI()
         {
-            // Header panel
+            
             var headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
                 Height = 80,
-                BackColor = Color.FromArgb(46, 204, 113)
+                BackColor = Color.FromArgb(42, 204, 113)
             };
-            this.Controls.Add(headerPanel);
 
             var lblTitle = new Label
             {
@@ -58,7 +57,7 @@ namespace TouristAgencyApp.Forms
             };
             headerPanel.Controls.Add(lblTitle);
 
-            // Toolbar panel
+           
             var toolbarPanel = new Panel
             {
                 Dock = DockStyle.Top,
@@ -66,9 +65,9 @@ namespace TouristAgencyApp.Forms
                 BackColor = Color.White,
                 Padding = new Padding(20, 10, 20, 10)
             };
-            this.Controls.Add(toolbarPanel);
 
-            // Toolbar controls
+
+          
             var btnAdd = CreateModernButton("➕ Dodaj klijenta", Color.FromArgb(46, 204, 113));
             btnAdd.Click += (s, e) => DodajKlijenta();
             btnAdd.Location = new Point(20, 15);
@@ -83,8 +82,9 @@ namespace TouristAgencyApp.Forms
                 Width = 400,
                 Height = 40,
                 Font = new Font("Segoe UI", 12, FontStyle.Regular),
-                Location = new Point(400, 15),
-                BorderStyle = BorderStyle.FixedSingle
+                Location = new Point(400, 20),
+                BorderStyle = BorderStyle.FixedSingle,
+             
             };
             txtPretraga.TextChanged += (s, e) =>
             {
@@ -100,7 +100,13 @@ namespace TouristAgencyApp.Forms
 
             toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, txtPretraga });
 
-            // DataGridView
+            var contentPanel = new Panel
+            {
+            Dock = DockStyle.Fill,
+            BackColor = Color.White
+            };
+
+           
             grid = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -116,7 +122,7 @@ namespace TouristAgencyApp.Forms
                 EnableHeadersVisualStyles = false
             };
 
-            // Grid styling
+            
             grid.DefaultCellStyle.BackColor = Color.White;
             grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             grid.DefaultCellStyle.SelectionForeColor = Color.White;
@@ -132,7 +138,7 @@ namespace TouristAgencyApp.Forms
             grid.ColumnHeadersDefaultCellStyle = headerStyle;
             grid.ColumnHeadersHeight = 45;
 
-            this.Controls.Add(grid);
+            contentPanel.Controls.Add(grid);
             grid.CellDoubleClick += (s, e) => PrikaziRezervacijeZaKlijenta();
 
             // Status bar
@@ -142,7 +148,6 @@ namespace TouristAgencyApp.Forms
                 Height = 30,
                 BackColor = Color.FromArgb(52, 73, 94)
             };
-            this.Controls.Add(statusBar);
 
             var lblStatus = new Label
             {
@@ -158,6 +163,12 @@ namespace TouristAgencyApp.Forms
                 Padding = new Padding(10, 0, 0, 0)
             };
             statusBar.Controls.Add(lblStatus);
+
+
+            this.Controls.Add(statusBar);
+            this.Controls.Add(contentPanel);
+            this.Controls.Add(toolbarPanel);
+            this.Controls.Add(headerPanel);
         }
 
         private Button CreateModernButton(string text, Color baseColor)
@@ -189,9 +200,25 @@ namespace TouristAgencyApp.Forms
         private void LoadClients()
         {
             grid.DataSource = null;
-            grid.DataSource = _db.GetAllClients().ToList();
-            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            grid.AutoResizeColumns();
+    grid.DataSource = _db.GetAllClients().ToList();
+
+    if (grid.Columns.Contains("FullName"))
+        grid.Columns["FullName"].Visible = false;
+
+    if (grid.Columns.Contains("FirstName"))
+        grid.Columns["FirstName"].HeaderText = "Ime";
+    if (grid.Columns.Contains("LastName"))
+        grid.Columns["LastName"].HeaderText = "Prezime";
+    if (grid.Columns.Contains("PassportNumber"))
+        grid.Columns["PassportNumber"].HeaderText = "Broj pasoša";
+    if (grid.Columns.Contains("BirthDate"))
+        grid.Columns["BirthDate"].HeaderText = "Datum rođenja";
+    if (grid.Columns.Contains("Email"))
+        grid.Columns["Email"].HeaderText = "Email";
+    if (grid.Columns.Contains("Phone"))
+        grid.Columns["Phone"].HeaderText = "Telefon";
+
+    AutoSizeGrid();
         }
 
         private void AutoSizeGrid()
@@ -214,7 +241,7 @@ namespace TouristAgencyApp.Forms
                 BackColor = Color.FromArgb(248, 249, 250)
             };
 
-            // Header
+            
             var headerLabel = new Label
             {
                 Text = "Dodavanje novog klijenta",

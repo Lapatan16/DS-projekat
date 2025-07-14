@@ -20,6 +20,7 @@ namespace TouristAgencyApp.Forms
             InitializeMainForm();
             CreateModernUI();
             SetupBackupTimer();
+            
         }
 
         private void InitializeMainForm()
@@ -31,21 +32,22 @@ namespace TouristAgencyApp.Forms
             this.BackColor = Color.FromArgb(240, 244, 248);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            this.DoubleBuffered = true;
         }
 
         private void CreateModernUI()
         {
-            // Header panel sa gradijentom
+           
             var headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
                 Height = 120,
-                BackColor = Color.FromArgb(52, 152, 219)
+                BackColor = Color.Transparent
             };
             headerPanel.Paint += (s, e) => DrawGradientHeader(e.Graphics, headerPanel.Width, headerPanel.Height);
             this.Controls.Add(headerPanel);
 
-            // Naslov agencije
+        
             var lblAgency = new Label
             {
                 Text = ConfigManager.Instance.AgencyName,
@@ -56,11 +58,12 @@ namespace TouristAgencyApp.Forms
                 Height = 60,
                 Top = 30,
                 Left = 0,
-                TextAlign = ContentAlignment.MiddleCenter
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
             };
             headerPanel.Controls.Add(lblAgency);
 
-            // Podnaslov
+         
             var lblSubtitle = new Label
             {
                 Text = "Sistem za upravljanje turističkim aranžmanima",
@@ -71,19 +74,19 @@ namespace TouristAgencyApp.Forms
                 Height = 30,
                 Top = 80,
                 Left = 0,
-                TextAlign = ContentAlignment.MiddleCenter
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
             };
             headerPanel.Controls.Add(lblSubtitle);
 
-            // Glavni panel za dugmad
             var mainPanel = new Panel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(40)
+                Padding = new Padding(40, 120 + 20, 40, 40)
             };
             this.Controls.Add(mainPanel);
 
-            // Grid za dugmad
+           
             var buttonGrid = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -94,7 +97,7 @@ namespace TouristAgencyApp.Forms
             };
             mainPanel.Controls.Add(buttonGrid);
 
-            // Kreiranje modernih dugmadi
+           
             var btnClients = CreateModernButton("👥 Klijenti", "Upravljanje klijentima", Color.FromArgb(46, 204, 113));
             btnClients.Click += (s, e) => new ClientsForm(_dbService).ShowDialog();
 
@@ -107,13 +110,13 @@ namespace TouristAgencyApp.Forms
             var btnBackup = CreateModernButton("💾 Backup", "Ručno kreiranje backup-a", Color.FromArgb(231, 76, 60));
             btnBackup.Click += (s, e) => NapraviBackup(true);
 
-            // Dodavanje dugmadi u grid
+           
             buttonGrid.Controls.Add(btnClients, 0, 0);
             buttonGrid.Controls.Add(btnPackages, 1, 0);
             buttonGrid.Controls.Add(btnReservations, 0, 1);
             buttonGrid.Controls.Add(btnBackup, 1, 1);
 
-            // Status bar
+            
             var statusBar = new Panel
             {
                 Dock = DockStyle.Bottom,
@@ -153,11 +156,11 @@ namespace TouristAgencyApp.Forms
                 Cursor = Cursors.Hand
             };
 
-            // Tooltip
+            
             var toolTip = new ToolTip();
             toolTip.SetToolTip(button, tooltip);
 
-            // Hover efekti
+            
             button.MouseEnter += (s, e) => {
                 button.BackColor = ControlPaint.Light(baseColor);
                 button.Font = new Font("Segoe UI", 15, FontStyle.Bold);
@@ -181,7 +184,7 @@ namespace TouristAgencyApp.Forms
         private void SetupBackupTimer()
         {
             backupTimer = new System.Windows.Forms.Timer();
-            backupTimer.Interval = 24 * 60 * 60 * 1000; // 24h u ms
+            backupTimer.Interval = 24 * 60 * 60 * 1000; 
             backupTimer.Tick += (s, e) => NapraviBackup();
             backupTimer.Start();
         }
