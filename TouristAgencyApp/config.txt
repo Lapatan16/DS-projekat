@@ -1,2 +1,2 @@
 Moja Turistička Agencija
-Data Source=agencija.db;
+Server=localhost;Uid=root;Pwd=;Port=3306;

@@ -20,10 +20,22 @@ namespace TouristAgencyApp.Services
             EnsureDatabase();
         }
 
-        // Kreira tabele samo prvi put
+        // Kreira bazu i tabele samo prvi put
         private void EnsureDatabase()
         {
-            using var connection = new MySqlConnection(_connectionString);
+            // Prvo se poveži bez specifične baze
+            var baseConnectionString = _connectionString.Replace("Database=turisticka_agencija;", "");
+            using var baseConnection = new MySqlConnection(baseConnectionString);
+            baseConnection.Open();
+            
+            // Kreiraj bazu ako ne postoji
+            var createDbCmd = baseConnection.CreateCommand();
+            createDbCmd.CommandText = "CREATE DATABASE IF NOT EXISTS turisticka_agencija;";
+            createDbCmd.ExecuteNonQuery();
+            
+            // Sada se poveži sa specifičnom bazom
+            var dbConnectionString = baseConnectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"
@@ -57,7 +69,8 @@ CREATE TABLE IF NOT EXISTS Reservations (
         public List<Client> GetAllClients()
         {
             var result = new List<Client>();
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT * FROM Clients";
@@ -80,7 +93,8 @@ CREATE TABLE IF NOT EXISTS Reservations (
 
         public void AddClient(Client client)
         {
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"INSERT INTO Clients (FirstName, LastName, PassportNumber, BirthDate, Email, Phone)
@@ -96,7 +110,8 @@ VALUES (@fn, @ln, @pn, @bd, @em, @ph)";
 
         public void UpdateClient(Client client)
         {
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"UPDATE Clients SET FirstName=@fn, LastName=@ln, PassportNumber=@pn, BirthDate=@bd, Email=@em, Phone=@ph WHERE Id=@id";
@@ -113,7 +128,8 @@ VALUES (@fn, @ln, @pn, @bd, @em, @ph)";
         public List<TravelPackage> GetAllPackages()
         {
             var result = new List<TravelPackage>();
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT * FROM TravelPackages";
@@ -148,7 +164,8 @@ VALUES (@fn, @ln, @pn, @bd, @em, @ph)";
 
         public void AddPackage(TravelPackage package)
         {
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"INSERT INTO TravelPackages (Name, Price, Type, Details)
@@ -166,7 +183,8 @@ VALUES (@n, @p, @t, @d)";
 
         public void UpdatePackage(TravelPackage package)
         {
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"UPDATE TravelPackages SET Name=@n, Price=@p, Type=@t, Details=@d WHERE Id=@id";
@@ -180,7 +198,8 @@ VALUES (@n, @p, @t, @d)";
 
         public void RemovePackage(int packageId)
         {
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = "DELETE FROM TravelPackages WHERE Id=@id";
@@ -191,7 +210,8 @@ VALUES (@n, @p, @t, @d)";
         public List<Reservation> GetReservationsByClient(int clientId)
         {
             var result = new List<Reservation>();
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT * FROM Reservations WHERE ClientId = @cid";
@@ -214,7 +234,8 @@ VALUES (@n, @p, @t, @d)";
 
         public void AddReservation(Reservation reservation)
         {
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"INSERT INTO Reservations (ClientId, PackageId, NumPersons, ReservationDate, ExtraServices)
@@ -229,7 +250,8 @@ VALUES (@cid, @pid, @num, @date, @extra)";
 
         public void RemoveReservation(int reservationId)
         {
-            using var connection = new MySqlConnection(_connectionString);
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = "DELETE FROM Reservations WHERE Id = @id";
