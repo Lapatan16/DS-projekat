@@ -201,6 +201,8 @@ private void CreateModernUI()
     grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
     grid.ColumnHeadersHeight = 40;
 
+    if (grid.Columns.Contains("Id"))
+        grid.Columns["Id"].Visible = false;
 
     if (grid.Columns.Contains("Name"))
     grid.Columns["Name"].HeaderText = "Naziv";

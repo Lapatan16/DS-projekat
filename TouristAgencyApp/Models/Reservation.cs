@@ -14,6 +14,6 @@ namespace TouristAgencyApp.Models
         public int NumPersons { get; set; }
         public DateTime ReservationDate { get; set; }
         public string ExtraServices { get; set; } = "";
-        public string PackageName { get; set; }
+        public string PackageName { get; set; } = "";
     }
 }

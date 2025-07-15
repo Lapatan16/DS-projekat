@@ -125,12 +125,7 @@ namespace TouristAgencyApp.Forms
             };
 
             
-            grid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = "Id",
-                HeaderText = "Id",
-                Width = 60
-            });
+            
             grid.Columns.Add(new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "PackageName",
