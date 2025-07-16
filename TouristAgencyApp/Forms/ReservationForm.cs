@@ -17,7 +17,7 @@ namespace TouristAgencyApp.Forms
         private ComboBox cbClients;
         private Button btnAdd;
         private Button btnRemove;
-
+        private Button btnEdit;
         public ReservationsForm(IDatabaseService dbService)
         {
             _db = dbService;
@@ -99,7 +99,12 @@ namespace TouristAgencyApp.Forms
 
             btnRemove.Click += (s, e) => OtkaziRezervaciju();
 
-            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove });
+            btnEdit = CreateModernButton(" Azuriraj rezervaciju", Color.FromArgb(255, 0, 0, 255));
+            btnEdit.Location = new Point(700, 15);
+            btnEdit.TextAlign = ContentAlignment.MiddleCenter;
+            btnEdit.Click += (s, e) => AzurirajRezervaciju();
+
+            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit });
 
 
             var contentPanel = new Panel
@@ -255,7 +260,6 @@ namespace TouristAgencyApp.Forms
                 foreach (var r in reservations)
                 {
                     var pkg = packages.FirstOrDefault(p => p.Id == r.PackageId);
-                    MessageBox.Show("Id= " + r.Id.ToString());
                     r.PackageName = pkg != null ? pkg.Name : "(nepoznato)";
                 }
 
@@ -341,20 +345,71 @@ namespace TouristAgencyApp.Forms
             f.Controls.AddRange(new Control[] { lblPackages, cbPackages, lblPersons, numPersons, lblExtra, txtExtra, btnSave });
             f.ShowDialog();
         }
+        private void AzurirajRezervaciju()
+        {
+            if (grid.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Prvo izaberi rezervaciju za azuriranje!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            var f = new Form
+            {
+                Text = "Azuriraj rezervaciju",
+                Width = 420,
+                Height = 350,
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                BackColor = Color.FromArgb(248, 249, 250)
+            };
 
+            var lblPackages = new Label { Text = "Paket: " + grid.SelectedRows[0].Cells[0].Value.ToString(), Left = 20, Top = 20, Width = 180, Font = new Font("Segoe UI", 11) };
+
+            var packages = _db.GetAllPackages();
+
+
+
+            var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 95, Width = 180, Font = new Font("Segoe UI", 11) };
+            var numPersons = new NumericUpDown { Left = 20, Top = 125, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
+            numPersons.Value = Convert.ToDecimal(grid.SelectedRows[0].Cells[1].Value);
+            var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 165, Width = 180, Font = new Font("Segoe UI", 11) };
+            var txtExtra = new TextBox {Text= grid.SelectedRows[0].Cells[3].Value.ToString() , Left = 20, Top = 195, Width = 360, Font = new Font("Segoe UI", 11) };
+
+            var btnSave = new Button
+            {
+                Text = "Sačuvaj",
+                Left = 20,
+                Top = 240,
+                Width = 150,
+                Height = 40,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                BackColor = Color.FromArgb(46, 204, 113),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+
+            btnSave.FlatAppearance.BorderSize = 0;
+
+            btnSave.Click += (ss, ee) =>
+            {
+                int reservationId = Convert.ToInt32(grid.SelectedRows[0].Cells[4].Value);
+                _db.UpdateReservation(reservationId, (int)numPersons.Value, txtExtra.Text);
+                LoadReservations();
+                f.Close();
+            };
+            f.Controls.AddRange(new Control[] { lblPackages, lblPersons, numPersons, lblExtra, txtExtra, btnSave });
+            f.ShowDialog();
+
+
+        }
         private void OtkaziRezervaciju()
         {
             if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Prvo izaberi rezervaciju za otkazivanje!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-            }
-            for(int i = 0; i < grid.SelectedRows.Count; i++)
-            {
-                for(int j = 0; j< grid.SelectedRows[i].Cells.Count; j++)
-                {
-                    MessageBox.Show(grid.SelectedRows[i].Cells[j].Value.ToString());
-                }
             }
             var id = Convert.ToInt32(grid.SelectedRows[0].Cells[4].Value);
             var confirm = MessageBox.Show("Da li ste sigurni da želite da otkažete ovu rezervaciju?", "Potvrda", MessageBoxButtons.YesNo, MessageBoxIcon.Question);

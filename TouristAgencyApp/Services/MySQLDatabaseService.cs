@@ -1,6 +1,8 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Microsoft.Data.Sqlite;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -16,11 +18,22 @@ namespace TouristAgencyApp.Services
 
         public MySQLDatabaseService(string connectionString)
         {
+            createFile();
             _connectionString = connectionString;
             EnsureDatabase();
         }
+        private void createFile()
+        {
+            string dbPath = "../net8.0-windows/agencija.db";
+            if (!File.Exists(dbPath))
+            {
+                File.Create(dbPath).Close();
+
+            }
+        }
 
         // Kreira bazu i tabele samo prvi put
+
         private void EnsureDatabase()
         {
             // Prvo se poveži bez specifične baze
@@ -256,6 +269,19 @@ VALUES (@cid, @pid, @num, @date, @extra)";
             var cmd = connection.CreateCommand();
             cmd.CommandText = "DELETE FROM Reservations WHERE Id = @id";
             cmd.Parameters.AddWithValue("@id", reservationId);
+            cmd.ExecuteNonQuery();
+        }
+
+        public void UpdateReservation(int reservationId, int numPersons, string extraInfo)
+        {
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
+            connection.Open();
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = "UPDATE Reservations set numPersons = @np, ExtraServices = @extra where Id = @Id";
+            cmd.Parameters.AddWithValue("@np", numPersons);
+            cmd.Parameters.AddWithValue("@extra", extraInfo);
+            cmd.Parameters.AddWithValue("@Id", reservationId);
             cmd.ExecuteNonQuery();
         }
     }

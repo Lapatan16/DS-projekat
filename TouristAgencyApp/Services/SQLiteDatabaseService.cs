@@ -240,5 +240,18 @@ VALUES ($cid, $pid, $num, $date, $extra)";
             cmd.Parameters.AddWithValue("$id", reservationId);
             cmd.ExecuteNonQuery();
         }
+
+        public void UpdateReservation(int reservationId, int numPersons, string extraInfo)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = "UPDATE Reservations set numPersons = $np, ExtraServices = $extra where Id = $Id";
+            cmd.Parameters.AddWithValue("$np", numPersons);
+            cmd.Parameters.AddWithValue("$extra", extraInfo);
+            cmd.Parameters.AddWithValue("$Id", reservationId);
+            cmd.ExecuteNonQuery();
+            //throw new NotImplementedException();
+        }
     }
 }
