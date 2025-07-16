@@ -46,12 +46,12 @@ namespace TouristAgencyApp.Forms
 
         private void CreateModernUI()
         {
-         
+
             var headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
                 Height = 80,
-                BackColor = Color.FromArgb(155, 89, 182) 
+                BackColor = Color.FromArgb(155, 89, 182)
             };
 
             var lblTitle = new Label
@@ -68,7 +68,7 @@ namespace TouristAgencyApp.Forms
             };
             headerPanel.Controls.Add(lblTitle);
 
-            
+
             var toolbarPanel = new Panel
             {
                 Dock = DockStyle.Top,
@@ -77,7 +77,7 @@ namespace TouristAgencyApp.Forms
                 Padding = new Padding(20, 10, 20, 10)
             };
 
-           
+
             cbClients = new ComboBox
             {
                 Width = 300,
@@ -87,12 +87,12 @@ namespace TouristAgencyApp.Forms
             };
             cbClients.SelectedIndexChanged += (s, e) => LoadReservations();
 
-          
+
             btnAdd = CreateModernButton("➕ Nova rezervacija", Color.FromArgb(46, 204, 113));
             btnAdd.Location = new Point(340, 15);
             btnAdd.Click += (s, e) => DodajRezervaciju();
 
-            
+
             btnRemove = CreateModernButton("✕ Otkaži rezervaciju", Color.FromArgb(231, 76, 60));
             btnRemove.Location = new Point(520, 15);
             btnRemove.TextAlign = ContentAlignment.MiddleCenter;
@@ -101,14 +101,14 @@ namespace TouristAgencyApp.Forms
 
             toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove });
 
-           
+
             var contentPanel = new Panel
             {
                 Dock = DockStyle.Fill,
                 BackColor = Color.White
             };
 
-           
+
             grid = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -124,8 +124,8 @@ namespace TouristAgencyApp.Forms
                 EnableHeadersVisualStyles = false
             };
 
-            
-            
+
+
             grid.Columns.Add(new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "PackageName",
@@ -150,7 +150,13 @@ namespace TouristAgencyApp.Forms
                 HeaderText = "Dodatne usluge",
                 Width = 200
             });
-
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Id",
+                HeaderText = "Id",
+                Width = 0,
+                Visible = false,
+            });
             
             var headerStyle = new DataGridViewCellStyle
             {
@@ -249,6 +255,7 @@ namespace TouristAgencyApp.Forms
                 foreach (var r in reservations)
                 {
                     var pkg = packages.FirstOrDefault(p => p.Id == r.PackageId);
+                    MessageBox.Show("Id= " + r.Id.ToString());
                     r.PackageName = pkg != null ? pkg.Name : "(nepoznato)";
                 }
 
@@ -342,7 +349,14 @@ namespace TouristAgencyApp.Forms
                 MessageBox.Show("Prvo izaberi rezervaciju za otkazivanje!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            var id = Convert.ToInt32(grid.SelectedRows[0].Cells[0].Value);
+            for(int i = 0; i < grid.SelectedRows.Count; i++)
+            {
+                for(int j = 0; j< grid.SelectedRows[i].Cells.Count; j++)
+                {
+                    MessageBox.Show(grid.SelectedRows[i].Cells[j].Value.ToString());
+                }
+            }
+            var id = Convert.ToInt32(grid.SelectedRows[0].Cells[4].Value);
             var confirm = MessageBox.Show("Da li ste sigurni da želite da otkažete ovu rezervaciju?", "Potvrda", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
