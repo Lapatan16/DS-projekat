@@ -19,5 +19,6 @@ namespace TouristAgencyApp.Services
         void UpdateClient(Client client);
         void UpdatePackage(TravelPackage package);
         void RemovePackage(int packageId);
+        void UpdateReservation(int reservationId, int numPersons, string extraInfo);
     }
 }
