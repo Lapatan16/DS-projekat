@@ -11,7 +11,6 @@ namespace TouristAgencyApp.Forms
     {
         public BackupForm(object dbService)
         {
-            //InitializeComponent();
             this.Text = "Backup";
             Button btnBackup = new Button { Text = "Backup baze", Dock = DockStyle.Fill };
             btnBackup.Click += (s, e) =>

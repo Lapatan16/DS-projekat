@@ -18,6 +18,5 @@ namespace TouristAgencyApp.Patterns
         public void AddPackage(TravelPackage p) => _db.AddPackage(p);
         public List<Reservation> GetReservationsByClient(int id) => _db.GetReservationsByClient(id);
         public void AddReservation(Reservation r) => _db.AddReservation(r);
-        // Dodaj još po potrebi
     }
 }

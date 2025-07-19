@@ -4,7 +4,7 @@ using TouristAgencyApp.Models;
 
 namespace TouristAgencyApp.Patterns
 {
-    // Observer Pattern - Behavioral
+
     public interface IObserver
     {
         void Update(string message);
@@ -78,7 +78,6 @@ namespace TouristAgencyApp.Patterns
     {
         public void Update(string message)
         {
-            // Ovde bi se slao email ili SMS obaveštenje
             Console.WriteLine($"NOTIFIKACIJA: {message}");
         }
     }

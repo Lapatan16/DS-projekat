@@ -180,38 +180,38 @@ private void CreateModernUI()
     private void LoadPackages()
     {
         grid.DataSource = null;
-    grid.Columns.Clear();
+        grid.Columns.Clear();
 
-    var data = _db.GetAllPackages().ToList();
-    List<TravelPackage> lista = new List<TravelPackage>();
+        var data = _db.GetAllPackages().ToList();
+        List<TravelPackage> lista = new List<TravelPackage>();
 
-    foreach (var pkg in data)
-        pkg.Details = pkg.ToString();
+        foreach (var pkg in data)
+            pkg.Details = pkg.ToString();
 
-    foreach (var pkg in data)
-    {
-        if (type == "Svi paketi" || type == pkg.Type)
-            lista.Add(pkg);
-    }
+        foreach (var pkg in data)
+        {
+            if (type == "Svi paketi" || type == pkg.Type)
+                lista.Add(pkg);
+        }
 
-    grid.AutoGenerateColumns = true;
-    grid.DataSource = lista;
-    grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-    grid.AutoResizeColumns();
-    grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
-    grid.ColumnHeadersHeight = 40;
+        grid.AutoGenerateColumns = true;
+        grid.DataSource = lista;
+        grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        grid.AutoResizeColumns();
+        grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
+        grid.ColumnHeadersHeight = 40;
 
-    if (grid.Columns.Contains("Id"))
-        grid.Columns["Id"].Visible = false;
+        if (grid.Columns.Contains("Id"))
+            grid.Columns["Id"].Visible = false;
 
-    if (grid.Columns.Contains("Name"))
-    grid.Columns["Name"].HeaderText = "Naziv";
-if (grid.Columns.Contains("Price"))
-    grid.Columns["Price"].HeaderText = "Cena";
-if (grid.Columns.Contains("Type"))
-    grid.Columns["Type"].HeaderText = "Tip";
-if (grid.Columns.Contains("Details"))
-    grid.Columns["Details"].HeaderText = "Detalji";
+        if (grid.Columns.Contains("Name"))
+            grid.Columns["Name"].HeaderText = "Naziv";
+        if (grid.Columns.Contains("Price"))
+            grid.Columns["Price"].HeaderText = "Cena";
+        if (grid.Columns.Contains("Type"))
+            grid.Columns["Type"].HeaderText = "Tip";
+        if (grid.Columns.Contains("Details"))
+            grid.Columns["Details"].HeaderText = "Detalji";
     }
 
     private void DodajPaket()
@@ -305,10 +305,6 @@ if (grid.Columns.Contains("Details"))
                     CabinType = txtCabin.Text
                 };
 
-            //MessageBox.Show(pkg.GetType().FullName, "Tip objekta koji dodajem");
-            //MessageBox.Show(System.Text.Json.JsonSerializer.Serialize(pkg), "Sadržaj objekta koji šaljem");
-            //MessageBox.Show((ExcursionPackage)pkg.)
-            //MessageBox.Show("Vodic: " + txtGuide.Text);
             _db.AddPackage(pkg);
             f.Close();
             LoadPackages();

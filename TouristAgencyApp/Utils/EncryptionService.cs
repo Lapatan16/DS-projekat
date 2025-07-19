@@ -9,7 +9,6 @@ namespace TouristAgencyApp.Utils
 {
     public class EncryptionService
     {
-        // 32 karaktera, AES-256
         private static readonly string Key = "MySuperSecretKey1234567890123456";
 
         public static string Encrypt(string plainText)

@@ -18,35 +18,20 @@ namespace TouristAgencyApp.Services
 
         public MySQLDatabaseService(string connectionString)
         {
-            createFile();
             _connectionString = connectionString;
             EnsureDatabase();
         }
-        private void createFile()
-        {
-            string dbPath = "../net8.0-windows/agencija.db";
-            if (!File.Exists(dbPath))
-            {
-                File.Create(dbPath).Close();
-
-            }
-        }
-
-        // Kreira bazu i tabele samo prvi put
 
         private void EnsureDatabase()
         {
-            // Prvo se poveži bez specifične baze
             var baseConnectionString = _connectionString.Replace("Database=turisticka_agencija;", "");
             using var baseConnection = new MySqlConnection(baseConnectionString);
             baseConnection.Open();
             
-            // Kreiraj bazu ako ne postoji
             var createDbCmd = baseConnection.CreateCommand();
             createDbCmd.CommandText = "CREATE DATABASE IF NOT EXISTS turisticka_agencija;";
             createDbCmd.ExecuteNonQuery();
             
-            // Sada se poveži sa specifičnom bazom
             var dbConnectionString = baseConnectionString + "Database=turisticka_agencija;";
             using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
@@ -204,7 +189,16 @@ VALUES (@n, @p, @t, @d)";
             cmd.Parameters.AddWithValue("@n", package.Name);
             cmd.Parameters.AddWithValue("@p", package.Price);
             cmd.Parameters.AddWithValue("@t", package.Type);
-            cmd.Parameters.AddWithValue("@d", JsonSerializer.Serialize(package));
+            if (package is ExcursionPackage ex)
+                cmd.Parameters.AddWithValue("@d", JsonSerializer.Serialize(ex));
+            else if (package is SeaPackage sea)
+                cmd.Parameters.AddWithValue("@d", JsonSerializer.Serialize(sea));
+            else if (package is MountainPackage mtn)
+                cmd.Parameters.AddWithValue("@d", JsonSerializer.Serialize(mtn));
+            else if (package is CruisePackage cr)
+                cmd.Parameters.AddWithValue("@d", JsonSerializer.Serialize(cr));
+            else
+                cmd.Parameters.AddWithValue("@d", JsonSerializer.Serialize(package));
             cmd.Parameters.AddWithValue("@id", package.Id);
             cmd.ExecuteNonQuery();
         }

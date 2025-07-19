@@ -141,7 +141,6 @@ namespace TouristAgencyApp.Forms
             contentPanel.Controls.Add(grid);
             grid.CellDoubleClick += (s, e) => PrikaziRezervacijeZaKlijenta();
 
-            // Status bar
             var statusBar = new Panel
             {
                 Dock = DockStyle.Bottom,
@@ -200,28 +199,28 @@ namespace TouristAgencyApp.Forms
         private void LoadClients()
         {
             grid.DataSource = null;
-    grid.DataSource = _db.GetAllClients().ToList();
+            grid.DataSource = _db.GetAllClients().ToList();
 
-    if (grid.Columns.Contains("Id"))
-        grid.Columns["Id"].Visible = false;
+            if (grid.Columns.Contains("Id"))
+                grid.Columns["Id"].Visible = false;
         
-    if (grid.Columns.Contains("FullName"))
-        grid.Columns["FullName"].Visible = false;
+            if (grid.Columns.Contains("FullName"))
+                grid.Columns["FullName"].Visible = false;
 
-    if (grid.Columns.Contains("FirstName"))
-        grid.Columns["FirstName"].HeaderText = "Ime";
-    if (grid.Columns.Contains("LastName"))
-        grid.Columns["LastName"].HeaderText = "Prezime";
-    if (grid.Columns.Contains("PassportNumber"))
-        grid.Columns["PassportNumber"].HeaderText = "Broj pasoša";
-    if (grid.Columns.Contains("BirthDate"))
-        grid.Columns["BirthDate"].HeaderText = "Datum rođenja";
-    if (grid.Columns.Contains("Email"))
-        grid.Columns["Email"].HeaderText = "Email";
-    if (grid.Columns.Contains("Phone"))
-        grid.Columns["Phone"].HeaderText = "Telefon";
+            if (grid.Columns.Contains("FirstName"))
+                grid.Columns["FirstName"].HeaderText = "Ime";
+            if (grid.Columns.Contains("LastName"))
+                grid.Columns["LastName"].HeaderText = "Prezime";
+            if (grid.Columns.Contains("PassportNumber"))
+                grid.Columns["PassportNumber"].HeaderText = "Broj pasoša";
+            if (grid.Columns.Contains("BirthDate"))
+                grid.Columns["BirthDate"].HeaderText = "Datum rođenja";
+            if (grid.Columns.Contains("Email"))
+                grid.Columns["Email"].HeaderText = "Email";
+            if (grid.Columns.Contains("Phone"))
+                grid.Columns["Phone"].HeaderText = "Telefon";
 
-    AutoSizeGrid();
+            AutoSizeGrid();
         }
 
         private void AutoSizeGrid()
@@ -403,102 +402,98 @@ namespace TouristAgencyApp.Forms
             var paketi = _db.GetAllPackages();
 
             if (grid.SelectedRows.Count == 0) return;
-    var client = grid.SelectedRows[0].DataBoundItem as Client;
-    if (client == null) return;
 
-    var form = new Form
-    {
-        Text = $"Rezervacije za {client.FirstName} {client.LastName}",
-        Width = 1000, // veća širina
-        Height = 500,
-        StartPosition = FormStartPosition.CenterParent,
-        BackColor = Color.White,
-        FormBorderStyle = FormBorderStyle.FixedDialog,
-        MaximizeBox = false
-    };
+            var client = grid.SelectedRows[0].DataBoundItem as Client;
 
-    // Header panel
-    var headerPanel = new Panel
-    {
-        Dock = DockStyle.Top,
-        Height = 60,
-        BackColor = Color.FromArgb(42, 204, 113)
-    };
+            if (client == null) return;
 
-    var lblHeader = new Label
-    {
-        Text = "📋 Spisak rezervacija korisnika",
-        Font = new Font("Segoe UI", 16, FontStyle.Bold),
-        ForeColor = Color.White,
-        AutoSize = false,
-        Dock = DockStyle.Fill,
-        TextAlign = ContentAlignment.MiddleCenter
-    };
-    headerPanel.Controls.Add(lblHeader);
+            var form = new Form
+            {
+                Text = $"Rezervacije za {client.FirstName} {client.LastName}",
+                Width = 1000, 
+                Height = 500,
+                StartPosition = FormStartPosition.CenterParent,
+                BackColor = Color.White,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false
+            };
 
-    // Grid za rezervacije
-    var gridRez = new DataGridView
-    {
-        Dock = DockStyle.Fill,
-        ReadOnly = true,
-        AutoGenerateColumns = true,
-        Font = new Font("Segoe UI", 11, FontStyle.Regular),
-        BackgroundColor = Color.White,
-        BorderStyle = BorderStyle.None,
-        GridColor = Color.LightGray,
-        EnableHeadersVisualStyles = false,
-        RowTemplate = { Height = 35 },
-        SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-        AllowUserToAddRows = false
-    };
+            var headerPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 60,
+                BackColor = Color.FromArgb(42, 204, 113)
+            };
 
-    // Stil za header
-    gridRez.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
-    {
-        BackColor = Color.FromArgb(52, 73, 94),
-        ForeColor = Color.White,
-        Font = new Font("Segoe UI", 12, FontStyle.Bold),
-        Alignment = DataGridViewContentAlignment.MiddleCenter
-    };
-    gridRez.ColumnHeadersHeight = 40;
+            var lblHeader = new Label
+            {
+                Text = "📋 Spisak rezervacija korisnika",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.White,
+                AutoSize = false,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            headerPanel.Controls.Add(lblHeader);
 
-    // Alternating rows
-    gridRez.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
-    gridRez.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
-    gridRez.DefaultCellStyle.SelectionForeColor = Color.White;
+            var gridRez = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                ReadOnly = true,
+                AutoGenerateColumns = true,
+                Font = new Font("Segoe UI", 11, FontStyle.Regular),
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                GridColor = Color.LightGray,
+                EnableHeadersVisualStyles = false,
+                RowTemplate = { Height = 35 },
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AllowUserToAddRows = false
+            };
 
-    // Učitavanje podataka
-    var rezervacije = _db.GetReservationsByClient(client.Id);
+            gridRez.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
+            {
+                BackColor = Color.FromArgb(52, 73, 94),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Alignment = DataGridViewContentAlignment.MiddleCenter
+            };
+            gridRez.ColumnHeadersHeight = 40;
 
-    var data = rezervacije.Select(r => new
-    {
-        NazivPaketa = paketi.FirstOrDefault(p => p.Id == r.PackageId)?.Name ?? "(nepoznato)",
-        DatumRezervacije = r.ReservationDate.ToString("dd.MM.yyyy"),
-        BrojOsoba = r.NumPersons,
-        DodatneUsluge = r.ExtraServices != null ? string.Join(", ", r.ExtraServices) : ""
-    }).ToList();
+            gridRez.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
+            gridRez.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
+            gridRez.DefaultCellStyle.SelectionForeColor = Color.White;
 
-gridRez.DataSource = data;
+            var rezervacije = _db.GetReservationsByClient(client.Id);
 
-    foreach (DataGridViewColumn col in gridRez.Columns)
-{
-    col.HeaderText = col.Name switch
-    {
-        "NazivPaketa" => "Naziv paketa",
-        "DatumRezervacije" => "Datum rezervacije",
-        "BrojOsoba" => "Broj osoba",
-        "DodatneUsluge" => "Dodatne usluge",
-        _ => col.HeaderText
-    };
-}
-    gridRez.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-    gridRez.AutoResizeColumns();
+            var data = rezervacije.Select(r => new
+            {
+                NazivPaketa = paketi.FirstOrDefault(p => p.Id == r.PackageId)?.Name ?? "(nepoznato)",
+                DatumRezervacije = r.ReservationDate.ToString("dd.MM.yyyy"),
+                BrojOsoba = r.NumPersons,
+                DodatneUsluge = r.ExtraServices != null ? string.Join(", ", r.ExtraServices) : ""
+            }).ToList();
 
-    // Dodavanje na formu
-    form.Controls.Add(gridRez);
-    form.Controls.Add(headerPanel);
+            gridRez.DataSource = data;
 
-    form.ShowDialog();
+                foreach (DataGridViewColumn col in gridRez.Columns)
+            {
+                col.HeaderText = col.Name switch
+                {
+                    "NazivPaketa" => "Naziv paketa",
+                    "DatumRezervacije" => "Datum rezervacije",
+                    "BrojOsoba" => "Broj osoba",
+                    "DodatneUsluge" => "Dodatne usluge",
+                    _ => col.HeaderText
+                };
+            }
+            gridRez.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            gridRez.AutoResizeColumns();
+
+            form.Controls.Add(gridRez);
+            form.Controls.Add(headerPanel);
+
+            form.ShowDialog();
         }
     }
 }

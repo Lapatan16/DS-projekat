@@ -12,7 +12,7 @@ namespace TouristAgencyApp.Models
         public string Name { get; set; } = "";
         public decimal Price { get; set; }
         public string Type { get; set; } = "";
-        public string Details { get; set; } = ""; // JSON za specifična polja
+        public string Details { get; set; } = "";
     }
 
     public class SeaPackage : TravelPackage

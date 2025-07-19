@@ -17,10 +17,26 @@ namespace TouristAgencyApp.Services
         public SQLiteDatabaseService(string connectionString)
         {
             _connectionString = connectionString;
+            EnsureDatabaseFile();
             EnsureDatabase();
         }
+        private void EnsureDatabaseFile()
+        {
+            var builder = new SqliteConnectionStringBuilder(_connectionString);
+            string dbPath = builder.DataSource;
 
-        // Pravljenje baze i tabela, samo prvi put
+            string? folder = Path.GetDirectoryName(dbPath);
+            if (!string.IsNullOrEmpty(folder) && !Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            if (!File.Exists(dbPath))
+            {
+                File.Create(dbPath).Close();
+            }
+        }
+
         private void EnsureDatabase()
         {
             using var connection = new SqliteConnection(_connectionString);
@@ -125,7 +141,6 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph)";
                 decimal price = reader.GetDecimal(2);
                 string type = reader.GetString(3);
                 string details = reader.GetString(4);
-                //MessageBox.Show("Detalji: == =" + details);
                 TravelPackage pkg = type switch
                 {
                     "Sea" => JsonSerializer.Deserialize<SeaPackage>(details) ?? new SeaPackage(),
@@ -140,7 +155,6 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph)";
                 pkg.Price = price;
                 pkg.Type = type;
                 pkg.Details = pkg.ToString();
-                //MessageBox.Show("LALALA" + pkg.ToString());
                 result.Add(pkg);
             }
             return result;
@@ -156,15 +170,13 @@ VALUES ($n, $p, $t, $d)";
             cmd.Parameters.AddWithValue("$n", package.Name);
             cmd.Parameters.AddWithValue("$p", package.Price);
             cmd.Parameters.AddWithValue("$t", package.Type);
-            // Ovde koristi JsonSerializer!
-            //MessageBox.Show("Test213:= " + package.Details);
+
             if(package is ExcursionPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((ExcursionPackage)package));
             if(package is SeaPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((SeaPackage)package));
             if(package is MountainPackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((MountainPackage)package));
             if(package is CruisePackage) cmd.Parameters.AddWithValue("$d", System.Text.Json.JsonSerializer.Serialize((CruisePackage)package));
 
             cmd.ExecuteNonQuery();
-            //MessageBox.Show(System.Text.Json.JsonSerializer.Serialize(package), "Šta šaljem u bazu kao Details");
         }
 
         public void UpdatePackage(TravelPackage package)
@@ -177,7 +189,16 @@ VALUES ($n, $p, $t, $d)";
             cmd.Parameters.AddWithValue("$n", package.Name);
             cmd.Parameters.AddWithValue("$p", package.Price);
             cmd.Parameters.AddWithValue("$t", package.Type);
-            cmd.Parameters.AddWithValue("$d", JsonSerializer.Serialize(package));
+            if (package is ExcursionPackage ex)
+                cmd.Parameters.AddWithValue("$d", JsonSerializer.Serialize(ex));
+            else if (package is SeaPackage sea)
+                cmd.Parameters.AddWithValue("$d", JsonSerializer.Serialize(sea));
+            else if (package is MountainPackage mtn)
+                cmd.Parameters.AddWithValue("$d", JsonSerializer.Serialize(mtn));
+            else if (package is CruisePackage cr)
+                cmd.Parameters.AddWithValue("$d", JsonSerializer.Serialize(cr));
+            else
+                cmd.Parameters.AddWithValue("$d", JsonSerializer.Serialize(package));
             cmd.Parameters.AddWithValue("$id", package.Id);
             cmd.ExecuteNonQuery();
         }
@@ -251,7 +272,6 @@ VALUES ($cid, $pid, $num, $date, $extra)";
             cmd.Parameters.AddWithValue("$extra", extraInfo);
             cmd.Parameters.AddWithValue("$Id", reservationId);
             cmd.ExecuteNonQuery();
-            //throw new NotImplementedException();
         }
     }
 }
