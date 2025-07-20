@@ -162,8 +162,8 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph)";
         }
         public Reservation? GetReservationById(int id)
         {
-            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
-            using var connection = new MySqlConnection(dbConnectionString);
+            //var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
             var cmd = connection.CreateCommand();
@@ -270,7 +270,7 @@ VALUES ($n, $p, $t, $d)";
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"INSERT INTO Reservations (ClientId, PackageId, NumPersons, ReservationDate, ExtraServices)
-VALUES ($cid, $pid, $num, $date, $extra)";
+VALUES ($cid, $pid, $num, $date, $extra); SELECT last_insert_rowid()";
             cmd.Parameters.AddWithValue("$cid", reservation.ClientId);
             cmd.Parameters.AddWithValue("$pid", reservation.PackageId);
             cmd.Parameters.AddWithValue("$num", reservation.NumPersons);
