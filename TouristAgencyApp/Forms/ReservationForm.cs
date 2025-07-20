@@ -13,6 +13,7 @@ namespace TouristAgencyApp.Forms
     {
         private readonly IDatabaseService _db;
         private readonly ReservationSubject _reservationSubject;
+        private ReservationManager _reservationManager;
         private DataGridView grid;
         private ComboBox cbClients;
         private Button btnAdd;
@@ -22,7 +23,7 @@ namespace TouristAgencyApp.Forms
         {
             _db = dbService;
             _reservationSubject = new ReservationSubject();
-
+            _reservationManager = new ReservationManager(dbService);
            
             _reservationSubject.Attach(new ReservationLogger());
             _reservationSubject.Attach(new ReservationNotifier());
@@ -343,7 +344,7 @@ namespace TouristAgencyApp.Forms
                     //    ExtraServices = txtExtra.Text
                     //};
 
-                    int id = _db.AddReservation(reservation);
+                    int id = _reservationManager.AddReservation(reservation);
                     _reservationSubject.AddReservation(reservation, id);
                     f.Close();
                     LoadReservations();
@@ -423,7 +424,8 @@ namespace TouristAgencyApp.Forms
             var confirm = MessageBox.Show("Da li ste sigurni da želite da otkažete ovu rezervaciju?", "Potvrda", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                _db.RemoveReservation(id);
+                //_db.RemoveReservation(id);
+                _reservationManager.RemoveReservation(id);
                 _reservationSubject.RemoveReservation(id);
                 LoadReservations();
             }

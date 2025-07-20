@@ -17,6 +17,7 @@ namespace TouristAgencyApp.Patterns
         private readonly IDatabaseService _db;
         private readonly Reservation _reservation;
         private int _reservationId;
+        public int ReservationId => _reservationId;
 
         public AddReservationCommand(IDatabaseService db, Reservation reservation)
         {
