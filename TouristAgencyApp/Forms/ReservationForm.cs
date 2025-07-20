@@ -326,17 +326,25 @@ namespace TouristAgencyApp.Forms
             {
                 if (cbPackages.SelectedItem is TravelPackage pkg)
                 {
-                    var reservation = new Reservation
-                    {
-                        ClientId = c.Id,
-                        PackageId = pkg.Id,
-                        NumPersons = (int)numPersons.Value,
-                        ReservationDate = DateTime.Now,
-                        ExtraServices = txtExtra.Text
-                    };
 
-                    _db.AddReservation(reservation);
-                    _reservationSubject.AddReservation(reservation);
+                    Reservation reservation = new ReservationBuilder()
+                       .SetClient(c)
+                       .SetPackage(pkg)
+                       .SetNumPersons((int)numPersons.Value)
+                       .SetExtraServices(txtExtra.Text)
+                       .SetReservationDate(DateTime.Now)
+                       .Build();
+                    //var reservation = new Reservation
+                    //{
+                    //    ClientId = c.Id,
+                    //    PackageId = pkg.Id,
+                    //    NumPersons = (int)numPersons.Value,
+                    //    ReservationDate = DateTime.Now,
+                    //    ExtraServices = txtExtra.Text
+                    //};
+
+                    int id = _db.AddReservation(reservation);
+                    _reservationSubject.AddReservation(reservation, id);
                     f.Close();
                     LoadReservations();
                 }

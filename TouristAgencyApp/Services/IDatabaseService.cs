@@ -14,7 +14,7 @@ namespace TouristAgencyApp.Services
         List<Reservation> GetReservationsByClient(int clientId);
         void AddClient(Client client);
         void AddPackage(TravelPackage package);
-        void AddReservation(Reservation reservation);
+        int AddReservation(Reservation reservation);
         void RemoveReservation(int reservationId);
         void UpdateClient(Client client);
         void UpdatePackage(TravelPackage package);
