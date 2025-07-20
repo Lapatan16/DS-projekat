@@ -41,10 +41,11 @@ namespace TouristAgencyApp.Patterns
             }
         }
 
-        public void AddReservation(Reservation reservation)
+        public void AddReservation(Reservation reservation, int id)
         {
             _reservations.Add(reservation);
-            Notify($"Nova rezervacija dodana: {reservation.Id}");
+            //MessageBox.Show(reservation.Id.ToString());
+            Notify($"Nova rezervacija dodana: KorisnikId:{reservation.ClientId} | PaketId: {reservation.PackageId} | ReservacijaId: {id}");
         }
 
         public void RemoveReservation(int reservationId)

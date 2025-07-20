@@ -343,8 +343,8 @@ namespace TouristAgencyApp.Forms
                     //    ExtraServices = txtExtra.Text
                     //};
 
-                    _db.AddReservation(reservation);
-                    _reservationSubject.AddReservation(reservation);
+                    int id = _db.AddReservation(reservation);
+                    _reservationSubject.AddReservation(reservation, id);
                     f.Close();
                     LoadReservations();
                 }

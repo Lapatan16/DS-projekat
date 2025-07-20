@@ -216,7 +216,7 @@ VALUES ($n, $p, $t, $d)";
             return result;
         }
 
-        public void AddReservation(Reservation reservation)
+        public int AddReservation(Reservation reservation)
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
@@ -228,7 +228,11 @@ VALUES ($cid, $pid, $num, $date, $extra)";
             cmd.Parameters.AddWithValue("$num", reservation.NumPersons);
             cmd.Parameters.AddWithValue("$date", reservation.ReservationDate.ToString("yyyy-MM-dd"));
             cmd.Parameters.AddWithValue("$extra", reservation.ExtraServices);
-            cmd.ExecuteNonQuery();
+            //cmd.ExecuteNonQuery();
+
+            int insertedId = Convert.ToInt32(cmd.ExecuteScalar());
+
+            return insertedId;
         }
 
         public void RemoveReservation(int reservationId)

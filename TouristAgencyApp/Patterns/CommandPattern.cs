@@ -28,6 +28,7 @@ namespace TouristAgencyApp.Patterns
         {
             _db.AddReservation(_reservation);
             // U realnoj aplikaciji bi se vratio ID
+           
             _reservationId = 1; // Placeholder
         }
 
