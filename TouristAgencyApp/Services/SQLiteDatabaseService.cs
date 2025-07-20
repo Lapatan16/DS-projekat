@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -159,7 +160,33 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph)";
             }
             return result;
         }
+        public Reservation? GetReservationById(int id)
+        {
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
+            connection.Open();
 
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT * FROM Reservations WHERE Id = $id";
+            cmd.Parameters.AddWithValue("$id", id);
+
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                return new Reservation
+                {
+                    Id = reader.GetInt32(0),
+                    ClientId = reader.GetInt32(1),
+                    PackageId = reader.GetInt32(2),
+                    NumPersons = reader.GetInt32(3),
+                    ReservationDate = reader.GetDateTime(4),
+                    ExtraServices = reader.GetString(5)
+                };
+            }
+
+            return null; // Not found
+        }
         public void AddPackage(TravelPackage package)
         {
             using var connection = new SqliteConnection(_connectionString);

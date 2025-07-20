@@ -17,6 +17,7 @@ namespace TouristAgencyApp.Patterns
         private readonly IDatabaseService _db;
         private readonly Reservation _reservation;
         private int _reservationId;
+        public int ReservationId => _reservationId;
 
         public AddReservationCommand(IDatabaseService db, Reservation reservation)
         {
@@ -50,7 +51,7 @@ namespace TouristAgencyApp.Patterns
             _db = db;
             _reservationId = reservationId;
             // U realnoj aplikaciji bi se učitao reservation
-            _reservation = new Reservation();
+            _reservation = _db.GetReservationById(reservationId);
         }
 
         public void Execute()

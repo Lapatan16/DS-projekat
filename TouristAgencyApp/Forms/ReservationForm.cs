@@ -13,8 +13,10 @@ namespace TouristAgencyApp.Forms
     {
         private readonly IDatabaseService _db;
         private readonly ReservationSubject _reservationSubject;
+        private ReservationManager _reservationManager;
         private DataGridView grid;
         private ComboBox cbClients;
+        private Button btnUndo;
         private Button btnAdd;
         private Button btnRemove;
         private Button btnEdit;
@@ -22,7 +24,7 @@ namespace TouristAgencyApp.Forms
         {
             _db = dbService;
             _reservationSubject = new ReservationSubject();
-
+            _reservationManager = new ReservationManager(dbService);
            
             _reservationSubject.Attach(new ReservationLogger());
             _reservationSubject.Attach(new ReservationNotifier());
@@ -104,7 +106,12 @@ namespace TouristAgencyApp.Forms
             btnEdit.TextAlign = ContentAlignment.MiddleCenter;
             btnEdit.Click += (s, e) => AzurirajRezervaciju();
 
-            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit });
+            btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
+            btnUndo.Location = new Point(880, 15);
+            btnUndo.TextAlign = ContentAlignment.MiddleCenter;
+            btnUndo.Click += (s, e) => OpozoviAkciju();
+            btnUndo.Width = 100;
+            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo });
 
 
             var contentPanel = new Panel
@@ -270,7 +277,11 @@ namespace TouristAgencyApp.Forms
                 grid.AutoResizeColumns();
             }
         }
-
+        private void OpozoviAkciju()
+        {
+            _reservationManager.UndoLastAction();
+            LoadReservations();
+        }
         private void DodajRezervaciju()
         {
             if (!(cbClients.SelectedItem is Client c)) return;
@@ -343,7 +354,7 @@ namespace TouristAgencyApp.Forms
                     //    ExtraServices = txtExtra.Text
                     //};
 
-                    int id = _db.AddReservation(reservation);
+                    int id = _reservationManager.AddReservation(reservation);
                     _reservationSubject.AddReservation(reservation, id);
                     f.Close();
                     LoadReservations();
@@ -423,7 +434,8 @@ namespace TouristAgencyApp.Forms
             var confirm = MessageBox.Show("Da li ste sigurni da želite da otkažete ovu rezervaciju?", "Potvrda", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                _db.RemoveReservation(id);
+                //_db.RemoveReservation(id);
+                _reservationManager.RemoveReservation(id);
                 _reservationSubject.RemoveReservation(id);
                 LoadReservations();
             }
