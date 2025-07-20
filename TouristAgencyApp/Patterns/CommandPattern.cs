@@ -51,7 +51,7 @@ namespace TouristAgencyApp.Patterns
             _db = db;
             _reservationId = reservationId;
             // U realnoj aplikaciji bi se učitao reservation
-            _reservation = new Reservation();
+            _reservation = _db.GetReservationById(reservationId);
         }
 
         public void Execute()

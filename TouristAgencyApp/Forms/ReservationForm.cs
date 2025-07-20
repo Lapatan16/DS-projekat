@@ -16,6 +16,7 @@ namespace TouristAgencyApp.Forms
         private ReservationManager _reservationManager;
         private DataGridView grid;
         private ComboBox cbClients;
+        private Button btnUndo;
         private Button btnAdd;
         private Button btnRemove;
         private Button btnEdit;
@@ -105,7 +106,12 @@ namespace TouristAgencyApp.Forms
             btnEdit.TextAlign = ContentAlignment.MiddleCenter;
             btnEdit.Click += (s, e) => AzurirajRezervaciju();
 
-            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit });
+            btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
+            btnUndo.Location = new Point(880, 15);
+            btnUndo.TextAlign = ContentAlignment.MiddleCenter;
+            btnUndo.Click += (s, e) => OpozoviAkciju();
+            btnUndo.Width = 100;
+            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo });
 
 
             var contentPanel = new Panel
@@ -271,7 +277,11 @@ namespace TouristAgencyApp.Forms
                 grid.AutoResizeColumns();
             }
         }
-
+        private void OpozoviAkciju()
+        {
+            _reservationManager.UndoLastAction();
+            LoadReservations();
+        }
         private void DodajRezervaciju()
         {
             if (!(cbClients.SelectedItem is Client c)) return;
