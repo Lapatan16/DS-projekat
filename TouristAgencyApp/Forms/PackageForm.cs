@@ -1,4 +1,5 @@
 ﻿using TouristAgencyApp.Models;
+using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Services;
 
 public partial class PackagesForm : Form
@@ -259,51 +260,46 @@ if (grid.Columns.Contains("Details"))
 
         btnSave.Click += (ss, ee) =>
         {
-            TravelPackage pkg;
-            if (cbType.SelectedItem.ToString() == "Sea")
-                pkg = new SeaPackage
-                {
-                    Type = "Sea",
-                    Name = txtName.Text,
-                    Price = numPrice.Value,
-                    Destination = txtDestination.Text,
-                    Accommodation = txtAcc.Text,
-                    Transport = txtTransport.Text
-                    
-                };
-            else if (cbType.SelectedItem.ToString() == "Mountain")
-                pkg = new MountainPackage
-                {
-                    Type = "Mountain",
-                    Name = txtName.Text,
-                    Price = numPrice.Value,
-                    Destination = txtDestination.Text,
-                    Accommodation = txtAcc.Text,
-                    Transport = txtTransport.Text,
-                    Activities = txtActivities.Text
-                };
-            else if (cbType.SelectedItem.ToString() == "Excursion")
-                pkg = new ExcursionPackage
-                {
-                    Type = "Excursion",
-                    Name = txtName.Text,
-                    Price = numPrice.Value,
-                    Destination = txtDestination.Text,
-                    Transport = txtTransport.Text,
-                    Guide = txtGuide.Text,
-                    Duration = (int)numDuration.Value
-                };
-            else 
-                pkg = new CruisePackage
-                {
-                    Type = "Cruise",
-                    Name = txtName.Text,
-                    Price = numPrice.Value,
-                    Ship = txtShip.Text,
-                    Route = txtRoute.Text,
-                    DepartureDate = dtDeparture.Value,
-                    CabinType = txtCabin.Text
-                };
+            PackageFactory factory = cbType.SelectedItem.ToString() switch
+            {
+                "Sea" => new SeaPackageFactory(),
+                "Mountain" => new MountainPackageFactory(),
+                "Excursion" => new ExcursionPackageFactory(),
+                "Cruise" => new CruisePackageFactory(),
+                _ => throw new Exception("Unknown package type")
+            };
+
+            TravelPackage pkg = factory.CreatePackage();
+
+            pkg.Name = txtName.Text;
+            pkg.Price = numPrice.Value;
+
+            switch (pkg)
+            {
+                case SeaPackage sea:
+                    sea.Destination = txtDestination.Text;
+                    sea.Accommodation = txtAcc.Text;
+                    sea.Transport = txtTransport.Text;
+                    break;
+                case MountainPackage mountain:
+                    mountain.Destination = txtDestination.Text;
+                    mountain.Accommodation = txtAcc.Text;
+                    mountain.Transport = txtTransport.Text;
+                    mountain.Activities = txtActivities.Text;
+                    break;
+                case ExcursionPackage excursion:
+                    excursion.Destination = txtDestination.Text;
+                    excursion.Transport = txtTransport.Text;
+                    excursion.Guide = txtGuide.Text;
+                    excursion.Duration = (int)numDuration.Value;
+                    break;
+                case CruisePackage cruise:
+                    cruise.Ship = txtShip.Text;
+                    cruise.Route = txtRoute.Text;
+                    cruise.DepartureDate = dtDeparture.Value;
+                    cruise.CabinType = txtCabin.Text;
+                    break;
+            }
 
             //MessageBox.Show(pkg.GetType().FullName, "Tip objekta koji dodajem");
             //MessageBox.Show(System.Text.Json.JsonSerializer.Serialize(pkg), "Sadržaj objekta koji šaljem");
