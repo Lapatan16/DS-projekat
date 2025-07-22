@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -89,23 +90,33 @@ CREATE TABLE IF NOT EXISTS Reservations (
             return result;
         }
 
-        public void AddClient(Client client)
+        public int AddClient(Client client)
         {
             var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
             using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"INSERT INTO Clients (FirstName, LastName, PassportNumber, BirthDate, Email, Phone)
-VALUES (@fn, @ln, @pn, @bd, @em, @ph)";
+VALUES (@fn, @ln, @pn, @bd, @em, @ph); SELECT LAST_INSERT_ID()";
             cmd.Parameters.AddWithValue("@fn", client.FirstName);
             cmd.Parameters.AddWithValue("@ln", client.LastName);
             cmd.Parameters.AddWithValue("@pn", EncryptionService.Encrypt(client.PassportNumber));
             cmd.Parameters.AddWithValue("@bd", client.BirthDate);
             cmd.Parameters.AddWithValue("@em", client.Email);
             cmd.Parameters.AddWithValue("@ph", client.Phone);
+            int insertedId = Convert.ToInt32(cmd.ExecuteScalar());
+            return insertedId;
+        }
+        public void RemoveClient(int clientId)
+        {
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
+            connection.Open();
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = "DELETE FROM Clients WHERE Id=@id";
+            cmd.Parameters.AddWithValue("@id", clientId);
             cmd.ExecuteNonQuery();
         }
-
         public void UpdateClient(Client client)
         {
             var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
@@ -160,14 +171,14 @@ VALUES (@fn, @ln, @pn, @bd, @em, @ph)";
             return result;
         }
 
-        public void AddPackage(TravelPackage package)
+        public int AddPackage(TravelPackage package)
         {
             var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
             using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"INSERT INTO TravelPackages (Name, Price, Type, Details)
-VALUES (@n, @p, @t, @d)";
+VALUES (@n, @p, @t, @d); SELECT LAST_INSERT_ID()";
             cmd.Parameters.AddWithValue("@n", package.Name);
             cmd.Parameters.AddWithValue("@p", package.Price);
             cmd.Parameters.AddWithValue("@t", package.Type);
@@ -176,7 +187,9 @@ VALUES (@n, @p, @t, @d)";
             if (package is MountainPackage) cmd.Parameters.AddWithValue("@d", System.Text.Json.JsonSerializer.Serialize((MountainPackage)package));
             if (package is CruisePackage) cmd.Parameters.AddWithValue("@d", System.Text.Json.JsonSerializer.Serialize((CruisePackage)package));
 
-            cmd.ExecuteNonQuery();
+            int id = Convert.ToInt32(cmd.ExecuteScalar());
+
+            return id;
         }
 
         public void UpdatePackage(TravelPackage package)

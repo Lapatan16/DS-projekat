@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Models;
+using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Forms
@@ -13,9 +14,17 @@ namespace TouristAgencyApp.Forms
     {
         private readonly IDatabaseService _db;
         private DataGridView grid;
-        
+        private readonly ClientSubject _clientSubject;
+        private readonly ClientManager _clientManager;
+        private Button btnUndo;
         public ClientsForm(IDatabaseService dbService)
         {
+            _clientManager = new ClientManager(dbService);
+            _clientSubject = new ClientSubject();
+            _clientSubject.Attach(new ClientLogger());
+            _clientSubject.Attach(new ClientNotifier());
+            //_clientSubject.Attach(new ReservationStatistics());
+
             _db = dbService;
             InitializeForm();
             CreateModernUI();
@@ -66,8 +75,15 @@ namespace TouristAgencyApp.Forms
                 Padding = new Padding(20, 10, 20, 10)
             };
 
+           
 
-          
+            btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
+            btnUndo.Location = new Point(880, 15);
+            btnUndo.TextAlign = ContentAlignment.MiddleCenter;
+            btnUndo.Click += (s, e) => OpozoviAkciju();
+            btnUndo.Width = 100;
+            btnUndo.Visible = false;
+
             var btnAdd = CreateModernButton("➕ Dodaj klijenta", Color.FromArgb(46, 204, 113));
             btnAdd.Click += (s, e) => DodajKlijenta();
             btnAdd.Location = new Point(20, 15);
@@ -98,7 +114,7 @@ namespace TouristAgencyApp.Forms
                 AutoSizeGrid();
             };
 
-            toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, txtPretraga });
+            toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, txtPretraga, btnUndo });
 
             var contentPanel = new Panel
             {
@@ -195,7 +211,12 @@ namespace TouristAgencyApp.Forms
 
             return button;
         }
-
+        private void OpozoviAkciju()
+        {
+            _clientManager.UndoLastAction();
+            btnUndo.Visible = false;
+            LoadClients();
+        }
         private void LoadClients()
         {
             grid.DataSource = null;
@@ -258,6 +279,8 @@ namespace TouristAgencyApp.Forms
             };
             f.Controls.Add(headerLabel);
 
+           
+
             int labelLeft = 30, txtLeft = 200;
             int labelWidth = 150, txtWidth = 250, height = 35, gap = 20;
             int startTop = 80;
@@ -316,7 +339,9 @@ namespace TouristAgencyApp.Forms
                 
                 try
                 {
-                    _db.AddClient(c);
+                    int id = _clientManager.AddClient(c);
+                    _clientSubject.AddClient(c, id);
+                    btnUndo.Visible = true;
                     f.Close();
                     LoadClients();
                     MessageBox.Show("Klijent uspešno dodat!", "Uspeh", MessageBoxButtons.OK, MessageBoxIcon.Information);

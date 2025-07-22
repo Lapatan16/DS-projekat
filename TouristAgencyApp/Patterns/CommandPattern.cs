@@ -28,15 +28,66 @@ namespace TouristAgencyApp.Patterns
         public void Execute()
         {
             int id = _db.AddReservation(_reservation);
-            // U realnoj aplikaciji bi se vratio ID
            
-            _reservationId = id; // Placeholder
+            _reservationId = id; 
         }
 
         public void Undo()
         {
             if (_reservationId > 0)
                 _db.RemoveReservation(_reservationId);
+        }
+    }
+    public class AddClientCommand : ICommand
+    {
+        private readonly IDatabaseService _db;
+        private readonly Client _client;
+        private int _clientId;
+        public int ClientId => _clientId;
+
+        public AddClientCommand(IDatabaseService db, Client client)
+        {
+            _db = db;
+            _client = client;
+        }
+
+        public void Execute()
+        {
+            int id = _db.AddClient(_client);
+
+            _clientId = id; 
+        }
+
+        public void Undo()
+        {
+            if (_clientId > 0)
+                _db.RemoveClient(_clientId);
+        }
+    }
+    public class AddPackageCommand : ICommand
+    {
+        private readonly IDatabaseService _db;
+        private readonly TravelPackage _package;
+        private int _packageId;
+        public int PackageId => _packageId;
+
+        public AddPackageCommand(IDatabaseService db, TravelPackage package)
+        {
+            _db = db;
+            _package = package;
+        }
+
+        public void Execute()
+        {
+            int id = _db.AddPackage(_package);
+           
+            _packageId= id; 
+        }
+
+        public void Undo()
+        {
+            if (_packageId> 0)
+                _db.RemovePackage(_packageId);
         }
     }
 
@@ -50,7 +101,7 @@ namespace TouristAgencyApp.Patterns
         {
             _db = db;
             _reservationId = reservationId;
-            // U realnoj aplikaciji bi se učitao reservation
+
             _reservation = _db.GetReservationById(reservationId);
         }
 

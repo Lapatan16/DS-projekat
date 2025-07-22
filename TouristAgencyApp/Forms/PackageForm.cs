@@ -5,10 +5,18 @@ using TouristAgencyApp.Services;
 public partial class PackagesForm : Form
 {
     private readonly IDatabaseService _db;
+    private readonly PackageSubject _packageSubject;
+    private readonly PackageManager _packageManager;
     private DataGridView grid;
+    private Button btnUndo;
     string type;
     public PackagesForm(IDatabaseService dbService)
     {
+        _packageManager = new PackageManager(dbService);
+        _packageSubject = new PackageSubject();
+        _packageSubject.Attach(new PackageNotifier());
+        _packageSubject.Attach(new PackageLogger());
+
         type = "Svi paketi";
         _db = dbService;
         this.Text = "Paketi";
@@ -119,9 +127,16 @@ private void CreateModernUI()
     btnAdd.Click += (s, e) => DodajPaket();
 
     var btnEdit = CreateModernButton("✏️ Izmeni paket", Color.FromArgb(52, 152, 219));
-    btnEdit.Click += (s, e) => IzmeniPaket();
 
-    var comboBox = new ComboBox
+    btnEdit.Click += (s, e) => IzmeniPaket();
+    btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
+    btnUndo.Location = new Point(880, 15);
+    btnUndo.TextAlign = ContentAlignment.MiddleCenter;
+    btnUndo.Click += (s, e) => OpozoviAkciju();
+    btnUndo.Width = 100;
+    btnUndo.Visible = false;
+
+        var comboBox = new ComboBox
     {
         DropDownStyle = ComboBoxStyle.DropDownList,
         Width = 180,
@@ -140,7 +155,7 @@ private void CreateModernUI()
     btnAdd.Location = new Point(20, 10);
     btnEdit.Location = new Point(200, 10);
 
-    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox });
+    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox, btnUndo });
 
     
     grid.Dock = DockStyle.Fill;
@@ -301,14 +316,23 @@ private void CreateModernUI()
                     break;
             }
 
-            _db.AddPackage(pkg);
+            
+
+            int id = _packageManager.AddPackage(pkg);
+            _packageSubject.AddPackage(pkg, id);
             f.Close();
+            btnUndo.Visible = true;
             LoadPackages();
         };
 
         f.ShowDialog();
     }
-
+    private void OpozoviAkciju()
+    {
+        _packageManager.UndoLastAction();
+        btnUndo.Visible = false;
+        LoadPackages();
+    }
     private void IzmeniPaket()
     {
         if (grid.SelectedRows.Count == 0) return;
