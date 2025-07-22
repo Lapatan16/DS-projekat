@@ -111,6 +111,7 @@ namespace TouristAgencyApp.Forms
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Click += (s, e) => OpozoviAkciju();
             btnUndo.Width = 100;
+            btnUndo.Visible = false;
             toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo });
 
 
@@ -280,6 +281,7 @@ namespace TouristAgencyApp.Forms
         private void OpozoviAkciju()
         {
             _reservationManager.UndoLastAction();
+            btnUndo.Visible = false;
             LoadReservations();
         }
         private void DodajRezervaciju()
@@ -353,9 +355,10 @@ namespace TouristAgencyApp.Forms
                     //    ReservationDate = DateTime.Now,
                     //    ExtraServices = txtExtra.Text
                     //};
-
+                    
                     int id = _reservationManager.AddReservation(reservation);
                     _reservationSubject.AddReservation(reservation, id);
+                    btnUndo.Visible = true;
                     f.Close();
                     LoadReservations();
                 }
@@ -437,6 +440,7 @@ namespace TouristAgencyApp.Forms
                 //_db.RemoveReservation(id);
                 _reservationManager.RemoveReservation(id);
                 _reservationSubject.RemoveReservation(id);
+                btnUndo.Visible = true;
                 LoadReservations();
             }
         }
