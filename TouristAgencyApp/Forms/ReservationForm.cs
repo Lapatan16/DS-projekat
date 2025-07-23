@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using TouristAgencyApp.Models;
-using TouristAgencyApp.Services;
+﻿using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
+using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Forms
 {
@@ -25,7 +20,7 @@ namespace TouristAgencyApp.Forms
             _db = dbService;
             _reservationSubject = new ReservationSubject();
             _reservationManager = new ReservationManager(dbService);
-           
+
             _reservationSubject.Attach(new ReservationLogger());
             _reservationSubject.Attach(new ReservationNotifier());
             _reservationSubject.Attach(new ReservationStatistics());
@@ -170,7 +165,7 @@ namespace TouristAgencyApp.Forms
                 Width = 0,
                 Visible = false,
             });
-            
+
             var headerStyle = new DataGridViewCellStyle
             {
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
@@ -182,13 +177,13 @@ namespace TouristAgencyApp.Forms
             grid.ColumnHeadersHeight = 45;
 
             grid.DefaultCellStyle.BackColor = Color.White;
-            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219); 
+            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             grid.DefaultCellStyle.SelectionForeColor = Color.White;
             grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
 
             contentPanel.Controls.Add(grid);
 
-            
+
             var statusBar = new Panel
             {
                 Dock = DockStyle.Bottom,
@@ -230,7 +225,7 @@ namespace TouristAgencyApp.Forms
                 Width = 160,
                 Height = 40,
                 Cursor = Cursors.Hand,
-                TextAlign = ContentAlignment.MiddleCenter 
+                TextAlign = ContentAlignment.MiddleCenter
             };
 
             button.MouseEnter += (s, e) =>
@@ -355,7 +350,7 @@ namespace TouristAgencyApp.Forms
                     //    ReservationDate = DateTime.Now,
                     //    ExtraServices = txtExtra.Text
                     //};
-                    
+
                     int id = _reservationManager.AddReservation(reservation);
                     _reservationSubject.AddReservation(reservation, id);
                     btnUndo.Visible = true;
@@ -396,7 +391,7 @@ namespace TouristAgencyApp.Forms
             var numPersons = new NumericUpDown { Left = 20, Top = 125, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
             numPersons.Value = Convert.ToDecimal(grid.SelectedRows[0].Cells[1].Value);
             var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 165, Width = 180, Font = new Font("Segoe UI", 11) };
-            var txtExtra = new TextBox {Text= grid.SelectedRows[0].Cells[3].Value.ToString() , Left = 20, Top = 195, Width = 360, Font = new Font("Segoe UI", 11) };
+            var txtExtra = new TextBox { Text = grid.SelectedRows[0].Cells[3].Value.ToString(), Left = 20, Top = 195, Width = 360, Font = new Font("Segoe UI", 11) };
 
             var btnSave = new Button
             {
@@ -417,7 +412,10 @@ namespace TouristAgencyApp.Forms
             btnSave.Click += (ss, ee) =>
             {
                 int reservationId = Convert.ToInt32(grid.SelectedRows[0].Cells[4].Value);
-                _db.UpdateReservation(reservationId, (int)numPersons.Value, txtExtra.Text);
+                _reservationManager.UpdateReservation(reservationId,(int) numPersons.Value, txtExtra.Text);
+                _reservationSubject.UpdateReservation(reservationId);
+                //_db.UpdateReservation(reservationId, (int)numPersons.Value, txtExtra.Text);
+                btnUndo.Visible = true;
                 LoadReservations();
                 f.Close();
             };

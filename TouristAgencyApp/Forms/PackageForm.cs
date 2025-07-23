@@ -366,7 +366,9 @@ private void CreateModernUI()
                 sea.Destination = txtDestination.Text;
                 sea.Accommodation = txtAcc.Text;
                 sea.Transport = txtTransport.Text;
-                _db.UpdatePackage(sea);
+                _packageManager.UpdatePackage(sea);
+                _packageSubject.UpdatePackage(sea);
+                //_db.UpdatePackage(sea);
                 f.Close();
                 LoadPackages();
             };
@@ -387,7 +389,9 @@ private void CreateModernUI()
                 mountain.Accommodation = txtAcc.Text;
                 mountain.Transport = txtTransport.Text;
                 mountain.Activities = txtActivities.Text;
-                _db.UpdatePackage(mountain);
+                _packageManager.UpdatePackage(mountain);
+                _packageSubject.UpdatePackage(mountain);
+                //_db.UpdatePackage(mountain);
                 f.Close();
                 LoadPackages();
             };
@@ -408,7 +412,9 @@ private void CreateModernUI()
                 excursion.Transport = txtTransport.Text;
                 excursion.Guide = txtGuide.Text;
                 excursion.Duration = (int)numDuration.Value;
-                _db.UpdatePackage(excursion);
+                //_db.UpdatePackage(excursion);
+                _packageManager.UpdatePackage(excursion);
+                _packageSubject.UpdatePackage(excursion);
                 f.Close();
                 LoadPackages();
             };
@@ -429,12 +435,15 @@ private void CreateModernUI()
                 cruise.Route = txtRoute.Text;
                 cruise.DepartureDate = dtDeparture.Value;
                 cruise.CabinType = txtCabin.Text;
-                _db.UpdatePackage(cruise);
+                //_db.UpdatePackage(cruise);
+                _packageManager.UpdatePackage(cruise);
+                _packageSubject.UpdatePackage(cruise);
                 f.Close();
                 LoadPackages();
             };
             f.Controls.AddRange(new Control[] { txtName, numPrice, txtShip, txtRoute, dtDeparture, txtCabin, btnSave });
         }
         f.ShowDialog();
+        btnUndo.Visible = true;
     }
 }
