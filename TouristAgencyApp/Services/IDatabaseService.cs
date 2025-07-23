@@ -22,5 +22,6 @@ namespace TouristAgencyApp.Services
         void RemovePackage(int packageId);
         void UpdateReservation(int reservationId, int numPersons, string extraInfo);
         Reservation? GetReservationById(int id);
+        Client? GetClientById(int id);
     }
 }

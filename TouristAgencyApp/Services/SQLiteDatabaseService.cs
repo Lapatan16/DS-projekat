@@ -136,8 +136,33 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph); SELECT last_insert_rowid()";
             cmd.Parameters.AddWithValue("$id", client.Id);
             cmd.ExecuteNonQuery();
         }
-    
-    public List<TravelPackage> GetAllPackages()
+        public Client? GetClientById(int id)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            var cmd = connection.CreateCommand();
+
+            cmd.CommandText = @"SELECT * FROM Clients WHERE Id = $id";
+            cmd.Parameters.AddWithValue("$id", id);
+
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                return new Client
+                {
+                    Id = reader.GetInt32(0),
+                    FirstName = reader.GetString(1),
+                    LastName = reader.GetString(2),
+                    PassportNumber = EncryptionService.Decrypt(reader.GetString(3)),
+                    BirthDate = reader.GetDateTime(4),
+                    Email = reader.GetString(5),
+                    Phone = reader.GetString(6)
+                };
+            }
+            return null;
+        }
+        public List<TravelPackage> GetAllPackages()
         {
             var result = new List<TravelPackage>();
             using var connection = new SqliteConnection(_connectionString);

@@ -47,13 +47,9 @@ namespace TouristAgencyApp.Patterns
         private int clientId;
         public UpdateClientCommand(IDatabaseService db, Client client)
         {
-            List<Client> clients = db.GetAllClients();// Ovde bi bilo bolje da postoji funkcija za dohvatanje klijenta po Id;
-            foreach (Client c in clients)
-            {
-                if (c.Id == client.Id) _client = c; // Cuvamo stare podatke o klijentu
-            }
-            _updated = client;
             _db = db;
+            _client = _db.GetClientById(client.Id);
+            _updated = client;
         }
         public void Execute()
         {
