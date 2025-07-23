@@ -413,7 +413,10 @@ namespace TouristAgencyApp.Forms
                 client.BirthDate = dtp.Value;
                 client.Email = txtEmail.Text;
                 client.Phone = txtTel.Text;
-                _db.UpdateClient(client);
+                _clientManager.updateClient(client);
+                _clientSubject.UpdateClient(client);
+                //_db.UpdateClient(client);
+                btnUndo.Visible = true;
                 f.Close();
                 LoadClients();
             };

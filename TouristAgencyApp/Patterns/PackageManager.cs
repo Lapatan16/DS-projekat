@@ -24,6 +24,12 @@ namespace TouristAgencyApp.Patterns
             MessageBox.Show("Added");
             return addCommand.PackageId;
         }
+        public void UpdatePackage(TravelPackage package)
+        {
+            var updateCommand = new UpdatePackageCommand(_dbService, package);
+            _invoker.ExecuteCommand(updateCommand);
+            MessageBox.Show("Updated pkg");
+        }
         public void RemovePackage(int packageId)
         {
             

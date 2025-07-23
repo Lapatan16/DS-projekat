@@ -46,7 +46,11 @@ namespace TouristAgencyApp.Patterns
             //MessageBox.Show(reservation.Id.ToString());
             Notify($"Nova rezervacija dodana: KorisnikId:{reservation.ClientId} | PaketId: {reservation.PackageId} | ReservacijaId: {id}");
         }
-
+        public void UpdateReservation(int id)
+        {
+            _reservations.Add(new Reservation { Id = id });
+            Notify($"Rezervacija sa id = {id} je azurirana");
+        }
         public void RemoveReservation(int reservationId)
         {
             var reservation = _reservations.Find(r => r.Id == reservationId);
@@ -85,7 +89,11 @@ namespace TouristAgencyApp.Patterns
             _clients.Add(client);
             Notify($"Novi klijent dodat: email: {client.Email} | id: {id} ");
         }
-
+        public void UpdateClient(Client client)
+        {
+            _clients.Add(client);
+            Notify($"Klijent sa id = {client.Id} je azuriran");
+        }
         public void RemoveClient(int clientId)
         {
             var client = _clients.Find(c => c.Id == clientId);
@@ -186,7 +194,11 @@ namespace TouristAgencyApp.Patterns
             //MessageBox.Show(reservation.Id.ToString());
             Notify($"Novi paket dodat: {package.Name} | id: {id}");
         }
-
+        public void UpdatePackage(TravelPackage package)
+        {
+            _packages.Add(package);
+            Notify($"Paket sa id = {package.Id} je azuriran");
+        } 
         public void RemovePackage(int reservationId)
         {
             var package = _packages.Find(r => r.Id == reservationId);

@@ -28,6 +28,12 @@ namespace TouristAgencyApp.Patterns
         {
            //Po zahtevima za zadatak nije potrebno, pise samo prikaz/dodavanje klijenata, ali neka ga ovako.
         }
+        public void updateClient(Client client)
+        {
+            var updateCommand = new UpdateClientCommand(_dbService, client);
+            _invoker.ExecuteCommand(updateCommand);
+            MessageBox.Show("Update cl");
+        }
         public void UndoLastAction()
         {
             _invoker.UndoLastCommand();

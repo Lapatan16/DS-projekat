@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Protobuf.WellKnownTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,12 @@ namespace TouristAgencyApp.Patterns
             _invoker.ExecuteCommand(addCommand);
             MessageBox.Show("Added");
             return addCommand.ReservationId;
+        }
+        public void UpdateReservation(int reservationId, int numPersons, string txtExtra)
+        {
+            var updateCommand = new UpdateReservationCommand(_dbService, reservationId, numPersons, txtExtra);
+            _invoker.ExecuteCommand(updateCommand);
+            MessageBox.Show("Updated res");
         }
         public void RemoveReservation(int reservationId)
         {
