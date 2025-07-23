@@ -251,6 +251,33 @@ VALUES (@n, @p, @t, @d); SELECT LAST_INSERT_ID()";
             }
             return result;
         }
+        public Client? GetClientById(int id)
+        {
+            var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
+            using var connection = new MySqlConnection(dbConnectionString);
+            connection.Open();
+
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT * FROM Clients WHERE Id = @id";
+            cmd.Parameters.AddWithValue("@id", id);
+
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                return new Client
+                {
+                    Id = reader.GetInt32(0),
+                    FirstName = reader.GetString(1),
+                    LastName = reader.GetString(2),
+                    PassportNumber = EncryptionService.Decrypt(reader.GetString(3)),
+                    BirthDate = reader.GetDateTime(4),
+                    Email = reader.GetString(5),
+                    Phone = reader.GetString(6)
+                };
+            }
+            return null;
+        }
         public Reservation? GetReservationById(int id)
         {
             var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
