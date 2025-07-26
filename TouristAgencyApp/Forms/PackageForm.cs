@@ -231,102 +231,167 @@ private void CreateModernUI()
     }
 
     private void DodajPaket()
+{
+    var f = new Form { Text = "Novi paket", Width = 440, Height = 700, StartPosition = FormStartPosition.CenterParent };
+
+    var lblType = new Label { Text = "Tip paketa", Left = 20, Top = 20, Width = 200 };
+    var cbType = new ComboBox { Left = 20, Top = 45, Width = 300, DropDownStyle = ComboBoxStyle.DropDownList };
+    cbType.Items.AddRange(new[] { "Sea", "Mountain", "Excursion", "Cruise" });
+    cbType.SelectedIndex = 0;
+
+    var lblName = new Label { Text = "Naziv paketa", Left = 20, Top = 80, Width = 200 };
+    var txtName = new TextBox { Top = 105, Left = 20, Width = 300 };
+
+    var lblPrice = new Label { Text = "Cena", Left = 20, Top = 140, Width = 200 };
+    var numPrice = new NumericUpDown { Top = 165, Left = 20, Width = 300, DecimalPlaces = 2, Maximum = 1000000 };
+
+    var lblDestination = new Label { Text = "Destinacija", Left = 20, Top = 200, Width = 200 };
+    var txtDestination = new TextBox { Top = 225, Left = 20, Width = 300 };
+
+    var lblAcc = new Label { Text = "Smeštaj", Left = 20, Top = 260, Width = 200 };
+    var txtAcc = new TextBox { Top = 285, Left = 20, Width = 300 };
+
+    var lblTransport = new Label { Text = "Prevoz", Left = 20, Top = 320, Width = 200 };
+    var txtTransport = new TextBox { Top = 345, Left = 20, Width = 300 };
+
+    var lblActivities = new Label { Text = "Dodatne aktivnosti", Left = 20, Top = 380, Width = 200 };
+    var txtActivities = new TextBox { Top = 405, Left = 20, Width = 300 };
+
+    var lblGuide = new Label { Text = "Vodič", Left = 20, Top = 260, Width = 200 };
+    var txtGuide = new TextBox { Top = 285, Left = 20, Width = 300 };
+
+    var lblDuration = new Label { Text = "Trajanje (dani)", Left = 20, Top = 380, Width = 200 };
+    var numDuration = new NumericUpDown { Top = 405, Left = 20, Width = 300, Maximum = 60, Minimum = 0 };
+
+    var lblShip = new Label { Text = "Brod", Left = 20, Top = 200, Width = 200 };
+    var txtShip = new TextBox { Top = 225, Left = 20, Width = 300 };
+
+    var lblRoute = new Label { Text = "Ruta", Left = 20, Top = 260, Width = 200 };
+    var txtRoute = new TextBox { Top = 285, Left = 20, Width = 300 };
+
+    var lblDeparture = new Label { Text = "Datum polaska", Left = 20, Top = 320, Width = 200 };
+    var dtDeparture = new DateTimePicker { Top = 345, Left = 20, Width = 300 };
+
+    var lblCabin = new Label { Text = "Tip kabine", Left = 20, Top = 380, Width = 200 };
+    var txtCabin = new TextBox { Top = 405, Left = 20, Width = 300 };
+
+    var btnSave = new Button { Text = "Sačuvaj", Top = 805, Left = 20, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter };
+
+    void UpdateFields()
     {
-        var f = new Form { Text = "Novi paket", Width = 440, Height = 700, StartPosition = FormStartPosition.CenterParent };
+        f.Controls.Clear();
+        f.Controls.AddRange(new Control[] { 
+            lblType, cbType, 
+            lblName, txtName, 
+            lblPrice, numPrice, 
+            btnSave 
+        });
+        
+        var type = cbType.SelectedItem.ToString();
+        int baseHeight = 250; 
+        int fieldHeight = 60;
+        int buttonPadding = 40;
 
-        var cbType = new ComboBox { Left = 20, Top = 20, Width = 200, DropDownStyle = ComboBoxStyle.DropDownList };
-        cbType.Items.AddRange(new[] { "Sea", "Mountain", "Excursion", "Cruise" });
-        cbType.SelectedIndex = 0;
-        var lblType = new Label { Text = "Tip paketa", Left = 20, Top = 0, Width = 200 };
+        if (type == "Sea")
+    {
+        f.Controls.AddRange(new Control[] { 
+            lblDestination, txtDestination, 
+            lblAcc, txtAcc, 
+            lblTransport, txtTransport 
+        });
+        btnSave.Top = baseHeight + (3 * fieldHeight) - 40;
+        f.Height = baseHeight + (3 * fieldHeight) + 40 + buttonPadding;
+    }
+    else if (type == "Mountain")
+    {
+        f.Controls.AddRange(new Control[] { 
+            lblDestination, txtDestination, 
+            lblAcc, txtAcc, 
+            lblTransport, txtTransport,
+            lblActivities, txtActivities
+        });
+        btnSave.Top = baseHeight + (4 * fieldHeight) - 40;
+        f.Height = baseHeight + (4 * fieldHeight) + 40 + buttonPadding;
+    }
+    else if (type == "Excursion")
+    {
+        f.Controls.AddRange(new Control[] { 
+            lblDestination, txtDestination, 
+            lblTransport, txtTransport,
+            lblGuide, txtGuide,
+            lblDuration, numDuration
+        });
+        btnSave.Top = baseHeight + (4 * fieldHeight) - 40;
+        f.Height = baseHeight + (4 * fieldHeight) + 40 + buttonPadding;
+    }
+    else if (type == "Cruise")
+    {
+        f.Controls.AddRange(new Control[] { 
+            lblShip, txtShip, 
+            lblRoute, txtRoute,
+            lblDeparture, dtDeparture,
+            lblCabin, txtCabin
+        });
+        btnSave.Top = baseHeight + (4 * fieldHeight) - 40;
+        f.Height = baseHeight + (4 * fieldHeight) + 40 + buttonPadding;
+    }
+    }
 
-        var txtName = new TextBox { PlaceholderText = "Naziv paketa", Top = 60, Left = 20, Width = 300 };
-        var numPrice = new NumericUpDown { Top = 100, Left = 20, Width = 300, DecimalPlaces = 2, Maximum = 1000000 };
+    cbType.SelectedIndexChanged += (ss, ee) => UpdateFields();
+    UpdateFields();
 
-        var txtDestination = new TextBox { PlaceholderText = "Destinacija", Top = 140, Left = 20, Width = 300 };
-        var txtAcc = new TextBox { PlaceholderText = "Smeštaj", Top = 180, Left = 20, Width = 300 };
-        var txtTransport = new TextBox { PlaceholderText = "Prevoz", Top = 220, Left = 20, Width = 300 };
-        var txtActivities = new TextBox { PlaceholderText = "Dodatne aktivnosti (planine)", Top = 260, Left = 20, Width = 300 };
-        var txtGuide = new TextBox { PlaceholderText = "Vodič (ekskurzija)", Top = 300, Left = 20, Width = 300 };
-        var numDuration = new NumericUpDown { Top = 340, Left = 20, Width = 300, Maximum = 60, Minimum = 0 };
-        var txtShip = new TextBox { PlaceholderText = "Brod (krstarenje)", Top = 380, Left = 20, Width = 300 };
-        var txtRoute = new TextBox { PlaceholderText = "Ruta (krstarenje)", Top = 420, Left = 20, Width = 300 };
-        var dtDeparture = new DateTimePicker { Top = 460, Left = 20, Width = 300 };
-        var txtCabin = new TextBox { PlaceholderText = "Tip kabine (krstarenje)", Top = 500, Left = 20, Width = 300 };
-
-        var btnSave = new Button { Text = "Sačuvaj", Top = 540, Left = 20, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter };
-
-        void UpdateFields()
+    btnSave.Click += (ss, ee) =>
+    {
+        PackageFactory factory = cbType.SelectedItem.ToString() switch
         {
-            f.Controls.Clear();
-            f.Controls.AddRange(new Control[] { lblType, cbType, txtName, numPrice, btnSave });
-            var type = cbType.SelectedItem.ToString();
-            if (type == "Sea")
-                f.Controls.AddRange(new Control[] { txtDestination, txtAcc, txtTransport });
-            if (type == "Mountain")
-                f.Controls.AddRange(new Control[] { txtDestination, txtAcc, txtTransport, txtActivities });
-            if (type == "Excursion")
-                f.Controls.AddRange(new Control[] { txtDestination, txtTransport, txtGuide, numDuration });
-            if (type == "Cruise")
-                f.Controls.AddRange(new Control[] { txtShip, txtRoute, dtDeparture, txtCabin });
-        }
-        cbType.SelectedIndexChanged += (ss, ee) => UpdateFields();
-        UpdateFields();
-
-
-        btnSave.Click += (ss, ee) =>
-        {
-            PackageFactory factory = cbType.SelectedItem.ToString() switch
-            {
-                "Sea" => new SeaPackageFactory(),
-                "Mountain" => new MountainPackageFactory(),
-                "Excursion" => new ExcursionPackageFactory(),
-                "Cruise" => new CruisePackageFactory(),
-                _ => throw new Exception("Unknown package type")
-            };
-
-            TravelPackage pkg = factory.CreatePackage();
-
-            pkg.Name = txtName.Text;
-            pkg.Price = numPrice.Value;
-
-            switch (pkg)
-            {
-                case SeaPackage sea:
-                    sea.Destination = txtDestination.Text;
-                    sea.Accommodation = txtAcc.Text;
-                    sea.Transport = txtTransport.Text;
-                    break;
-                case MountainPackage mountain:
-                    mountain.Destination = txtDestination.Text;
-                    mountain.Accommodation = txtAcc.Text;
-                    mountain.Transport = txtTransport.Text;
-                    mountain.Activities = txtActivities.Text;
-                    break;
-                case ExcursionPackage excursion:
-                    excursion.Destination = txtDestination.Text;
-                    excursion.Transport = txtTransport.Text;
-                    excursion.Guide = txtGuide.Text;
-                    excursion.Duration = (int)numDuration.Value;
-                    break;
-                case CruisePackage cruise:
-                    cruise.Ship = txtShip.Text;
-                    cruise.Route = txtRoute.Text;
-                    cruise.DepartureDate = dtDeparture.Value;
-                    cruise.CabinType = txtCabin.Text;
-                    break;
-            }
-
-            
-
-            int id = _packageManager.AddPackage(pkg);
-            _packageSubject.AddPackage(pkg, id);
-            f.Close();
-            btnUndo.Visible = true;
-            LoadPackages();
+            "Sea" => new SeaPackageFactory(),
+            "Mountain" => new MountainPackageFactory(),
+            "Excursion" => new ExcursionPackageFactory(),
+            "Cruise" => new CruisePackageFactory(),
+            _ => throw new Exception("Unknown package type")
         };
 
-        f.ShowDialog();
-    }
+        TravelPackage pkg = factory.CreatePackage();
+
+        pkg.Name = txtName.Text;
+        pkg.Price = numPrice.Value;
+
+        switch (pkg)
+        {
+            case SeaPackage sea:
+                sea.Destination = txtDestination.Text;
+                sea.Accommodation = txtAcc.Text;
+                sea.Transport = txtTransport.Text;
+                break;
+            case MountainPackage mountain:
+                mountain.Destination = txtDestination.Text;
+                mountain.Accommodation = txtAcc.Text;
+                mountain.Transport = txtTransport.Text;
+                mountain.Activities = txtActivities.Text;
+                break;
+            case ExcursionPackage excursion:
+                excursion.Destination = txtDestination.Text;
+                excursion.Transport = txtTransport.Text;
+                excursion.Guide = txtGuide.Text;
+                excursion.Duration = (int)numDuration.Value;
+                break;
+            case CruisePackage cruise:
+                cruise.Ship = txtShip.Text;
+                cruise.Route = txtRoute.Text;
+                cruise.DepartureDate = dtDeparture.Value;
+                cruise.CabinType = txtCabin.Text;
+                break;
+        }
+
+        int id = _packageManager.AddPackage(pkg);
+        _packageSubject.AddPackage(pkg, id);
+        f.Close();
+        btnUndo.Visible = true;
+        LoadPackages();
+    };
+
+    f.ShowDialog();
+}
     private void OpozoviAkciju()
     {
         _packageManager.UndoLastAction();
@@ -334,116 +399,193 @@ private void CreateModernUI()
         LoadPackages();
     }
     private void IzmeniPaket()
+{
+    if (grid.SelectedRows.Count == 0) return;
+    var pkg = grid.SelectedRows[0].DataBoundItem as TravelPackage;
+    if (pkg == null) return;
+
+    var f = new Form { Text = "Izmeni paket", Width = 440, StartPosition = FormStartPosition.CenterParent };
+
+    var lblName = new Label { Text = "Naziv paketa", Left = 20, Top = 20, Width = 200 };
+    var txtName = new TextBox { Text = pkg.Name, Top = 45, Left = 20, Width = 300 };
+
+    var lblPrice = new Label { Text = "Cena", Left = 20, Top = 80, Width = 200 };
+    var numPrice = new NumericUpDown
     {
-        if (grid.SelectedRows.Count == 0) return;
-        var pkg = grid.SelectedRows[0].DataBoundItem as TravelPackage;
-        if (pkg == null) return;
+        Top = 105,
+        Left = 20,
+        Width = 300,
+        DecimalPlaces = 2,
+        Minimum = 0,
+        Maximum = 1000000,
+        Value = pkg.Price
+    };
 
-        var f = new Form { Text = "Izmeni paket", Width = 440, Height = 700, StartPosition = FormStartPosition.CenterParent };
+    var btnSave = new Button { 
+        Text = "Sačuvaj", 
+        Left = 20, 
+        Width = 120, 
+        Height = 40, 
+        Font = new Font("Segoe UI", 11, FontStyle.Bold), 
+        TextAlign = ContentAlignment.MiddleCenter 
+    };
 
-        var txtName = new TextBox { Text = pkg.Name, Top = 20, Left = 20, Width = 300 };
-        var numPrice = new NumericUpDown
+    if (pkg.Type == "Sea" && pkg is SeaPackage sea)
+    {
+        var lblDestination = new Label { Text = "Destinacija", Left = 20, Top = 140, Width = 200 };
+        var txtDestination = new TextBox { Text = sea.Destination, Top = 165, Left = 20, Width = 300 };
+        
+        var lblAcc = new Label { Text = "Smeštaj", Left = 20, Top = 200, Width = 200 };
+        var txtAcc = new TextBox { Text = sea.Accommodation, Top = 225, Left = 20, Width = 300 };
+
+        var lblTransport = new Label { Text = "Prevoz", Left = 20, Top = 260, Width = 200 };
+        var txtTransport = new TextBox { Text = sea.Transport, Top = 285, Left = 20, Width = 300 };
+
+        btnSave.Top = txtTransport.Bottom + 30;
+        f.Height = btnSave.Bottom + 70;
+
+        btnSave.Click += (ss, ee) =>
         {
-            Top = 60,
-            Left = 20,
-            Width = 300,
-            DecimalPlaces = 2,
-            Minimum = 0,
-            Maximum = 1000000
+            sea.Name = txtName.Text;
+            sea.Price = numPrice.Value;
+            sea.Destination = txtDestination.Text;
+            sea.Accommodation = txtAcc.Text;
+            sea.Transport = txtTransport.Text;
+            _packageManager.UpdatePackage(sea);
+            _packageSubject.UpdatePackage(sea);
+            f.Close();
+            LoadPackages();
         };
-        numPrice.Value = pkg.Price;
-
-        if (pkg.Type == "Sea" && pkg is SeaPackage sea)
-        {
-            var txtDestination = new TextBox { Text = sea.Destination, Top = 100, Left = 20, Width = 300 };
-            var txtAcc = new TextBox { Text = sea.Accommodation, Top = 140, Left = 20, Width = 300 };
-            var txtTransport = new TextBox { Text = sea.Transport, Top = 180, Left = 20, Width = 300 };
-            var btnSave = new Button { Text = "Sačuvaj", Top = 240, Left = 20, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter };
-            btnSave.Click += (ss, ee) =>
-            {
-                sea.Name = txtName.Text;
-                sea.Price = numPrice.Value;
-                sea.Destination = txtDestination.Text;
-                sea.Accommodation = txtAcc.Text;
-                sea.Transport = txtTransport.Text;
-                _packageManager.UpdatePackage(sea);
-                _packageSubject.UpdatePackage(sea);
-                //_db.UpdatePackage(sea);
-                f.Close();
-                LoadPackages();
-            };
-            f.Controls.AddRange(new Control[] { txtName, numPrice, txtDestination, txtAcc, txtTransport, btnSave });
-        }
-        else if (pkg.Type == "Mountain" && pkg is MountainPackage mountain)
-        {
-            var txtDestination = new TextBox { Text = mountain.Destination, Top = 100, Left = 20, Width = 300 };
-            var txtAcc = new TextBox { Text = mountain.Accommodation, Top = 140, Left = 20, Width = 300 };
-            var txtTransport = new TextBox { Text = mountain.Transport, Top = 180, Left = 20, Width = 300 };
-            var txtActivities = new TextBox { Text = mountain.Activities, Top = 220, Left = 20, Width = 300 };
-            var btnSave = new Button { Text = "Sačuvaj", Top = 270, Left = 20, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter };
-            btnSave.Click += (ss, ee) =>
-            {
-                mountain.Name = txtName.Text;
-                mountain.Price = numPrice.Value;
-                mountain.Destination = txtDestination.Text;
-                mountain.Accommodation = txtAcc.Text;
-                mountain.Transport = txtTransport.Text;
-                mountain.Activities = txtActivities.Text;
-                _packageManager.UpdatePackage(mountain);
-                _packageSubject.UpdatePackage(mountain);
-                //_db.UpdatePackage(mountain);
-                f.Close();
-                LoadPackages();
-            };
-            f.Controls.AddRange(new Control[] { txtName, numPrice, txtDestination, txtAcc, txtTransport, txtActivities, btnSave });
-        }
-        else if (pkg.Type == "Excursion" && pkg is ExcursionPackage excursion)
-        {
-            var txtDestination = new TextBox { Text = excursion.Destination, Top = 100, Left = 20, Width = 300 };
-            var txtTransport = new TextBox { Text = excursion.Transport, Top = 140, Left = 20, Width = 300 };
-            var txtGuide = new TextBox { Text = excursion.Guide, Top = 180, Left = 20, Width = 300 };
-            var numDuration = new NumericUpDown { Value = excursion.Duration, Top = 220, Left = 20, Width = 300, Maximum = 60, Minimum = 0 };
-            var btnSave = new Button { Text = "Sačuvaj", Top = 270, Left = 20, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter };
-            btnSave.Click += (ss, ee) =>
-            {
-                excursion.Name = txtName.Text;
-                excursion.Price = numPrice.Value;
-                excursion.Destination = txtDestination.Text;
-                excursion.Transport = txtTransport.Text;
-                excursion.Guide = txtGuide.Text;
-                excursion.Duration = (int)numDuration.Value;
-                //_db.UpdatePackage(excursion);
-                _packageManager.UpdatePackage(excursion);
-                _packageSubject.UpdatePackage(excursion);
-                f.Close();
-                LoadPackages();
-            };
-            f.Controls.AddRange(new Control[] { txtName, numPrice, txtDestination, txtTransport, txtGuide, numDuration, btnSave });
-        }
-        else if (pkg.Type == "Cruise" && pkg is CruisePackage cruise)
-        {
-            var txtShip = new TextBox { Text = cruise.Ship, Top = 100, Left = 20, Width = 300 };
-            var txtRoute = new TextBox { Text = cruise.Route, Top = 140, Left = 20, Width = 300 };
-            var dtDeparture = new DateTimePicker { Value = cruise.DepartureDate, Top = 180, Left = 20, Width = 300 };
-            var txtCabin = new TextBox { Text = cruise.CabinType, Top = 220, Left = 20, Width = 300 };
-            var btnSave = new Button { Text = "Sačuvaj", Top = 270, Left = 20, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter };
-            btnSave.Click += (ss, ee) =>
-            {
-                cruise.Name = txtName.Text;
-                cruise.Price = numPrice.Value;
-                cruise.Ship = txtShip.Text;
-                cruise.Route = txtRoute.Text;
-                cruise.DepartureDate = dtDeparture.Value;
-                cruise.CabinType = txtCabin.Text;
-                //_db.UpdatePackage(cruise);
-                _packageManager.UpdatePackage(cruise);
-                _packageSubject.UpdatePackage(cruise);
-                f.Close();
-                LoadPackages();
-            };
-            f.Controls.AddRange(new Control[] { txtName, numPrice, txtShip, txtRoute, dtDeparture, txtCabin, btnSave });
-        }
-        f.ShowDialog();
-        btnUndo.Visible = true;
+        f.Controls.AddRange(new Control[] { 
+            lblName, txtName, 
+            lblPrice, numPrice, 
+            lblDestination, txtDestination, 
+            lblAcc, txtAcc, 
+            lblTransport, txtTransport, 
+            btnSave 
+        });
     }
+    else if (pkg.Type == "Mountain" && pkg is MountainPackage mountain)
+    {
+        var lblDestination = new Label { Text = "Destinacija", Left = 20, Top = 140, Width = 200 };
+        var txtDestination = new TextBox { Text = mountain.Destination, Top = 165, Left = 20, Width = 300 };
+        
+        var lblAcc = new Label { Text = "Smeštaj", Left = 20, Top = 200, Width = 200 };
+        var txtAcc = new TextBox { Text = mountain.Accommodation, Top = 225, Left = 20, Width = 300 };
+
+        var lblTransport = new Label { Text = "Prevoz", Left = 20, Top = 260, Width = 200 };
+        var txtTransport = new TextBox { Text = mountain.Transport, Top = 285, Left = 20, Width = 300 };
+
+        var lblActivities = new Label { Text = "Dodatne aktivnosti", Left = 20, Top = 320, Width = 200 };
+        var txtActivities = new TextBox { Text = mountain.Activities, Top = 345, Left = 20, Width = 300 };
+
+        btnSave.Top = txtActivities.Bottom + 30;
+        f.Height = btnSave.Bottom + 70;
+
+        btnSave.Click += (ss, ee) =>
+        {
+            mountain.Name = txtName.Text;
+            mountain.Price = numPrice.Value;
+            mountain.Destination = txtDestination.Text;
+            mountain.Accommodation = txtAcc.Text;
+            mountain.Transport = txtTransport.Text;
+            mountain.Activities = txtActivities.Text;
+            _packageManager.UpdatePackage(mountain);
+            _packageSubject.UpdatePackage(mountain);
+            f.Close();
+            LoadPackages();
+        };
+        f.Controls.AddRange(new Control[] { 
+            lblName, txtName, 
+            lblPrice, numPrice, 
+            lblDestination, txtDestination, 
+            lblAcc, txtAcc, 
+            lblTransport, txtTransport,
+            lblActivities, txtActivities,
+            btnSave 
+        });
+    }
+    else if (pkg.Type == "Excursion" && pkg is ExcursionPackage excursion)
+    {
+        var lblDestination = new Label { Text = "Destinacija", Left = 20, Top = 140, Width = 200 };
+        var txtDestination = new TextBox { Text = excursion.Destination, Top = 165, Left = 20, Width = 300 };
+        
+        var lblTransport = new Label { Text = "Prevoz", Left = 20, Top = 200, Width = 200 };
+        var txtTransport = new TextBox { Text = excursion.Transport, Top = 225, Left = 20, Width = 300 };
+
+        var lblGuide = new Label { Text = "Vodič", Left = 20, Top = 260, Width = 200 };
+        var txtGuide = new TextBox { Text = excursion.Guide, Top = 285, Left = 20, Width = 300 };
+
+        var lblDuration = new Label { Text = "Trajanje (dani)", Left = 20, Top = 320, Width = 200 };
+        var numDuration = new NumericUpDown { Value = excursion.Duration, Top = 345, Left = 20, Width = 300, Maximum = 60, Minimum = 0 };
+
+        btnSave.Top = numDuration.Bottom + 30;
+        f.Height = btnSave.Bottom + 70;
+
+        btnSave.Click += (ss, ee) =>
+        {
+            excursion.Name = txtName.Text;
+            excursion.Price = numPrice.Value;
+            excursion.Destination = txtDestination.Text;
+            excursion.Transport = txtTransport.Text;
+            excursion.Guide = txtGuide.Text;
+            excursion.Duration = (int)numDuration.Value;
+            _packageManager.UpdatePackage(excursion);
+            _packageSubject.UpdatePackage(excursion);
+            f.Close();
+            LoadPackages();
+        };
+        f.Controls.AddRange(new Control[] { 
+            lblName, txtName, 
+            lblPrice, numPrice, 
+            lblDestination, txtDestination, 
+            lblTransport, txtTransport,
+            lblGuide, txtGuide,
+            lblDuration, numDuration,
+            btnSave 
+        });
+    }
+    else if (pkg.Type == "Cruise" && pkg is CruisePackage cruise)
+    {
+        var lblShip = new Label { Text = "Brod", Left = 20, Top = 140, Width = 200 };
+        var txtShip = new TextBox { Text = cruise.Ship, Top = 165, Left = 20, Width = 300 };
+        
+        var lblRoute = new Label { Text = "Ruta", Left = 20, Top = 200, Width = 200 };
+        var txtRoute = new TextBox { Text = cruise.Route, Top = 225, Left = 20, Width = 300 };
+
+        var lblDeparture = new Label { Text = "Datum polaska", Left = 20, Top = 260, Width = 200 };
+        var dtDeparture = new DateTimePicker { Value = cruise.DepartureDate, Top = 285, Left = 20, Width = 300 };
+
+        var lblCabin = new Label { Text = "Tip kabine", Left = 20, Top = 320, Width = 200 };
+        var txtCabin = new TextBox { Text = cruise.CabinType, Top = 345, Left = 20, Width = 300 };
+
+        btnSave.Top = txtCabin.Bottom + 30;
+        f.Height = btnSave.Bottom + 70;
+
+        btnSave.Click += (ss, ee) =>
+        {
+            cruise.Name = txtName.Text;
+            cruise.Price = numPrice.Value;
+            cruise.Ship = txtShip.Text;
+            cruise.Route = txtRoute.Text;
+            cruise.DepartureDate = dtDeparture.Value;
+            cruise.CabinType = txtCabin.Text;
+            _packageManager.UpdatePackage(cruise);
+            _packageSubject.UpdatePackage(cruise);
+            f.Close();
+            LoadPackages();
+        };
+        f.Controls.AddRange(new Control[] { 
+            lblName, txtName, 
+            lblPrice, numPrice, 
+            lblShip, txtShip, 
+            lblRoute, txtRoute,
+            lblDeparture, dtDeparture,
+            lblCabin, txtCabin,
+            btnSave 
+        });
+    }
+    f.ShowDialog();
+    btnUndo.Visible = true;
+}
 }
