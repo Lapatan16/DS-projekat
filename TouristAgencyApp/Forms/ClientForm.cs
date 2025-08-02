@@ -23,7 +23,6 @@ namespace TouristAgencyApp.Forms
             _clientSubject = new ClientSubject();
             _clientSubject.Attach(new ClientLogger());
             _clientSubject.Attach(new ClientNotifier());
-            //_clientSubject.Attach(new ReservationStatistics());
 
             _db = dbService;
             InitializeForm();
@@ -74,8 +73,6 @@ namespace TouristAgencyApp.Forms
                 BackColor = Color.White,
                 Padding = new Padding(20, 10, 20, 10)
             };
-
-           
 
             btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
             btnUndo.Location = new Point(880, 15);
@@ -138,7 +135,6 @@ namespace TouristAgencyApp.Forms
                 EnableHeadersVisualStyles = false
             };
 
-            
             grid.DefaultCellStyle.BackColor = Color.White;
             grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             grid.DefaultCellStyle.SelectionForeColor = Color.White;
@@ -178,7 +174,6 @@ namespace TouristAgencyApp.Forms
                 Padding = new Padding(10, 0, 0, 0)
             };
             statusBar.Controls.Add(lblStatus);
-
 
             this.Controls.Add(statusBar);
             this.Controls.Add(contentPanel);
@@ -278,8 +273,6 @@ namespace TouristAgencyApp.Forms
                 TextAlign = ContentAlignment.MiddleCenter
             };
             f.Controls.Add(headerLabel);
-
-           
 
             int labelLeft = 30, txtLeft = 200;
             int labelWidth = 150, txtWidth = 250, height = 35, gap = 20;
@@ -415,7 +408,6 @@ namespace TouristAgencyApp.Forms
                 client.Phone = txtTel.Text;
                 _clientManager.updateClient(client);
                 _clientSubject.UpdateClient(client);
-                //_db.UpdateClient(client);
                 btnUndo.Visible = true;
                 f.Close();
                 LoadClients();

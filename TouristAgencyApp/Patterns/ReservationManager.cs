@@ -22,14 +22,14 @@ namespace TouristAgencyApp.Patterns
         {
             var addCommand = new AddReservationCommand(_dbService, reservation);
             _invoker.ExecuteCommand(addCommand);
-            MessageBox.Show("Added");
+            MessageBox.Show("Reservation added.");
             return addCommand.ReservationId;
         }
         public void UpdateReservation(int reservationId, int numPersons, string txtExtra)
         {
             var updateCommand = new UpdateReservationCommand(_dbService, reservationId, numPersons, txtExtra);
             _invoker.ExecuteCommand(updateCommand);
-            MessageBox.Show("Updated res");
+            MessageBox.Show("Reservation updated.");
         }
         public void RemoveReservation(int reservationId)
         {

@@ -197,7 +197,6 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph); SELECT last_insert_rowid()";
         }
         public Reservation? GetReservationById(int id)
         {
-            //var dbConnectionString = _connectionString + "Database=turisticka_agencija;";
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
@@ -220,7 +219,7 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph); SELECT last_insert_rowid()";
                 };
             }
 
-            return null; // Not found
+            return null;
         }
         public int AddPackage(TravelPackage package)
         {
@@ -312,7 +311,6 @@ VALUES ($cid, $pid, $num, $date, $extra); SELECT last_insert_rowid()";
             cmd.Parameters.AddWithValue("$num", reservation.NumPersons);
             cmd.Parameters.AddWithValue("$date", reservation.ReservationDate.ToString("yyyy-MM-dd"));
             cmd.Parameters.AddWithValue("$extra", reservation.ExtraServices);
-            //cmd.ExecuteNonQuery();
 
             int insertedId = Convert.ToInt32(cmd.ExecuteScalar());
 

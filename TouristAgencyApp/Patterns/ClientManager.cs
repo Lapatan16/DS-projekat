@@ -21,18 +21,18 @@ namespace TouristAgencyApp.Patterns
         {
             var addCommand = new AddClientCommand(_dbService, client);
             _invoker.ExecuteCommand(addCommand);
-            MessageBox.Show("Added");
+            MessageBox.Show("Client added.");
             return addCommand.ClientId;
         }
         public void RemoveClient(int clientId)
         {
-           //Po zahtevima za zadatak nije potrebno, pise samo prikaz/dodavanje klijenata, ali neka ga ovako.
+           //Po zahtevima za zadatak nije potrebno, pise samo prikaz/dodavanje klijenata.
         }
         public void updateClient(Client client)
         {
             var updateCommand = new UpdateClientCommand(_dbService, client);
             _invoker.ExecuteCommand(updateCommand);
-            MessageBox.Show("Update cl");
+            MessageBox.Show("Client updated.");
         }
         public void UndoLastAction()
         {

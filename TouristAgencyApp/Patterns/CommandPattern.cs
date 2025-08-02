@@ -6,7 +6,6 @@ using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Patterns
 {
-    // Command Pattern - Behavioral
     public interface ICommand
     {
         void Execute();
@@ -195,7 +194,7 @@ namespace TouristAgencyApp.Patterns
             _db.UpdateReservation(_reservation.Id, _reservation.NumPersons, _reservation.ExtraServices);
         }
     }
-    // Command Invoker
+
     public class CommandInvoker
     {
         private readonly Stack<ICommand> _commandHistory = new();

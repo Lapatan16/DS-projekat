@@ -303,7 +303,7 @@ VALUES (@n, @p, @t, @d); SELECT LAST_INSERT_ID()";
                 };
             }
 
-            return null; // Not found
+            return null;
         }
         public int AddReservation(Reservation reservation)
         {
@@ -318,7 +318,6 @@ VALUES (@cid, @pid, @num, @date, @extra); SELECT LAST_INSERT_ID()";
             cmd.Parameters.AddWithValue("@num", reservation.NumPersons);
             cmd.Parameters.AddWithValue("@date", reservation.ReservationDate);
             cmd.Parameters.AddWithValue("@extra", reservation.ExtraServices);
-            //cmd.ExecuteNonQuery();
             int insertedId = Convert.ToInt32(cmd.ExecuteScalar());
             return insertedId;
         }

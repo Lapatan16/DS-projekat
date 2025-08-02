@@ -4,7 +4,6 @@ using TouristAgencyApp.Models;
 
 namespace TouristAgencyApp.Patterns
 {
-
     public interface IObserver
     {
         void Update(string message);
@@ -43,7 +42,6 @@ namespace TouristAgencyApp.Patterns
         public void AddReservation(Reservation reservation, int id)
         {
             _reservations.Add(reservation);
-            //MessageBox.Show(reservation.Id.ToString());
             Notify($"Nova rezervacija dodana: KorisnikId:{reservation.ClientId} | PaketId: {reservation.PackageId} | ReservacijaId: {id}");
         }
         public void UpdateReservation(int id)
@@ -191,7 +189,6 @@ namespace TouristAgencyApp.Patterns
         public void AddPackage(TravelPackage package, int id)
         {
             _packages.Add(package);
-            //MessageBox.Show(reservation.Id.ToString());
             Notify($"Novi paket dodat: {package.Name} | id: {id}");
         }
         public void UpdatePackage(TravelPackage package)

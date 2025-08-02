@@ -21,18 +21,18 @@ namespace TouristAgencyApp.Patterns
         {
             var addCommand = new AddPackageCommand(_dbService, package);
             _invoker.ExecuteCommand(addCommand);
-            MessageBox.Show("Added");
+            MessageBox.Show("Package added.");
             return addCommand.PackageId;
         }
         public void UpdatePackage(TravelPackage package)
         {
             var updateCommand = new UpdatePackageCommand(_dbService, package);
             _invoker.ExecuteCommand(updateCommand);
-            MessageBox.Show("Updated pkg");
+            MessageBox.Show("Package updated.");
         }
         public void RemovePackage(int packageId)
         {
-            
+            //Po zahtevima za zadatak nije potrebno.
         }
         public void UndoLastAction()
         {

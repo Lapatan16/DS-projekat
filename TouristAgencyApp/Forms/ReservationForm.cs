@@ -33,7 +33,7 @@ namespace TouristAgencyApp.Forms
         private void InitializeForm()
         {
             this.Text = "🛎️ Upravljanje rezervacijama";
-            this.Width = 1000;
+            this.Width = 1100;
             this.Height = 600;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(248, 249, 250);
@@ -342,15 +342,7 @@ namespace TouristAgencyApp.Forms
                        .SetExtraServices(txtExtra.Text)
                        .SetReservationDate(DateTime.Now)
                        .Build();
-                    //var reservation = new Reservation
-                    //{
-                    //    ClientId = c.Id,
-                    //    PackageId = pkg.Id,
-                    //    NumPersons = (int)numPersons.Value,
-                    //    ReservationDate = DateTime.Now,
-                    //    ExtraServices = txtExtra.Text
-                    //};
-
+              
                     int id = _reservationManager.AddReservation(reservation);
                     _reservationSubject.AddReservation(reservation, id);
                     btnUndo.Visible = true;
@@ -414,7 +406,7 @@ namespace TouristAgencyApp.Forms
                 int reservationId = Convert.ToInt32(grid.SelectedRows[0].Cells[4].Value);
                 _reservationManager.UpdateReservation(reservationId,(int) numPersons.Value, txtExtra.Text);
                 _reservationSubject.UpdateReservation(reservationId);
-                //_db.UpdateReservation(reservationId, (int)numPersons.Value, txtExtra.Text);
+
                 btnUndo.Visible = true;
                 LoadReservations();
                 f.Close();
@@ -435,7 +427,6 @@ namespace TouristAgencyApp.Forms
             var confirm = MessageBox.Show("Da li ste sigurni da želite da otkažete ovu rezervaciju?", "Potvrda", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                //_db.RemoveReservation(id);
                 _reservationManager.RemoveReservation(id);
                 _reservationSubject.RemoveReservation(id);
                 btnUndo.Visible = true;
