@@ -56,16 +56,18 @@ Reservations (Id, ClientId, PackageId, NumPersons, ReservationDate, ExtraService
 ## 🎨 Design Patterns
 
 ### Creational Patterns:
-1. **Singleton** - `ConfigManager` (konfiguracija aplikacije)
+1. **Singleton** - `ConfigManager` (konfiguracija aplikacije, povezivanje sa bazom, thread-safe je koristi se Lazy<T> klasa)
 2. **Factory** - `PackageFactory` (kreiranje različitih tipova paketa)
+3. **Builder** - `ReservationBuilder.cs` (pravljenje rezervacije korak po korak)
 
 ### Structural Patterns:
 1. **Decorator** - `LoggingBackupService` (dodavanje logovanja backup-u)
-2. **Facade** - `AgencyFacade` (jednostavan interfejs za sve operacije)
+2. **Facade** - `ReservationManager.cs` (jednostavan interfejs za sve operacije)
 
 ### Behavioral Patterns:
-1. **Command** - `AddReservationCommand`, `RemoveReservationCommand` (undo/redo funkcionalnost)
-2. **Observer** - `ReservationSubject` (praćenje promena rezervacija)
+1. **Command** - `CommandPattern.cs`, `AddReservationCommand`, `RemoveReservationCommand` (undo/execute funkcionalnosti)
+2. **Observer** - `ObserverPattern.cs`, `ReservationSubject` (praćenje promena rezervacija)
+3. **Strategy** - `ReservationManager.cs`, `IDatabaseService.cs`, `MySQLDatabaseService.cs`, `SQLiteDatabaseService.cs` (aptraktna, konkretne strategije i korisnik)
 
 ## 🚀 Pokretanje aplikacije
 
@@ -99,7 +101,7 @@ Connection string
 - ✅ Sigurno čuvanje podataka
 
 ### Korisničko iskustvo:
-- ✅ Modern, responzivan dizajn
+- ✅ Moderan, responzivan dizajn
 - ✅ Intuitivan interfejs
 - ✅ Tooltip-ovi i pomoć
 - ✅ Status bar sa informacijama
@@ -119,7 +121,8 @@ TouristAgencyApp/
 │   ├── MainForm.cs       # Glavna forma
 │   ├── ClientForm.cs     # Upravljanje klijentima
 │   ├── PackageForm.cs    # Upravljanje paketima
-│   └── ReservationForm.cs # Upravljanje rezervacijama
+│   ├── ReservationForm.cs # Upravljanje rezervacijama
+|   └── BackupForm.cs     # Upravljanje rezervnim kopijama
 ├── Models/               # Modeli podataka
 │   ├── Client.cs
 │   ├── TravelPackage.cs
@@ -130,11 +133,14 @@ TouristAgencyApp/
 │   ├── MySQLDatabaseService.cs
 │   └── ConfigManager.cs
 ├── Patterns/             # Design Patterns
+│   ├── ClientManager.cs
 │   ├── CommandPattern.cs
+│   ├── IBackupService.cs
 │   ├── ObserverPattern.cs
 │   ├── PackageFactory.cs
-│   ├── IBackupService.cs
-│   └── AgencyFacade.cs
+│   ├── PackageManager.cs
+│   ├── ReservationBuilder.cs
+│   └── ReservationManager.cs
 ├── Utils/               # Pomoćne klase
 │   └── EncryptionService.cs
 └── config.txt          # Konfiguracija
@@ -152,11 +158,10 @@ TouristAgencyApp/
 ## 📊 Statistike projekta
 
 - **Linija koda:** ~2000+
-- **Design patterns:** 6 implementiranih
-- **Forme:** 4 glavne forme
+- **Design patterns:** 8 implementiranih
+- **Forme:** 5 glavnih formi
 - **Modeli:** 3 osnovna modela
 - **Servisi:** 4 servisa
-- **Patterns:** 5 pattern implementacija
 
 ## 🎉 Zaključak
 
