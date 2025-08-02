@@ -8,7 +8,7 @@ namespace TouristAgencyApp.Services
 {
     public class ConfigManager
     {
-        private static ConfigManager? _instance;
+        private static readonly Lazy<ConfigManager> _instance = new Lazy<ConfigManager>(() => new ConfigManager());
         public string AgencyName { get; private set; } = "";
         public string ConnectionString { get; private set; } = "";
 
@@ -19,6 +19,6 @@ namespace TouristAgencyApp.Services
             ConnectionString = lines.Length > 1 ? lines[1] : "";
         }
 
-        public static ConfigManager Instance => _instance ??= new ConfigManager();
+        public static ConfigManager Instance => _instance.Value;
     }
 }
