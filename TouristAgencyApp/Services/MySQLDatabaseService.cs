@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS TravelPackages (
     Name VARCHAR(200),
     Price DECIMAL(10,2),
     Type VARCHAR(20),
+    Destination VARCHAR(200),
     Details TEXT
 );
 CREATE TABLE IF NOT EXISTS Reservations (
@@ -177,11 +178,12 @@ VALUES (@fn, @ln, @pn, @bd, @em, @ph); SELECT LAST_INSERT_ID()";
             using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
-            cmd.CommandText = @"INSERT INTO TravelPackages (Name, Price, Type, Details)
-VALUES (@n, @p, @t, @d); SELECT LAST_INSERT_ID()";
+            cmd.CommandText = @"INSERT INTO TravelPackages (Name, Price, Type, Destination, Details)
+VALUES (@n, @p, @t, @des, @d); SELECT LAST_INSERT_ID()";
             cmd.Parameters.AddWithValue("@n", package.Name);
             cmd.Parameters.AddWithValue("@p", package.Price);
             cmd.Parameters.AddWithValue("@t", package.Type);
+            cmd.Parameters.AddWithValue("@des", package.Destination);
             if (package is ExcursionPackage) cmd.Parameters.AddWithValue("@d", System.Text.Json.JsonSerializer.Serialize((ExcursionPackage)package));
             if (package is SeaPackage) cmd.Parameters.AddWithValue("@d", System.Text.Json.JsonSerializer.Serialize((SeaPackage)package));
             if (package is MountainPackage) cmd.Parameters.AddWithValue("@d", System.Text.Json.JsonSerializer.Serialize((MountainPackage)package));
@@ -198,10 +200,11 @@ VALUES (@n, @p, @t, @d); SELECT LAST_INSERT_ID()";
             using var connection = new MySqlConnection(dbConnectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
-            cmd.CommandText = @"UPDATE TravelPackages SET Name=@n, Price=@p, Type=@t, Details=@d WHERE Id=@id";
+            cmd.CommandText = @"UPDATE TravelPackages SET Name=@n, Price=@p, Type=@t, Destination=@des, Details=@d WHERE Id=@id";
             cmd.Parameters.AddWithValue("@n", package.Name);
             cmd.Parameters.AddWithValue("@p", package.Price);
             cmd.Parameters.AddWithValue("@t", package.Type);
+            cmd.Parameters.AddWithValue("@des", package.Destination);
             if (package is ExcursionPackage ex)
                 cmd.Parameters.AddWithValue("@d", JsonSerializer.Serialize(ex));
             else if (package is SeaPackage sea)

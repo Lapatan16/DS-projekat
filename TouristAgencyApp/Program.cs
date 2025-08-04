@@ -17,6 +17,10 @@ namespace TouristAgencyApp
             else
                 dbService = new MySQLDatabaseService(config.ConnectionString);
 
+            var builder = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder(config.ConnectionString);
+            string dbPath = Path.GetFullPath(builder.DataSource);
+            MessageBox.Show(dbPath, "Full DB Path");
+
             Application.Run(new MainForm(dbService));
         }
     }
