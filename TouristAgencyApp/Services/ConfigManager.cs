@@ -8,17 +8,14 @@ namespace TouristAgencyApp.Services
 {
     public class ConfigManager
     {
-        private static readonly Lazy<ConfigManager> _instance = new Lazy<ConfigManager>(() => new ConfigManager());
-        public string AgencyName { get; private set; } = "";
-        public string ConnectionString { get; private set; } = "";
+        public string AgencyName { get; private set; }
+        public string ConnectionString { get; private set; }
 
-        private ConfigManager()
+        public ConfigManager(string configPath)
         {
-            var lines = File.ReadAllLines("config.txt");
+            var lines = File.ReadAllLines(configPath);
             AgencyName = lines.Length > 0 ? lines[0] : "Agencija";
             ConnectionString = lines.Length > 1 ? lines[1] : "";
         }
-
-        public static ConfigManager Instance => _instance.Value;
     }
 }

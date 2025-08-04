@@ -9,15 +9,7 @@ namespace TouristAgencyApp
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            var config = ConfigManager.Instance;
-            IDatabaseService dbService;
-
-            if (config.ConnectionString.ToLower().Contains("data source"))
-                dbService = new SQLiteDatabaseService(config.ConnectionString);
-            else
-                dbService = new MySQLDatabaseService(config.ConnectionString);
-
-            Application.Run(new MainForm(dbService));
+            Application.Run(new StartupForm());
         }
     }
 }
