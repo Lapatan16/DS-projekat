@@ -9,6 +9,7 @@ public partial class PackagesForm : Form
     private readonly PackageManager _packageManager;
     private DataGridView grid;
     private Button btnUndo;
+    private Button btnRedo;
     string type;
     public PackagesForm(IDatabaseService dbService)
     {
@@ -134,7 +135,13 @@ private void CreateModernUI()
     btnUndo.TextAlign = ContentAlignment.MiddleCenter;
     btnUndo.Click += (s, e) => OpozoviAkciju();
     btnUndo.Width = 100;
-    btnUndo.Visible = false;
+
+    btnRedo = CreateModernButton(" Nazovi", Color.FromArgb(255, 255, 165, 0));
+    btnRedo.Location = new Point(980, 15);
+    btnRedo.TextAlign = ContentAlignment.MiddleCenter;
+    btnRedo.Click += (s, e) => NazoviAkciju();
+    btnRedo.Width = 100;
+
 
         var comboBox = new ComboBox
     {
@@ -155,7 +162,7 @@ private void CreateModernUI()
     btnAdd.Location = new Point(20, 10);
     btnEdit.Location = new Point(200, 10);
 
-    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox, btnUndo });
+    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox, btnUndo, btnRedo });
 
     
     grid.Dock = DockStyle.Fill;
@@ -350,6 +357,7 @@ private void CreateModernUI()
             "Cruise" => new CruisePackageFactory(),
             _ => throw new Exception("Unknown package type")
         };
+        //TravelPackage packege = factory.GetHashCode("", "", "")
 
         TravelPackage pkg = factory.CreatePackage();
 
@@ -395,7 +403,11 @@ private void CreateModernUI()
     private void OpozoviAkciju()
     {
         _packageManager.UndoLastAction();
-        btnUndo.Visible = false;
+        LoadPackages();
+    }
+    private void NazoviAkciju()
+    {
+        _packageManager.RedoLastAction();
         LoadPackages();
     }
     private void IzmeniPaket()
@@ -586,6 +598,5 @@ private void CreateModernUI()
         });
     }
     f.ShowDialog();
-    btnUndo.Visible = true;
 }
 }

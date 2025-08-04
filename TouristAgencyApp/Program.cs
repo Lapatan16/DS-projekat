@@ -12,6 +12,7 @@ namespace TouristAgencyApp
             var config = ConfigManager.Instance;
             IDatabaseService dbService;
 
+            // daj mi interfejs
             if (config.ConnectionString.ToLower().Contains("data source"))
                 dbService = new SQLiteDatabaseService(config.ConnectionString);
             else

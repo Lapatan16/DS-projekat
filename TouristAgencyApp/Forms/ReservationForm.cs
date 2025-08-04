@@ -12,6 +12,7 @@ namespace TouristAgencyApp.Forms
         private DataGridView grid;
         private ComboBox cbClients;
         private Button btnUndo;
+        private Button btnRedo;
         private Button btnAdd;
         private Button btnRemove;
         private Button btnEdit;
@@ -106,8 +107,14 @@ namespace TouristAgencyApp.Forms
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Click += (s, e) => OpozoviAkciju();
             btnUndo.Width = 100;
-            btnUndo.Visible = false;
-            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo });
+
+            btnRedo = CreateModernButton(" Nazovi", Color.FromArgb(255, 255, 165, 0));
+            btnRedo.Location = new Point(980, 15);
+            btnRedo.TextAlign = ContentAlignment.MiddleCenter;
+            btnRedo.Click += (s, e) => NazoviAkciju();
+            btnRedo.Width = 100;
+  
+            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo, btnRedo });
 
 
             var contentPanel = new Panel
@@ -276,7 +283,12 @@ namespace TouristAgencyApp.Forms
         private void OpozoviAkciju()
         {
             _reservationManager.UndoLastAction();
-            btnUndo.Visible = false;
+            LoadReservations();
+        }
+
+        private void NazoviAkciju()
+        {
+            _reservationManager.RedoLastAction();
             LoadReservations();
         }
         private void DodajRezervaciju()

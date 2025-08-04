@@ -17,6 +17,7 @@ namespace TouristAgencyApp.Forms
         private readonly ClientSubject _clientSubject;
         private readonly ClientManager _clientManager;
         private Button btnUndo;
+        private Button btnRedo;
         public ClientsForm(IDatabaseService dbService)
         {
             _clientManager = new ClientManager(dbService);
@@ -79,7 +80,14 @@ namespace TouristAgencyApp.Forms
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Click += (s, e) => OpozoviAkciju();
             btnUndo.Width = 100;
-            btnUndo.Visible = false;
+            // btnUndo.Visible = false;
+
+            btnRedo = CreateModernButton(" Nazovi", Color.FromArgb(255, 255, 165, 0));
+            btnRedo.Location = new Point(980, 15);
+            btnRedo.TextAlign = ContentAlignment.MiddleCenter;
+            btnRedo.Click += (s, e) => NapredAkcija();
+            btnRedo.Width = 100;
+            // btnRedo.Visible = false;
 
             var btnAdd = CreateModernButton("➕ Dodaj klijenta", Color.FromArgb(46, 204, 113));
             btnAdd.Click += (s, e) => DodajKlijenta();
@@ -111,7 +119,7 @@ namespace TouristAgencyApp.Forms
                 AutoSizeGrid();
             };
 
-            toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, txtPretraga, btnUndo });
+            toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, txtPretraga, btnUndo,btnRedo });
 
             var contentPanel = new Panel
             {
@@ -209,7 +217,12 @@ namespace TouristAgencyApp.Forms
         private void OpozoviAkciju()
         {
             _clientManager.UndoLastAction();
-            btnUndo.Visible = false;
+            LoadClients();
+        }
+
+        private void NapredAkcija()
+        {
+            _clientManager.RedoLastAction();
             LoadClients();
         }
         private void LoadClients()
@@ -334,7 +347,6 @@ namespace TouristAgencyApp.Forms
                 {
                     int id = _clientManager.AddClient(c);
                     _clientSubject.AddClient(c, id);
-                    btnUndo.Visible = true;
                     f.Close();
                     LoadClients();
                     MessageBox.Show("Klijent uspešno dodat!", "Uspeh", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -408,7 +420,7 @@ namespace TouristAgencyApp.Forms
                 client.Phone = txtTel.Text;
                 _clientManager.updateClient(client);
                 _clientSubject.UpdateClient(client);
-                btnUndo.Visible = true;
+
                 f.Close();
                 LoadClients();
             };
