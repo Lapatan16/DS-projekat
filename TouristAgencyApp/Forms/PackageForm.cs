@@ -130,14 +130,14 @@ private void CreateModernUI()
     var btnEdit = CreateModernButton("✏️ Izmeni paket", Color.FromArgb(52, 152, 219));
 
     btnEdit.Click += (s, e) => IzmeniPaket();
-    btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
-    btnUndo.Location = new Point(880, 15);
+    btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 255, 165, 0));
+    btnUndo.Location = new Point(600, 15);
     btnUndo.TextAlign = ContentAlignment.MiddleCenter;
     btnUndo.Click += (s, e) => OpozoviAkciju();
     btnUndo.Width = 100;
 
-    btnRedo = CreateModernButton(" Nazovi", Color.FromArgb(255, 255, 165, 0));
-    btnRedo.Location = new Point(980, 15);
+    btnRedo = CreateModernButton("↪️ Redo", Color.FromArgb(255, 255, 165, 0));
+    btnRedo.Location = new Point(720, 15);
     btnRedo.TextAlign = ContentAlignment.MiddleCenter;
     btnRedo.Click += (s, e) => NazoviAkciju();
     btnRedo.Width = 100;

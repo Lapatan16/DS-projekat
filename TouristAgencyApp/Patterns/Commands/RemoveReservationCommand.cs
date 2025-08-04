@@ -13,7 +13,7 @@ namespace TouristAgencyApp.Patterns.Commands
     {
         private readonly IDatabaseService _db;
         private readonly ReservationMemento _memento;
-        private readonly int _reservationId;
+        private int _reservationId;
         private bool _executed;
         private bool _undone;
         private bool _redone;
@@ -40,7 +40,7 @@ namespace TouristAgencyApp.Patterns.Commands
         {
             if (!_executed || _undone)
                 return;
-            _db.AddReservation(_memento.GetState());
+            _reservationId = _db.AddReservation(_memento.GetState());
             _undone = true;
             _redone = false;
         }

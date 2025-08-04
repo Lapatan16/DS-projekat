@@ -75,15 +75,15 @@ namespace TouristAgencyApp.Forms
                 Padding = new Padding(20, 10, 20, 10)
             };
 
-            btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
+            btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 255, 165, 0));
             btnUndo.Location = new Point(880, 15);
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Click += (s, e) => OpozoviAkciju();
             btnUndo.Width = 100;
             // btnUndo.Visible = false;
 
-            btnRedo = CreateModernButton(" Nazovi", Color.FromArgb(255, 255, 165, 0));
-            btnRedo.Location = new Point(980, 15);
+            btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 255, 165, 0));
+            btnRedo.Location = new Point(1000, 15);
             btnRedo.TextAlign = ContentAlignment.MiddleCenter;
             btnRedo.Click += (s, e) => NapredAkcija();
             btnRedo.Width = 100;
