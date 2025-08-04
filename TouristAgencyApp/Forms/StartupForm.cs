@@ -44,7 +44,6 @@ namespace TouristAgencyApp.Forms
             if (cmbConfigs.SelectedItem is ConfigItem selected)
             {
                 var config = new ConfigManager(selected.FullPath);
-                DatabaseFactory.Reset();
                 var db = DatabaseFactory.GetDatabaseService(selected.FullPath);
                 var mainForm = new MainForm(db, config.AgencyName);
                 this.Hide();
