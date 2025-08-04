@@ -7,9 +7,9 @@ using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns.Memento;
 using TouristAgencyApp.Services;
 
-namespace TouristAgencyApp.Patterns.Commands
+namespace TouristAgencyApp.Patterns.Commands.ReservationCommands
 {
-    public class RemoveReservationCommand : ICommand
+    public class AddReservationCommand : ICommand
     {
         private readonly IDatabaseService _db;
         private readonly ReservationMemento _memento;
@@ -17,38 +17,41 @@ namespace TouristAgencyApp.Patterns.Commands
         private bool _executed;
         private bool _undone;
         private bool _redone;
+        public int ReservationId => _reservationId;
 
-        public RemoveReservationCommand(IDatabaseService db, int reservationId)
+        public AddReservationCommand(IDatabaseService db, Reservation reservation)
         {
             _db = db;
-            _reservationId = reservationId;
-            
-            var res = _db.GetReservationById(reservationId);
-            _memento = res.CreateMemento();
+            _memento = reservation.CreateMemento();
         }
 
         public void Execute()
         {
             if (_executed) return;
-            _db.RemoveReservation(_reservationId);
+            int id = _db.AddReservation(_memento.GetState());
             _executed = true;
             _undone = false;
             _redone = false;
+            _reservationId = id;
         }
 
         public void Undo()
         {
             if (!_executed || _undone)
                 return;
-            _reservationId = _db.AddReservation(_memento.GetState());
-            _undone = true;
-            _redone = false;
+            if (_reservationId > 0)
+            {
+                _db.RemoveReservation(_reservationId);
+                _undone = true;
+                _redone = false;
+            }
+                
         }
         public void Redo()
         {
             if (!_executed || !_undone || _redone)
                 return;
-            _db.RemoveReservation(_reservationId);
+            _reservationId = _db.AddReservation(_memento.GetState());
             _undone = false;
             _redone = true;
         }

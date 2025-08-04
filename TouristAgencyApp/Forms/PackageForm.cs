@@ -136,7 +136,7 @@ private void CreateModernUI()
     btnUndo.Click += (s, e) => OpozoviAkciju();
     btnUndo.Width = 100;
 
-    btnRedo = CreateModernButton("↪️ Redo", Color.FromArgb(255, 255, 165, 0));
+    btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 255, 165, 0));
     btnRedo.Location = new Point(720, 15);
     btnRedo.TextAlign = ContentAlignment.MiddleCenter;
     btnRedo.Click += (s, e) => NazoviAkciju();

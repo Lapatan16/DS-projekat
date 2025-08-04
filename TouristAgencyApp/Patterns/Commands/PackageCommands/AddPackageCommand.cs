@@ -7,7 +7,7 @@ using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns.Memento.PackageMemento;
 using TouristAgencyApp.Services;
 
-namespace TouristAgencyApp.Patterns.Commands
+namespace TouristAgencyApp.Patterns.Commands.PackageCommands
 {
     public class AddPackageCommand : ICommand
     {

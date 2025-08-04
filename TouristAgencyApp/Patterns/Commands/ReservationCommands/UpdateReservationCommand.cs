@@ -7,7 +7,7 @@ using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns.Memento;
 using TouristAgencyApp.Services;
 
-namespace TouristAgencyApp.Patterns.Commands
+namespace TouristAgencyApp.Patterns.Commands.ReservationCommands
 {
     public class UpdateReservationCommand : ICommand
     {
