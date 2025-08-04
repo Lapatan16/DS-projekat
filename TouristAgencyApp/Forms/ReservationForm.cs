@@ -283,11 +283,19 @@ namespace TouristAgencyApp.Forms
         {
             if (!(cbClients.SelectedItem is Client c)) return;
 
+            var allPackages = _db.GetAllPackages();
+
+            if (allPackages.Count == 0)
+            {
+                MessageBox.Show("Nema dostupnih paketa.", "Upozorenje", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             var f = new Form
             {
                 Text = "Nova rezervacija",
                 Width = 420,
-                Height = 350,
+                Height = 420,
                 StartPosition = FormStartPosition.CenterParent,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 MaximizeBox = false,
@@ -295,8 +303,9 @@ namespace TouristAgencyApp.Forms
                 BackColor = Color.FromArgb(248, 249, 250)
             };
 
-            var lblPackages = new Label { Text = "Paket:", Left = 20, Top = 20, Width = 180, Font = new Font("Segoe UI", 11) };
-            var cbPackages = new ComboBox
+            // Destination selector
+            var lblDestinations = new Label { Text = "Destinacija:", Left = 20, Top = 20, Width = 180, Font = new Font("Segoe UI", 11) };
+            var cbDestinations = new ComboBox
             {
                 Left = 20,
                 Top = 50,
@@ -304,21 +313,51 @@ namespace TouristAgencyApp.Forms
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 11)
             };
-            var packages = _db.GetAllPackages();
-            cbPackages.DataSource = packages;
-            cbPackages.DisplayMember = "Name";
 
-            var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 95, Width = 180, Font = new Font("Segoe UI", 11) };
-            var numPersons = new NumericUpDown { Left = 20, Top = 125, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
+            var uniqueDestinations = allPackages
+                .Select(p => p.Destination)
+                .Where(d => !string.IsNullOrWhiteSpace(d))
+                .Distinct()
+                .ToList();
 
-            var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 165, Width = 180, Font = new Font("Segoe UI", 11) };
-            var txtExtra = new TextBox { Left = 20, Top = 195, Width = 360, Font = new Font("Segoe UI", 11) };
+            cbDestinations.DataSource = uniqueDestinations;
+
+            // Packages dropdown (filtered by selected destination)
+            var lblPackages = new Label { Text = "Paket:", Left = 20, Top = 95, Width = 180, Font = new Font("Segoe UI", 11) };
+            var cbPackages = new ComboBox
+            {
+                Left = 20,
+                Top = 125,
+                Width = 360,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Segoe UI", 11)
+            };
+
+            void UpdatePackageDropdown()
+            {
+                if (cbDestinations.SelectedItem is not string selectedDestination) return;
+
+                var filteredPackages = allPackages
+                    .Where(p => p.Destination == selectedDestination)
+                    .ToList();
+
+                cbPackages.DataSource = filteredPackages;
+                cbPackages.DisplayMember = "Name";
+            }
+
+            cbDestinations.SelectedIndexChanged += (s, e) => UpdatePackageDropdown();
+
+            var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 170, Width = 180, Font = new Font("Segoe UI", 11) };
+            var numPersons = new NumericUpDown { Left = 20, Top = 200, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
+
+            var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 240, Width = 180, Font = new Font("Segoe UI", 11) };
+            var txtExtra = new TextBox { Left = 20, Top = 270, Width = 360, Font = new Font("Segoe UI", 11) };
 
             var btnSave = new Button
             {
                 Text = "Sačuvaj",
                 Left = 20,
-                Top = 240,
+                Top = 315,
                 Width = 150,
                 Height = 40,
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
@@ -334,7 +373,6 @@ namespace TouristAgencyApp.Forms
             {
                 if (cbPackages.SelectedItem is TravelPackage pkg)
                 {
-
                     Reservation reservation = new ReservationBuilder()
                        .SetClient(c)
                        .SetPackage(pkg)
@@ -342,7 +380,7 @@ namespace TouristAgencyApp.Forms
                        .SetExtraServices(txtExtra.Text)
                        .SetReservationDate(DateTime.Now)
                        .Build();
-              
+
                     int id = _reservationManager.AddReservation(reservation);
                     _reservationSubject.AddReservation(reservation, id);
                     btnUndo.Visible = true;
@@ -351,9 +389,47 @@ namespace TouristAgencyApp.Forms
                 }
             };
 
-            f.Controls.AddRange(new Control[] { lblPackages, cbPackages, lblPersons, numPersons, lblExtra, txtExtra, btnSave });
+            // Trigger filtering only after the form is shown
+            f.Shown += (s, e) =>
+            {
+                
+                 btnSave.Top = f.ClientSize.Height - btnSave.Height - 10;
+
+                if (cbDestinations.Items.Count > 0)
+                {
+                    cbDestinations.SelectedIndex = 0;  // Select first destination
+                    UpdatePackageDropdown();           // Filter packages for selected destination
+
+                    if (cbPackages.Items.Count > 0)
+                    {
+                        cbPackages.SelectedIndex = 0; // Select first package
+                        btnSave.Enabled = true;
+                    }
+                    else
+                    {
+                        btnSave.Enabled = false;      // No packages - disable save
+                    }
+                }
+                else
+                {
+                    btnSave.Enabled = false;          // No destinations - disable save
+                }
+            };
+
+            f.Controls.AddRange(new Control[] {
+                lblDestinations, cbDestinations,
+                lblPackages, cbPackages,
+                lblPersons, numPersons,
+                lblExtra, txtExtra,
+                btnSave
+            });
+
             f.ShowDialog();
         }
+
+
+
+
         private void AzurirajRezervaciju()
         {
             if (grid.SelectedRows.Count == 0)

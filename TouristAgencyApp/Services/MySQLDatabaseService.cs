@@ -150,7 +150,8 @@ VALUES (@fn, @ln, @pn, @bd, @em, @ph); SELECT LAST_INSERT_ID()";
                 string name = reader.GetString(1);
                 decimal price = reader.GetDecimal(2);
                 string type = reader.GetString(3);
-                string details = reader.GetString(4);
+                string destination = reader.GetString(4);
+                string details = reader.GetString(5);
 
                 TravelPackage pkg = type switch
                 {
