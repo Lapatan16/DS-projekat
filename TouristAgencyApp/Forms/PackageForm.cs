@@ -1,7 +1,7 @@
 ﻿using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Services;
-
+using TouristAgencyApp.Patterns.Observer.PackageObserver;
 public partial class PackagesForm : Form
 {
     private readonly IDatabaseService _db;
@@ -9,6 +9,7 @@ public partial class PackagesForm : Form
     private readonly PackageManager _packageManager;
     private DataGridView grid;
     private Button btnUndo;
+    private Button btnRedo;
     string type;
     public PackagesForm(IDatabaseService dbService)
     {
@@ -129,12 +130,18 @@ private void CreateModernUI()
     var btnEdit = CreateModernButton("✏️ Izmeni paket", Color.FromArgb(52, 152, 219));
 
     btnEdit.Click += (s, e) => IzmeniPaket();
-    btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
-    btnUndo.Location = new Point(880, 15);
+    btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 255, 165, 0));
+    btnUndo.Location = new Point(600, 15);
     btnUndo.TextAlign = ContentAlignment.MiddleCenter;
     btnUndo.Click += (s, e) => OpozoviAkciju();
     btnUndo.Width = 100;
-    btnUndo.Visible = false;
+
+    btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 255, 165, 0));
+    btnRedo.Location = new Point(720, 15);
+    btnRedo.TextAlign = ContentAlignment.MiddleCenter;
+    btnRedo.Click += (s, e) => NazoviAkciju();
+    btnRedo.Width = 100;
+
 
         var comboBox = new ComboBox
     {
@@ -155,7 +162,7 @@ private void CreateModernUI()
     btnAdd.Location = new Point(20, 10);
     btnEdit.Location = new Point(200, 10);
 
-    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox, btnUndo });
+    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox, btnUndo, btnRedo });
 
     
     grid.Dock = DockStyle.Fill;
@@ -350,6 +357,7 @@ private void CreateModernUI()
             "Cruise" => new CruisePackageFactory(),
             _ => throw new Exception("Unknown package type")
         };
+        //TravelPackage packege = factory.GetHashCode("", "", "")
 
         TravelPackage pkg = factory.CreatePackage();
 
@@ -395,7 +403,11 @@ private void CreateModernUI()
     private void OpozoviAkciju()
     {
         _packageManager.UndoLastAction();
-        btnUndo.Visible = false;
+        LoadPackages();
+    }
+    private void NazoviAkciju()
+    {
+        _packageManager.RedoLastAction();
         LoadPackages();
     }
     private void IzmeniPaket()
@@ -586,6 +598,5 @@ private void CreateModernUI()
         });
     }
     f.ShowDialog();
-    btnUndo.Visible = true;
 }
 }

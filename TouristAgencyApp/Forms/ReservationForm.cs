@@ -1,5 +1,6 @@
 ﻿using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
+using TouristAgencyApp.Patterns.Observer.ReservationObserver;
 using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Forms
@@ -12,6 +13,7 @@ namespace TouristAgencyApp.Forms
         private DataGridView grid;
         private ComboBox cbClients;
         private Button btnUndo;
+        private Button btnRedo;
         private Button btnAdd;
         private Button btnRemove;
         private Button btnEdit;
@@ -101,13 +103,19 @@ namespace TouristAgencyApp.Forms
             btnEdit.TextAlign = ContentAlignment.MiddleCenter;
             btnEdit.Click += (s, e) => AzurirajRezervaciju();
 
-            btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
+            btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 255, 165, 0));
             btnUndo.Location = new Point(880, 15);
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Click += (s, e) => OpozoviAkciju();
             btnUndo.Width = 100;
-            btnUndo.Visible = false;
-            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo });
+
+            btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 255, 165, 0));
+            btnRedo.Location = new Point(990, 15);
+            btnRedo.TextAlign = ContentAlignment.MiddleCenter;
+            btnRedo.Click += (s, e) => NazoviAkciju();
+            btnRedo.Width = 100;
+  
+            toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo, btnRedo });
 
 
             var contentPanel = new Panel
@@ -276,7 +284,12 @@ namespace TouristAgencyApp.Forms
         private void OpozoviAkciju()
         {
             _reservationManager.UndoLastAction();
-            btnUndo.Visible = false;
+            LoadReservations();
+        }
+
+        private void NazoviAkciju()
+        {
+            _reservationManager.RedoLastAction();
             LoadReservations();
         }
         private void DodajRezervaciju()

@@ -9,7 +9,9 @@ namespace TouristAgencyApp
         static void Main()
         {
             ApplicationConfiguration.Initialize();
+
             Application.Run(new StartupForm());
+
         }
     }
 }

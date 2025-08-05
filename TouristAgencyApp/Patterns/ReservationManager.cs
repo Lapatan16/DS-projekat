@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Services;
+using TouristAgencyApp.Patterns.Commands;
+using TouristAgencyApp.Patterns.Commands.ReservationCommands;
 
 namespace TouristAgencyApp.Patterns
 {
@@ -41,6 +43,11 @@ namespace TouristAgencyApp.Patterns
         {
             _invoker.UndoLastCommand();
             MessageBox.Show("Last action undone!");
+        }
+        public void RedoLastAction()
+        {
+            _invoker.RedoLastAction();
+            MessageBox.Show("Last action redone!");
         }
     }
 }
