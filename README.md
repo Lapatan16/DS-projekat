@@ -47,7 +47,7 @@ Modern Windows Forms aplikacija za upravljanje turističkim aranžmanima. Aplika
 Clients (Id, FirstName, LastName, PassportNumber, BirthDate, Email, Phone)
 
 -- Turistički paketi
-TravelPackages (Id, Name, Price, Type, Details)
+TravelPackages (Id, Name, Price, Type, Destination, Details)
 
 -- Rezervacije
 Reservations (Id, ClientId, PackageId, NumPersons, ReservationDate, ExtraServices)

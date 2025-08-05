@@ -1,7 +1,7 @@
 ﻿using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Services;
-
+using TouristAgencyApp.Patterns.Observer.PackageObserver;
 public partial class PackagesForm : Form
 {
     private readonly IDatabaseService _db;
@@ -9,6 +9,7 @@ public partial class PackagesForm : Form
     private readonly PackageManager _packageManager;
     private DataGridView grid;
     private Button btnUndo;
+    private Button btnRedo;
     string type;
     public PackagesForm(IDatabaseService dbService)
     {
@@ -129,12 +130,18 @@ private void CreateModernUI()
     var btnEdit = CreateModernButton("✏️ Izmeni paket", Color.FromArgb(52, 152, 219));
 
     btnEdit.Click += (s, e) => IzmeniPaket();
-    btnUndo = CreateModernButton(" Opozovi", Color.FromArgb(255, 255, 165, 0));
-    btnUndo.Location = new Point(880, 15);
+    btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 255, 165, 0));
+    btnUndo.Location = new Point(600, 15);
     btnUndo.TextAlign = ContentAlignment.MiddleCenter;
     btnUndo.Click += (s, e) => OpozoviAkciju();
     btnUndo.Width = 100;
-    btnUndo.Visible = false;
+
+    btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 255, 165, 0));
+    btnRedo.Location = new Point(720, 15);
+    btnRedo.TextAlign = ContentAlignment.MiddleCenter;
+    btnRedo.Click += (s, e) => NazoviAkciju();
+    btnRedo.Width = 100;
+
 
         var comboBox = new ComboBox
     {
@@ -155,7 +162,7 @@ private void CreateModernUI()
     btnAdd.Location = new Point(20, 10);
     btnEdit.Location = new Point(200, 10);
 
-    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox, btnUndo });
+    toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBox, btnUndo, btnRedo });
 
     
     grid.Dock = DockStyle.Fill;
@@ -342,46 +349,38 @@ private void CreateModernUI()
 
     btnSave.Click += (ss, ee) =>
     {
-        PackageFactory factory = cbType.SelectedItem.ToString() switch
+        TravelPackage pkg = cbType.SelectedItem.ToString() switch
         {
-            "Sea" => new SeaPackageFactory(),
-            "Mountain" => new MountainPackageFactory(),
-            "Excursion" => new ExcursionPackageFactory(),
-            "Cruise" => new CruisePackageFactory(),
+            "Sea" => PackageDirector.CreateSeaPackage(
+                txtName.Text, 
+                numPrice.Value, 
+                txtDestination.Text, 
+                txtAcc.Text, 
+                txtTransport.Text),
+            "Mountain" => PackageDirector.CreateMountainPackage(
+                txtName.Text, 
+                numPrice.Value, 
+                txtDestination.Text, 
+                txtAcc.Text, 
+                txtTransport.Text, 
+                txtActivities.Text),
+            "Excursion" => PackageDirector.CreateExcursionPackage(
+                txtName.Text, 
+                numPrice.Value, 
+                txtDestination.Text, 
+                txtTransport.Text, 
+                txtGuide.Text, 
+                (int)numDuration.Value),
+            "Cruise" => PackageDirector.CreateCruisePackage(
+                txtName.Text, 
+                numPrice.Value, 
+                txtShip.Text, 
+                txtRoute.Text, 
+                dtDeparture.Value, 
+                txtCabin.Text),
             _ => throw new Exception("Unknown package type")
         };
-
-        TravelPackage pkg = factory.CreatePackage();
-
-        pkg.Name = txtName.Text;
-        pkg.Price = numPrice.Value;
-
-        switch (pkg)
-        {
-            case SeaPackage sea:
-                sea.Destination = txtDestination.Text;
-                sea.Accommodation = txtAcc.Text;
-                sea.Transport = txtTransport.Text;
-                break;
-            case MountainPackage mountain:
-                mountain.Destination = txtDestination.Text;
-                mountain.Accommodation = txtAcc.Text;
-                mountain.Transport = txtTransport.Text;
-                mountain.Activities = txtActivities.Text;
-                break;
-            case ExcursionPackage excursion:
-                excursion.Destination = txtDestination.Text;
-                excursion.Transport = txtTransport.Text;
-                excursion.Guide = txtGuide.Text;
-                excursion.Duration = (int)numDuration.Value;
-                break;
-            case CruisePackage cruise:
-                cruise.Ship = txtShip.Text;
-                cruise.Route = txtRoute.Text;
-                cruise.DepartureDate = dtDeparture.Value;
-                cruise.CabinType = txtCabin.Text;
-                break;
-        }
+        //TravelPackage packege = factory.GetHashCode("", "", "")
 
         int id = _packageManager.AddPackage(pkg);
         _packageSubject.AddPackage(pkg, id);
@@ -395,7 +394,11 @@ private void CreateModernUI()
     private void OpozoviAkciju()
     {
         _packageManager.UndoLastAction();
-        btnUndo.Visible = false;
+        LoadPackages();
+    }
+    private void NazoviAkciju()
+    {
+        _packageManager.RedoLastAction();
         LoadPackages();
     }
     private void IzmeniPaket()
@@ -446,13 +449,16 @@ private void CreateModernUI()
 
         btnSave.Click += (ss, ee) =>
         {
-            sea.Name = txtName.Text;
-            sea.Price = numPrice.Value;
-            sea.Destination = txtDestination.Text;
-            sea.Accommodation = txtAcc.Text;
-            sea.Transport = txtTransport.Text;
-            _packageManager.UpdatePackage(sea);
-            _packageSubject.UpdatePackage(sea);
+            var updatedPackage = PackageDirector.CreateSeaPackageForUpdate(
+                sea.Id,
+                txtName.Text,
+                numPrice.Value,
+                txtDestination.Text,
+                txtAcc.Text,
+                txtTransport.Text);
+            
+            _packageManager.UpdatePackage(updatedPackage);
+            _packageSubject.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -484,14 +490,17 @@ private void CreateModernUI()
 
         btnSave.Click += (ss, ee) =>
         {
-            mountain.Name = txtName.Text;
-            mountain.Price = numPrice.Value;
-            mountain.Destination = txtDestination.Text;
-            mountain.Accommodation = txtAcc.Text;
-            mountain.Transport = txtTransport.Text;
-            mountain.Activities = txtActivities.Text;
-            _packageManager.UpdatePackage(mountain);
-            _packageSubject.UpdatePackage(mountain);
+            var updatedPackage = PackageDirector.CreateMountainPackageForUpdate(
+                mountain.Id,
+                txtName.Text,
+                numPrice.Value,
+                txtDestination.Text,
+                txtAcc.Text,
+                txtTransport.Text,
+                txtActivities.Text);
+            
+            _packageManager.UpdatePackage(updatedPackage);
+            _packageSubject.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -524,14 +533,17 @@ private void CreateModernUI()
 
         btnSave.Click += (ss, ee) =>
         {
-            excursion.Name = txtName.Text;
-            excursion.Price = numPrice.Value;
-            excursion.Destination = txtDestination.Text;
-            excursion.Transport = txtTransport.Text;
-            excursion.Guide = txtGuide.Text;
-            excursion.Duration = (int)numDuration.Value;
-            _packageManager.UpdatePackage(excursion);
-            _packageSubject.UpdatePackage(excursion);
+            var updatedPackage = PackageDirector.CreateExcursionPackageForUpdate(
+                excursion.Id,
+                txtName.Text,
+                numPrice.Value,
+                txtDestination.Text,
+                txtTransport.Text,
+                txtGuide.Text,
+                (int)numDuration.Value);
+            
+            _packageManager.UpdatePackage(updatedPackage);
+            _packageSubject.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -564,14 +576,17 @@ private void CreateModernUI()
 
         btnSave.Click += (ss, ee) =>
         {
-            cruise.Name = txtName.Text;
-            cruise.Price = numPrice.Value;
-            cruise.Ship = txtShip.Text;
-            cruise.Route = txtRoute.Text;
-            cruise.DepartureDate = dtDeparture.Value;
-            cruise.CabinType = txtCabin.Text;
-            _packageManager.UpdatePackage(cruise);
-            _packageSubject.UpdatePackage(cruise);
+            var updatedPackage = PackageDirector.CreateCruisePackageForUpdate(
+                cruise.Id,
+                txtName.Text,
+                numPrice.Value,
+                txtShip.Text,
+                txtRoute.Text,
+                dtDeparture.Value,
+                txtCabin.Text);
+            
+            _packageManager.UpdatePackage(updatedPackage);
+            _packageSubject.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -586,6 +601,5 @@ private void CreateModernUI()
         });
     }
     f.ShowDialog();
-    btnUndo.Visible = true;
 }
 }

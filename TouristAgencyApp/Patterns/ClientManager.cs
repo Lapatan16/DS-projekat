@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Models;
+using TouristAgencyApp.Patterns.Commands;
+using TouristAgencyApp.Patterns.Commands.ClientCommands;
 using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Patterns
@@ -38,6 +40,11 @@ namespace TouristAgencyApp.Patterns
         {
             _invoker.UndoLastCommand();
             MessageBox.Show("Poslednja akcija uspesno opozvana!");
+        }
+        public void RedoLastAction()
+        {
+            _invoker.RedoLastAction();
+            MessageBox.Show("Poslednja akcija uspesno redo-ovana!");
         }
     }
 }
