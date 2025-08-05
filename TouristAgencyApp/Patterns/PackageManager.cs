@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns.Commands;
+using TouristAgencyApp.Patterns.Commands.PackageCommands;
 using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Patterns

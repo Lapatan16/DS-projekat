@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Services;
 using TouristAgencyApp.Patterns.Commands;
+using TouristAgencyApp.Patterns.Commands.ReservationCommands;
 
 namespace TouristAgencyApp.Patterns
 {

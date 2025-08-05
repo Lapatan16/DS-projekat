@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
+using TouristAgencyApp.Patterns.Observer.ClientObserver;
 using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Forms

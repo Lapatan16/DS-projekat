@@ -1,7 +1,7 @@
 ﻿using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Services;
-
+using TouristAgencyApp.Patterns.Observer.PackageObserver;
 public partial class PackagesForm : Form
 {
     private readonly IDatabaseService _db;

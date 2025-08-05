@@ -1,5 +1,6 @@
 ﻿using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
+using TouristAgencyApp.Patterns.Observer.ReservationObserver;
 using TouristAgencyApp.Services;
 
 namespace TouristAgencyApp.Forms
