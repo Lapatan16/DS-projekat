@@ -349,47 +349,38 @@ private void CreateModernUI()
 
     btnSave.Click += (ss, ee) =>
     {
-        PackageFactory factory = cbType.SelectedItem.ToString() switch
+        TravelPackage pkg = cbType.SelectedItem.ToString() switch
         {
-            "Sea" => new SeaPackageFactory(),
-            "Mountain" => new MountainPackageFactory(),
-            "Excursion" => new ExcursionPackageFactory(),
-            "Cruise" => new CruisePackageFactory(),
+            "Sea" => PackageDirector.CreateSeaPackage(
+                txtName.Text, 
+                numPrice.Value, 
+                txtDestination.Text, 
+                txtAcc.Text, 
+                txtTransport.Text),
+            "Mountain" => PackageDirector.CreateMountainPackage(
+                txtName.Text, 
+                numPrice.Value, 
+                txtDestination.Text, 
+                txtAcc.Text, 
+                txtTransport.Text, 
+                txtActivities.Text),
+            "Excursion" => PackageDirector.CreateExcursionPackage(
+                txtName.Text, 
+                numPrice.Value, 
+                txtDestination.Text, 
+                txtTransport.Text, 
+                txtGuide.Text, 
+                (int)numDuration.Value),
+            "Cruise" => PackageDirector.CreateCruisePackage(
+                txtName.Text, 
+                numPrice.Value, 
+                txtShip.Text, 
+                txtRoute.Text, 
+                dtDeparture.Value, 
+                txtCabin.Text),
             _ => throw new Exception("Unknown package type")
         };
         //TravelPackage packege = factory.GetHashCode("", "", "")
-
-        TravelPackage pkg = factory.CreatePackage();
-
-        pkg.Name = txtName.Text;
-        pkg.Price = numPrice.Value;
-
-        switch (pkg)
-        {
-            case SeaPackage sea:
-                sea.Destination = txtDestination.Text;
-                sea.Accommodation = txtAcc.Text;
-                sea.Transport = txtTransport.Text;
-                break;
-            case MountainPackage mountain:
-                mountain.Destination = txtDestination.Text;
-                mountain.Accommodation = txtAcc.Text;
-                mountain.Transport = txtTransport.Text;
-                mountain.Activities = txtActivities.Text;
-                break;
-            case ExcursionPackage excursion:
-                excursion.Destination = txtDestination.Text;
-                excursion.Transport = txtTransport.Text;
-                excursion.Guide = txtGuide.Text;
-                excursion.Duration = (int)numDuration.Value;
-                break;
-            case CruisePackage cruise:
-                cruise.Ship = txtShip.Text;
-                cruise.Route = txtRoute.Text;
-                cruise.DepartureDate = dtDeparture.Value;
-                cruise.CabinType = txtCabin.Text;
-                break;
-        }
 
         int id = _packageManager.AddPackage(pkg);
         _packageSubject.AddPackage(pkg, id);
@@ -458,13 +449,16 @@ private void CreateModernUI()
 
         btnSave.Click += (ss, ee) =>
         {
-            sea.Name = txtName.Text;
-            sea.Price = numPrice.Value;
-            sea.Destination = txtDestination.Text;
-            sea.Accommodation = txtAcc.Text;
-            sea.Transport = txtTransport.Text;
-            _packageManager.UpdatePackage(sea);
-            _packageSubject.UpdatePackage(sea);
+            var updatedPackage = PackageDirector.CreateSeaPackageForUpdate(
+                sea.Id,
+                txtName.Text,
+                numPrice.Value,
+                txtDestination.Text,
+                txtAcc.Text,
+                txtTransport.Text);
+            
+            _packageManager.UpdatePackage(updatedPackage);
+            _packageSubject.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -496,14 +490,17 @@ private void CreateModernUI()
 
         btnSave.Click += (ss, ee) =>
         {
-            mountain.Name = txtName.Text;
-            mountain.Price = numPrice.Value;
-            mountain.Destination = txtDestination.Text;
-            mountain.Accommodation = txtAcc.Text;
-            mountain.Transport = txtTransport.Text;
-            mountain.Activities = txtActivities.Text;
-            _packageManager.UpdatePackage(mountain);
-            _packageSubject.UpdatePackage(mountain);
+            var updatedPackage = PackageDirector.CreateMountainPackageForUpdate(
+                mountain.Id,
+                txtName.Text,
+                numPrice.Value,
+                txtDestination.Text,
+                txtAcc.Text,
+                txtTransport.Text,
+                txtActivities.Text);
+            
+            _packageManager.UpdatePackage(updatedPackage);
+            _packageSubject.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -536,14 +533,17 @@ private void CreateModernUI()
 
         btnSave.Click += (ss, ee) =>
         {
-            excursion.Name = txtName.Text;
-            excursion.Price = numPrice.Value;
-            excursion.Destination = txtDestination.Text;
-            excursion.Transport = txtTransport.Text;
-            excursion.Guide = txtGuide.Text;
-            excursion.Duration = (int)numDuration.Value;
-            _packageManager.UpdatePackage(excursion);
-            _packageSubject.UpdatePackage(excursion);
+            var updatedPackage = PackageDirector.CreateExcursionPackageForUpdate(
+                excursion.Id,
+                txtName.Text,
+                numPrice.Value,
+                txtDestination.Text,
+                txtTransport.Text,
+                txtGuide.Text,
+                (int)numDuration.Value);
+            
+            _packageManager.UpdatePackage(updatedPackage);
+            _packageSubject.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -576,14 +576,17 @@ private void CreateModernUI()
 
         btnSave.Click += (ss, ee) =>
         {
-            cruise.Name = txtName.Text;
-            cruise.Price = numPrice.Value;
-            cruise.Ship = txtShip.Text;
-            cruise.Route = txtRoute.Text;
-            cruise.DepartureDate = dtDeparture.Value;
-            cruise.CabinType = txtCabin.Text;
-            _packageManager.UpdatePackage(cruise);
-            _packageSubject.UpdatePackage(cruise);
+            var updatedPackage = PackageDirector.CreateCruisePackageForUpdate(
+                cruise.Id,
+                txtName.Text,
+                numPrice.Value,
+                txtShip.Text,
+                txtRoute.Text,
+                dtDeparture.Value,
+                txtCabin.Text);
+            
+            _packageManager.UpdatePackage(updatedPackage);
+            _packageSubject.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
