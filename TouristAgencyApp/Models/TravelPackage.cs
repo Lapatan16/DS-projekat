@@ -16,13 +16,14 @@ namespace TouristAgencyApp.Models
         public string Name { get; set; } = "";
         public decimal Price { get; set; }
         public string Type { get; set; } = "";
+        public string Destination { get; set; } = "";
         public string Details { get; set; } = "";
         public abstract TravelPackageMemento CreateMemento();
     }
 
     public class SeaPackage : TravelPackage
     {
-        public string Destination { get; set; } = "";
+        //public string Destination { get; set; } = "";
         public string Accommodation { get; set; } = "";
         public string Transport { get; set; } = "";
         public override TravelPackageMemento CreateMemento()
@@ -43,13 +44,13 @@ namespace TouristAgencyApp.Models
         }
         public override string ToString()
         {
-            return $"Destinacija: {Destination}, Smeštaj: {Accommodation}, Prevoz: {Transport}";
+            return $"Smeštaj: {Accommodation}, Prevoz: {Transport}";
         }
     }
 
     public class MountainPackage : TravelPackage
     {
-        public string Destination { get; set; } = "";
+        //public string Destination { get; set; } = "";
         public string Accommodation { get; set; } = "";
         public string Transport { get; set; } = "";
         public string Activities { get; set; } = "";
@@ -72,13 +73,13 @@ namespace TouristAgencyApp.Models
         }
         public override string ToString()
         {
-            return $"Destinacija: {Destination}, Smeštaj: {Accommodation}, Prevoz: {Transport}, Aktivnosti: {Activities}";
+            return $"Smeštaj: {Accommodation}, Prevoz: {Transport}, Aktivnosti: {Activities}";
         }
     }
 
     public class ExcursionPackage : TravelPackage
     {
-        public string Destination { get; set; } = "";
+        //public string Destination { get; set; } = "";
         public string Transport { get; set; } = "";
         public string Guide { get; set; } = "";
         public int Duration { get; set; }
@@ -101,7 +102,7 @@ namespace TouristAgencyApp.Models
         }
         public override string ToString()
         {
-            return $"Destinacija: {Destination}, Prevoz: {Transport}, Vodič: {Guide}, Trajanje: {Duration} dana";
+            return $"Prevoz: {Transport}, Vodič: {Guide}, Trajanje: {Duration} dana";
         }
     }
 

@@ -11,7 +11,6 @@ namespace TouristAgencyApp
             ApplicationConfiguration.Initialize();
 
             Application.Run(new StartupForm());
-
         }
     }
 }
