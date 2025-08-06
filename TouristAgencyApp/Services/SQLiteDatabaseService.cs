@@ -177,7 +177,9 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph); SELECT last_insert_rowid()";
                 string name = reader.GetString(1);
                 decimal price = reader.GetDecimal(2);
                 string type = reader.GetString(3);
-                string details = reader.GetString(4);
+                string destionation = reader.GetString(4);
+                string details = reader.GetString(5);
+
                 TravelPackage pkg = type switch
                 {
                     "Sea" => JsonSerializer.Deserialize<SeaPackage>(details) ?? new SeaPackage(),
@@ -191,6 +193,7 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph); SELECT last_insert_rowid()";
                 pkg.Name = name;
                 pkg.Price = price;
                 pkg.Type = type;
+                pkg.Destination = destionation;
                 pkg.Details = pkg.ToString();
                 result.Add(pkg);
             }

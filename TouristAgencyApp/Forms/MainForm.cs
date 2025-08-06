@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TouristAgencyApp.Services;
+using TouristAgencyApp.Patterns.Facade;
 
 namespace TouristAgencyApp.Forms
 {
@@ -15,12 +16,14 @@ namespace TouristAgencyApp.Forms
     {
         private readonly IDatabaseService _dbService;
         private readonly string _agencyName;
+        private readonly BackupFacade _backupFacade;
         private System.Windows.Forms.Timer backupTimer;
 
         public MainForm(IDatabaseService dbService, string agencyName)
         {
             _dbService = dbService;
             _agencyName = agencyName;
+            _backupFacade = new BackupFacade("agencija.db");
             InitializeComponent();
             SetupBackupTimer();
         }
@@ -35,18 +38,7 @@ namespace TouristAgencyApp.Forms
 
         private void NapraviBackup(bool showMsg = false)
         {
-            try
-            {
-                string dbFile = "agencija.db";
-                var backup = new TouristAgencyApp.Patterns.LoggingBackupService(new TouristAgencyApp.Patterns.BackupService(dbFile));
-                backup.CreateBackup();
-                if (showMsg)
-                    MessageBox.Show("Backup uspešno kreiran!", "Backup", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Greška pri kreiranju backup-a: {ex.Message}", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            _backupFacade.CreateBackup(showMsg);
         }
     }
 }
