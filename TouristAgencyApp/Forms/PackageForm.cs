@@ -4,22 +4,16 @@ using TouristAgencyApp.Services;
 using TouristAgencyApp.Patterns.Observer.PackageObserver;
 public partial class PackagesForm : Form
 {
-    private readonly IDatabaseService _db;
-    private readonly PackageSubject _packageSubject;
-    private readonly PackageManager _packageManager;
+    private readonly PackageFacade _packageFacade;
     private DataGridView grid;
     private Button btnUndo;
     private Button btnRedo;
     string type;
     public PackagesForm(IDatabaseService dbService)
     {
-        _packageManager = new PackageManager(dbService);
-        _packageSubject = new PackageSubject();
-        _packageSubject.Attach(new PackageNotifier());
-        _packageSubject.Attach(new PackageLogger());
+        _packageFacade = new PackageFacade(dbService);
 
-        type = "Svi paketi";
-        _db = dbService;
+        type = "Svi paketi";  
         this.Text = "Paketi";
         this.Width = 1100;
         this.Height = 560;
@@ -201,41 +195,38 @@ private void CreateModernUI()
     }
 
     private void LoadPackages()
+{
+    grid.DataSource = null;
+    grid.Columns.Clear();
+
+    var data = _packageFacade.GetAllPackages();
+    List<TravelPackage> lista = new List<TravelPackage>();
+
+    foreach (var pkg in data)
     {
-        grid.DataSource = null;
-        grid.Columns.Clear();
-
-        var data = _db.GetAllPackages().ToList();
-        List<TravelPackage> lista = new List<TravelPackage>();
-
-        foreach (var pkg in data)
-            pkg.Details = pkg.ToString();
-
-        foreach (var pkg in data)
-        {
-            if (type == "Svi paketi" || type == pkg.Type)
-                lista.Add(pkg);
-        }
-
-        grid.AutoGenerateColumns = true;
-        grid.DataSource = lista;
-        grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-        grid.AutoResizeColumns();
-        grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
-        grid.ColumnHeadersHeight = 40;
-
-        if (grid.Columns.Contains("Id"))
-            grid.Columns["Id"].Visible = false;
-
-        if (grid.Columns.Contains("Name"))
-            grid.Columns["Name"].HeaderText = "Naziv";
-        if (grid.Columns.Contains("Price"))
-            grid.Columns["Price"].HeaderText = "Cena";
-        if (grid.Columns.Contains("Type"))
-            grid.Columns["Type"].HeaderText = "Tip";
-        if (grid.Columns.Contains("Details"))
-            grid.Columns["Details"].HeaderText = "Detalji";
+        if (type == "Svi paketi" || type == pkg.Type)
+            lista.Add(pkg);
     }
+
+    grid.AutoGenerateColumns = true;
+    grid.DataSource = lista;
+    grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+    grid.AutoResizeColumns();
+    grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 14, FontStyle.Bold);
+    grid.ColumnHeadersHeight = 40;
+
+    if (grid.Columns.Contains("Id"))
+        grid.Columns["Id"].Visible = false;
+
+    if (grid.Columns.Contains("Name"))
+        grid.Columns["Name"].HeaderText = "Naziv";
+    if (grid.Columns.Contains("Price"))
+        grid.Columns["Price"].HeaderText = "Cena";
+    if (grid.Columns.Contains("Type"))
+        grid.Columns["Type"].HeaderText = "Tip";
+    if (grid.Columns.Contains("Details"))
+        grid.Columns["Details"].HeaderText = "Detalji";
+}
 
     private void DodajPaket()
 {
@@ -382,8 +373,7 @@ private void CreateModernUI()
         };
         //TravelPackage packege = factory.GetHashCode("", "", "")
 
-        int id = _packageManager.AddPackage(pkg);
-        _packageSubject.AddPackage(pkg, id);
+        int id = _packageFacade.AddPackage(pkg);
         f.Close();
         btnUndo.Visible = true;
         LoadPackages();
@@ -393,12 +383,12 @@ private void CreateModernUI()
 }
     private void OpozoviAkciju()
     {
-        _packageManager.UndoLastAction();
+        _packageFacade.Undo();
         LoadPackages();
     }
     private void NazoviAkciju()
     {
-        _packageManager.RedoLastAction();
+        _packageFacade.Redo();
         LoadPackages();
     }
     private void IzmeniPaket()
@@ -457,8 +447,7 @@ private void CreateModernUI()
                 txtAcc.Text,
                 txtTransport.Text);
             
-            _packageManager.UpdatePackage(updatedPackage);
-            _packageSubject.UpdatePackage(updatedPackage);
+            _packageFacade.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -499,8 +488,7 @@ private void CreateModernUI()
                 txtTransport.Text,
                 txtActivities.Text);
             
-            _packageManager.UpdatePackage(updatedPackage);
-            _packageSubject.UpdatePackage(updatedPackage);
+            _packageFacade.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -542,8 +530,7 @@ private void CreateModernUI()
                 txtGuide.Text,
                 (int)numDuration.Value);
             
-            _packageManager.UpdatePackage(updatedPackage);
-            _packageSubject.UpdatePackage(updatedPackage);
+            _packageFacade.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };
@@ -585,8 +572,7 @@ private void CreateModernUI()
                 dtDeparture.Value,
                 txtCabin.Text);
             
-            _packageManager.UpdatePackage(updatedPackage);
-            _packageSubject.UpdatePackage(updatedPackage);
+            _packageFacade.UpdatePackage(updatedPackage);
             f.Close();
             LoadPackages();
         };

@@ -7,9 +7,7 @@ namespace TouristAgencyApp.Forms
 {
     public partial class ReservationsForm : Form
     {
-        private readonly IDatabaseService _db;
-        private readonly ReservationSubject _reservationSubject;
-        private ReservationManager _reservationManager;
+        private readonly ReservationFacade _reservationFacade;
         private DataGridView grid;
         private ComboBox cbClients;
         private Button btnUndo;
@@ -19,13 +17,7 @@ namespace TouristAgencyApp.Forms
         private Button btnEdit;
         public ReservationsForm(IDatabaseService dbService)
         {
-            _db = dbService;
-            _reservationSubject = new ReservationSubject();
-            _reservationManager = new ReservationManager(dbService);
-
-            _reservationSubject.Attach(new ReservationLogger());
-            _reservationSubject.Attach(new ReservationNotifier());
-            _reservationSubject.Attach(new ReservationStatistics());
+            _reservationFacade = new ReservationFacade(dbService);
 
             InitializeForm();
             CreateModernUI();
@@ -251,13 +243,14 @@ namespace TouristAgencyApp.Forms
 
         private void LoadClients()
         {
-            var clientsList = _db.GetAllClients();
+            var clientsList = _reservationFacade.GetAllClients();
             cbClients.DataSource = clientsList;
             cbClients.DisplayMember = "FullName";
             cbClients.ValueMember = "Id";
 
             if (cbClients.Items.Count > 0)
                 cbClients.SelectedIndex = 0;
+
             LoadReservations();
         }
 
@@ -265,14 +258,7 @@ namespace TouristAgencyApp.Forms
         {
             if (cbClients.SelectedItem is Client c)
             {
-                var reservations = _db.GetReservationsByClient(c.Id).ToList();
-
-                var packages = _db.GetAllPackages();
-                foreach (var r in reservations)
-                {
-                    var pkg = packages.FirstOrDefault(p => p.Id == r.PackageId);
-                    r.PackageName = pkg != null ? pkg.Name : "(nepoznato)";
-                }
+                var reservations = _reservationFacade.GetReservationsByClient(c.Id);
 
                 grid.DataSource = null;
                 grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -283,20 +269,20 @@ namespace TouristAgencyApp.Forms
         }
         private void OpozoviAkciju()
         {
-            _reservationManager.UndoLastAction();
+            _reservationFacade.Undo();
             LoadReservations();
         }
 
         private void NazoviAkciju()
         {
-            _reservationManager.RedoLastAction();
+            _reservationFacade.Redo();
             LoadReservations();
         }
         private void DodajRezervaciju()
         {
             if (!(cbClients.SelectedItem is Client c)) return;
 
-            var allPackages = _db.GetAllPackages();
+            var allPackages = _reservationFacade.GetAllPackages();
 
             if (allPackages.Count == 0)
             {
@@ -394,8 +380,7 @@ namespace TouristAgencyApp.Forms
                        .SetReservationDate(DateTime.Now)
                        .Build();
 
-                    int id = _reservationManager.AddReservation(reservation);
-                    _reservationSubject.AddReservation(reservation, id);
+                    int id = _reservationFacade.AddReservation(reservation);
                     btnUndo.Visible = true;
                     f.Close();
                     LoadReservations();
@@ -464,7 +449,8 @@ namespace TouristAgencyApp.Forms
 
             var lblPackages = new Label { Text = "Paket: " + grid.SelectedRows[0].Cells[0].Value.ToString(), Left = 20, Top = 20, Width = 180, Font = new Font("Segoe UI", 11) };
 
-            var packages = _db.GetAllPackages();
+            var packages = _reservationFacade.GetAllPackages();
+
 
 
 
@@ -493,8 +479,8 @@ namespace TouristAgencyApp.Forms
             btnSave.Click += (ss, ee) =>
             {
                 int reservationId = Convert.ToInt32(grid.SelectedRows[0].Cells[4].Value);
-                _reservationManager.UpdateReservation(reservationId,(int) numPersons.Value, txtExtra.Text);
-                _reservationSubject.UpdateReservation(reservationId);
+                _reservationFacade.UpdateReservation(reservationId, (int)numPersons.Value, txtExtra.Text);
+
 
                 btnUndo.Visible = true;
                 LoadReservations();
@@ -516,8 +502,7 @@ namespace TouristAgencyApp.Forms
             var confirm = MessageBox.Show("Da li ste sigurni da želite da otkažete ovu rezervaciju?", "Potvrda", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                _reservationManager.RemoveReservation(id);
-                _reservationSubject.RemoveReservation(id);
+                _reservationFacade.RemoveReservation(id);
                 btnUndo.Visible = true;
                 LoadReservations();
             }

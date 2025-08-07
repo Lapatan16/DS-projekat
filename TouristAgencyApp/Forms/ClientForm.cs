@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Patterns.Observer.ClientObserver;
@@ -13,20 +12,14 @@ namespace TouristAgencyApp.Forms
 {
     public partial class ClientsForm : Form
     {
-        private readonly IDatabaseService _db;
-        private DataGridView grid;
-        private readonly ClientSubject _clientSubject;
-        private readonly ClientManager _clientManager;
-        private Button btnUndo;
-        private Button btnRedo;
+        private readonly ClientFacade _clientFacade;
+        private DataGridView grid = new DataGridView();
+        private Button btnUndo = new Button();
+        private Button btnRedo = new Button();
+
         public ClientsForm(IDatabaseService dbService)
         {
-            _clientManager = new ClientManager(dbService);
-            _clientSubject = new ClientSubject();
-            _clientSubject.Attach(new ClientLogger());
-            _clientSubject.Attach(new ClientNotifier());
-
-            _db = dbService;
+            _clientFacade = new ClientFacade(dbService);
             InitializeForm();
             CreateModernUI();
             LoadClients();
@@ -45,7 +38,6 @@ namespace TouristAgencyApp.Forms
 
         private void CreateModernUI()
         {
-            
             var headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
@@ -67,7 +59,6 @@ namespace TouristAgencyApp.Forms
             };
             headerPanel.Controls.Add(lblTitle);
 
-           
             var toolbarPanel = new Panel
             {
                 Dock = DockStyle.Top,
@@ -81,14 +72,12 @@ namespace TouristAgencyApp.Forms
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Click += (s, e) => OpozoviAkciju();
             btnUndo.Width = 100;
-            // btnUndo.Visible = false;
 
             btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 255, 165, 0));
             btnRedo.Location = new Point(1000, 15);
             btnRedo.TextAlign = ContentAlignment.MiddleCenter;
             btnRedo.Click += (s, e) => NapredAkcija();
             btnRedo.Width = 100;
-            // btnRedo.Visible = false;
 
             var btnAdd = CreateModernButton("➕ Dodaj klijenta", Color.FromArgb(46, 204, 113));
             btnAdd.Click += (s, e) => DodajKlijenta();
@@ -105,14 +94,12 @@ namespace TouristAgencyApp.Forms
                 Height = 40,
                 Font = new Font("Segoe UI", 12, FontStyle.Regular),
                 Location = new Point(400, 20),
-                BorderStyle = BorderStyle.FixedSingle,
-             
+                BorderStyle = BorderStyle.FixedSingle
             };
             txtPretraga.TextChanged += (s, e) =>
             {
-                var svi = _db.GetAllClients();
                 var filter = txtPretraga.Text.ToLower();
-                grid.DataSource = svi.Where(x =>
+                grid.DataSource = _clientFacade.GetAllClients().Where(x =>
                     x.FirstName.ToLower().Contains(filter) ||
                     x.LastName.ToLower().Contains(filter) ||
                     x.PassportNumber.ToLower().Contains(filter)
@@ -120,15 +107,14 @@ namespace TouristAgencyApp.Forms
                 AutoSizeGrid();
             };
 
-            toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, txtPretraga, btnUndo,btnRedo });
+            toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, txtPretraga, btnUndo, btnRedo });
 
             var contentPanel = new Panel
             {
-            Dock = DockStyle.Fill,
-            BackColor = Color.White
+                Dock = DockStyle.Fill,
+                BackColor = Color.White
             };
 
-           
             grid = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -215,21 +201,11 @@ namespace TouristAgencyApp.Forms
 
             return button;
         }
-        private void OpozoviAkciju()
-        {
-            _clientManager.UndoLastAction();
-            LoadClients();
-        }
 
-        private void NapredAkcija()
-        {
-            _clientManager.RedoLastAction();
-            LoadClients();
-        }
         private void LoadClients()
         {
             grid.DataSource = null;
-            grid.DataSource = _db.GetAllClients().ToList();
+            grid.DataSource = _clientFacade.GetAllClients().ToList();
 
             if (grid.Columns.Contains("Id"))
                 grid.Columns["Id"].Visible = false;
@@ -273,7 +249,6 @@ namespace TouristAgencyApp.Forms
                 BackColor = Color.FromArgb(248, 249, 250)
             };
 
-            
             var headerLabel = new Label
             {
                 Text = "Dodavanje novog klijenta",
@@ -346,8 +321,7 @@ namespace TouristAgencyApp.Forms
                 
                 try
                 {
-                    int id = _clientManager.AddClient(c);
-                    _clientSubject.AddClient(c, id);
+                    _clientFacade.AddClient(c);
                     f.Close();
                     LoadClients();
                     MessageBox.Show("Klijent uspešno dodat!", "Uspeh", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -408,7 +382,12 @@ namespace TouristAgencyApp.Forms
                 Width = 150,
                 Height = 45,
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.FromArgb(52, 152, 219),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                Cursor = Cursors.Hand
             };
 
             btnSave.Click += (ss, ee) =>
@@ -419,9 +398,8 @@ namespace TouristAgencyApp.Forms
                 client.BirthDate = dtp.Value;
                 client.Email = txtEmail.Text;
                 client.Phone = txtTel.Text;
-                _clientManager.updateClient(client);
-                _clientSubject.UpdateClient(client);
-
+                
+                _clientFacade.UpdateClient(client);
                 f.Close();
                 LoadClients();
             };
@@ -432,18 +410,14 @@ namespace TouristAgencyApp.Forms
 
         private void PrikaziRezervacijeZaKlijenta()
         {
-            var paketi = _db.GetAllPackages();
-
             if (grid.SelectedRows.Count == 0) return;
-
             var client = grid.SelectedRows[0].DataBoundItem as Client;
-
             if (client == null) return;
 
             var form = new Form
             {
                 Text = $"Rezervacije za {client.FirstName} {client.LastName}",
-                Width = 1000, 
+                Width = 1000,
                 Height = 500,
                 StartPosition = FormStartPosition.CenterParent,
                 BackColor = Color.White,
@@ -451,24 +425,7 @@ namespace TouristAgencyApp.Forms
                 MaximizeBox = false
             };
 
-            var headerPanel = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 60,
-                BackColor = Color.FromArgb(42, 204, 113)
-            };
-
-            var lblHeader = new Label
-            {
-                Text = "📋 Spisak rezervacija korisnika",
-                Font = new Font("Segoe UI", 16, FontStyle.Bold),
-                ForeColor = Color.White,
-                AutoSize = false,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            headerPanel.Controls.Add(lblHeader);
-
+            var rezervacije = _clientFacade.GetClientReservations(client.Id);
             var gridRez = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -497,19 +454,17 @@ namespace TouristAgencyApp.Forms
             gridRez.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             gridRez.DefaultCellStyle.SelectionForeColor = Color.White;
 
-            var rezervacije = _db.GetReservationsByClient(client.Id);
-
             var data = rezervacije.Select(r => new
             {
-                NazivPaketa = paketi.FirstOrDefault(p => p.Id == r.PackageId)?.Name ?? "(nepoznato)",
+                NazivPaketa = _clientFacade.GetPackageName(r.PackageId) ?? "(nepoznato)",
                 DatumRezervacije = r.ReservationDate.ToString("dd.MM.yyyy"),
                 BrojOsoba = r.NumPersons,
-                DodatneUsluge = r.ExtraServices != null ? string.Join(", ", r.ExtraServices) : ""
+                DodatneUsluge = r.ExtraServices ?? ""
             }).ToList();
 
             gridRez.DataSource = data;
 
-                foreach (DataGridViewColumn col in gridRez.Columns)
+            foreach (DataGridViewColumn col in gridRez.Columns)
             {
                 col.HeaderText = col.Name switch
                 {
@@ -524,9 +479,19 @@ namespace TouristAgencyApp.Forms
             gridRez.AutoResizeColumns();
 
             form.Controls.Add(gridRez);
-            form.Controls.Add(headerPanel);
-
             form.ShowDialog();
+        }
+
+        private void OpozoviAkciju()
+        {
+            _clientFacade.UndoLastAction();
+            LoadClients();
+        }
+
+        private void NapredAkcija()
+        {
+            _clientFacade.RedoLastAction();
+            LoadClients();
         }
     }
 }

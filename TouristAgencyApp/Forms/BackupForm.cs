@@ -4,21 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Patterns;
+using TouristAgencyApp.Patterns.Facade;
 
 namespace TouristAgencyApp.Forms
 {
     public partial class BackupForm : Form
     {
-        public BackupForm(object dbService)
+        public BackupForm()
         {
             this.Text = "Backup";
             Button btnBackup = new Button { Text = "Backup baze", Dock = DockStyle.Fill };
             btnBackup.Click += (s, e) =>
             {
-                string dbFile = "agencija.db";
-                IBackupService backup = new LoggingBackupService(new BackupService(dbFile));
-                backup.CreateBackup();
-                MessageBox.Show("Backup kreiran!");
+                var backupFacade = new BackupFacade("agencija.db");
+                backupFacade.CreateBackup();
             };
             this.Controls.Add(btnBackup);
         }
