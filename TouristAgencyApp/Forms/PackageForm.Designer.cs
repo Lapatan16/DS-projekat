@@ -17,92 +17,92 @@ namespace TouristAgencyApp.Forms
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            grid = new DataGridView();
-            btnUndo = new Button();
-            btnRedo = new Button();
-            comboBoxMain = new ComboBox();
-            headerPanel = new Panel();
-            lblTitle = new Label();
-            toolbarPanel = new Panel();
-            ((System.ComponentModel.ISupportInitialize)grid).BeginInit();
-            headerPanel.SuspendLayout();
-            toolbarPanel.SuspendLayout();
-            SuspendLayout();
+            this.grid = new DataGridView();
+            this.btnUndo = new Button();
+            this.btnRedo = new Button();
+            this.comboBoxMain = new ComboBox();
 
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.BackgroundColor = Color.White;
-            grid.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(52, 73, 94);
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            grid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            grid.ColumnHeadersHeight = 40;
-            grid.Dock = DockStyle.Fill;
-            grid.EnableHeadersVisualStyles = false;
-            grid.Font = new Font("Segoe UI", 11F);
-            grid.GridColor = Color.LightGray;
-            grid.Location = new Point(0, 0);
-            grid.Name = "grid";
-            grid.ReadOnly = true;
-            grid.RowTemplate.Height = 35;
-            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grid.Size = new Size(1084, 521);
-            grid.TabIndex = 0;
-            
-            btnUndo.Location = new Point(600, 15);
-            btnUndo.Name = "btnUndo";
-            btnUndo.Size = new Size(100, 23);
-            btnUndo.TabIndex = 1;
-           
-            btnRedo.Location = new Point(720, 15);
-            btnRedo.Name = "btnRedo";
-            btnRedo.Size = new Size(100, 23);
-            btnRedo.TabIndex = 2;
+            this.Text = "Paketi";
+            this.Width = 1100;
+            this.Height = 560;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            var headerPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 80,
+                BackColor = Color.FromArgb(52, 152, 219)
+            };
+            var lblTitle = new Label
+            {
+                Text = "Upravljanje paketima",
+                Font = new Font("Segoe UI", 18, FontStyle.Bold),
+                ForeColor = Color.White,
+                AutoSize = false,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            headerPanel.Controls.Add(lblTitle);
+
+            var toolbarPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 60,
+                BackColor = Color.White,
+                Padding = new Padding(20, 10, 20, 10)
+            };
+
+            btnAdd = CreateModernButton("➕ Dodaj paket", Color.FromArgb(46, 204, 113));
+            btnAdd.Location = new Point(20, 10);
+
+            btnEdit = CreateModernButton("✏️ Izmeni paket", Color.FromArgb(52, 152, 219));
+            btnEdit.Location = new Point(200, 10);
 
             comboBoxMain.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBoxMain.Font = new Font("Segoe UI", 10F);
-            comboBoxMain.Items.AddRange(new object[] { "Svi paketi", "Sea", "Excursion", "Mountain", "Cruise" });
-            comboBoxMain.Location = new Point(380, 15);
-            comboBoxMain.Name = "comboBoxMain";
-            comboBoxMain.Size = new Size(180, 25);
-            comboBoxMain.TabIndex = 0;
+            comboBoxMain.Width = 180;
+            comboBoxMain.Font = new Font("Segoe UI", 10);
+            comboBoxMain.Left = 380;
+            comboBoxMain.Top = 15;
+            comboBoxMain.Items.AddRange(new string[] { "Svi paketi", "Sea", "Excursion", "Mountain", "Cruise" });
+            comboBoxMain.SelectedIndex = 0;
+            comboBoxMain.SelectedIndexChanged += (s, e) =>
+            {
+                type = comboBoxMain.SelectedItem.ToString();
+                LoadPackages();
+            };
 
-            headerPanel.Controls.Add(lblTitle);
-            headerPanel.Location = new Point(0, 0);
-            headerPanel.Name = "headerPanel";
-            headerPanel.Size = new Size(200, 100);
-            headerPanel.TabIndex = 2;
+            btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 165, 0));
+            btnUndo.Location = new Point(600, 15);
+            btnUndo.TextAlign = ContentAlignment.MiddleCenter;
+            btnUndo.Width = 100;
 
-            lblTitle.Location = new Point(0, 0);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(100, 23);
-            lblTitle.TabIndex = 0;
+            btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 165, 0));
+            btnRedo.Location = new Point(720, 15);
+            btnRedo.TextAlign = ContentAlignment.MiddleCenter;
+            btnRedo.Width = 100;
 
-            toolbarPanel.Controls.Add(comboBoxMain);
-            toolbarPanel.Controls.Add(btnUndo);
-            toolbarPanel.Controls.Add(btnRedo);
-            toolbarPanel.Location = new Point(0, 0);
-            toolbarPanel.Name = "toolbarPanel";
-            toolbarPanel.Size = new Size(200, 100);
-            toolbarPanel.TabIndex = 1;
+            toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBoxMain, btnUndo, btnRedo });
 
-            ClientSize = new Size(1084, 521);
-            Controls.Add(grid);
-            Controls.Add(toolbarPanel);
-            Controls.Add(headerPanel);
-            Name = "PackagesForm";
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "Paketi";
-            ((System.ComponentModel.ISupportInitialize)grid).EndInit();
-            headerPanel.ResumeLayout(false);
-            toolbarPanel.ResumeLayout(false);
-            ResumeLayout(false);
+            grid.Dock = DockStyle.Fill;
+            grid.ReadOnly = true;
+            grid.AutoGenerateColumns = true;
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.Font = new Font("Segoe UI", 11, FontStyle.Regular);
+            grid.RowTemplate.Height = 35;
+            grid.AllowUserToAddRows = false;
+            grid.BackgroundColor = Color.White;
+            grid.BorderStyle = BorderStyle.None;
+            grid.GridColor = Color.LightGray;
+            grid.EnableHeadersVisualStyles = false;
+            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
+            grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+            grid.ColumnHeadersHeight = 40;
+            grid.AutoResizeColumns();
+
+            this.Controls.Add(grid);          
+            this.Controls.Add(toolbarPanel);  
+            this.Controls.Add(headerPanel);
         }
 
         private Button CreateModernButton(string text, Color color)
