@@ -17,100 +17,92 @@ namespace TouristAgencyApp.Forms
 
         private void InitializeComponent()
         {
-            this.grid = new DataGridView();
-            this.btnUndo = new Button();
-            this.btnRedo = new Button();
-            this.comboBoxMain = new ComboBox();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            grid = new DataGridView();
+            btnUndo = new Button();
+            btnRedo = new Button();
+            comboBoxMain = new ComboBox();
+            headerPanel = new Panel();
+            lblTitle = new Label();
+            toolbarPanel = new Panel();
+            ((System.ComponentModel.ISupportInitialize)grid).BeginInit();
+            headerPanel.SuspendLayout();
+            toolbarPanel.SuspendLayout();
+            SuspendLayout();
 
-            // Form properties
-            this.Text = "Paketi";
-            this.Width = 1100;
-            this.Height = 560;
-            this.StartPosition = FormStartPosition.CenterScreen;
-
-            // === HEADER PANEL ===
-            var headerPanel = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 80,
-                BackColor = Color.FromArgb(52, 152, 219)
-            };
-            var lblTitle = new Label
-            {
-                Text = "Upravljanje paketima",
-                Font = new Font("Segoe UI", 18, FontStyle.Bold),
-                ForeColor = Color.White,
-                AutoSize = false,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            headerPanel.Controls.Add(lblTitle);
-            
-
-            // === TOOLBAR PANEL ===
-            var toolbarPanel = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 60,
-                BackColor = Color.White,
-                Padding = new Padding(20, 10, 20, 10)
-            };
-
-            btnAdd = CreateModernButton("➕ Dodaj paket", Color.FromArgb(46, 204, 113));
-            btnAdd.Location = new Point(20, 10);
-            
-
-            btnEdit = CreateModernButton("✏️ Izmeni paket", Color.FromArgb(52, 152, 219));
-            btnEdit.Location = new Point(200, 10);
-            
-
-            comboBoxMain.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBoxMain.Width = 180;
-            comboBoxMain.Font = new Font("Segoe UI", 10);
-            comboBoxMain.Left = 380;
-            comboBoxMain.Top = 15;
-            comboBoxMain.Items.AddRange(new string[] { "Svi paketi", "Sea", "Excursion", "Mountain", "Cruise" });
-            comboBoxMain.SelectedIndex = 0;
-            comboBoxMain.SelectedIndexChanged += (s, e) =>
-            {
-                type = comboBoxMain.SelectedItem.ToString();
-                LoadPackages();
-            };
-
-            btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 165, 0));
-            btnUndo.Location = new Point(600, 15);
-            btnUndo.TextAlign = ContentAlignment.MiddleCenter;
-            btnUndo.Width = 100;
-            
-
-            btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 165, 0));
-            btnRedo.Location = new Point(720, 15);
-            btnRedo.TextAlign = ContentAlignment.MiddleCenter;
-            btnRedo.Width = 100;
-            
-
-            toolbarPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, comboBoxMain, btnUndo, btnRedo });
-            
-            // === DATA GRID ===
-            grid.Dock = DockStyle.Fill;
-            grid.ReadOnly = true;
-            grid.AutoGenerateColumns = true;
-            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grid.Font = new Font("Segoe UI", 11, FontStyle.Regular);
-            grid.RowTemplate.Height = 35;
             grid.AllowUserToAddRows = false;
+            grid.AllowUserToDeleteRows = false;
             grid.BackgroundColor = Color.White;
             grid.BorderStyle = BorderStyle.None;
-            grid.GridColor = Color.LightGray;
-            grid.EnableHeadersVisualStyles = false;
-            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
-            grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(52, 73, 94);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            grid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             grid.ColumnHeadersHeight = 40;
-            grid.AutoResizeColumns();
-            this.Controls.Add(grid);
-            this.Controls.Add(toolbarPanel);
-            this.Controls.Add(headerPanel);
+            grid.Dock = DockStyle.Fill;
+            grid.EnableHeadersVisualStyles = false;
+            grid.Font = new Font("Segoe UI", 11F);
+            grid.GridColor = Color.LightGray;
+            grid.Location = new Point(0, 0);
+            grid.Name = "grid";
+            grid.ReadOnly = true;
+            grid.RowTemplate.Height = 35;
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.Size = new Size(1084, 521);
+            grid.TabIndex = 0;
+            
+            btnUndo.Location = new Point(600, 15);
+            btnUndo.Name = "btnUndo";
+            btnUndo.Size = new Size(100, 23);
+            btnUndo.TabIndex = 1;
+           
+            btnRedo.Location = new Point(720, 15);
+            btnRedo.Name = "btnRedo";
+            btnRedo.Size = new Size(100, 23);
+            btnRedo.TabIndex = 2;
+
+            comboBoxMain.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxMain.Font = new Font("Segoe UI", 10F);
+            comboBoxMain.Items.AddRange(new object[] { "Svi paketi", "Sea", "Excursion", "Mountain", "Cruise" });
+            comboBoxMain.Location = new Point(380, 15);
+            comboBoxMain.Name = "comboBoxMain";
+            comboBoxMain.Size = new Size(180, 25);
+            comboBoxMain.TabIndex = 0;
+
+            headerPanel.Controls.Add(lblTitle);
+            headerPanel.Location = new Point(0, 0);
+            headerPanel.Name = "headerPanel";
+            headerPanel.Size = new Size(200, 100);
+            headerPanel.TabIndex = 2;
+
+            lblTitle.Location = new Point(0, 0);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(100, 23);
+            lblTitle.TabIndex = 0;
+
+            toolbarPanel.Controls.Add(comboBoxMain);
+            toolbarPanel.Controls.Add(btnUndo);
+            toolbarPanel.Controls.Add(btnRedo);
+            toolbarPanel.Location = new Point(0, 0);
+            toolbarPanel.Name = "toolbarPanel";
+            toolbarPanel.Size = new Size(200, 100);
+            toolbarPanel.TabIndex = 1;
+
+            ClientSize = new Size(1084, 521);
+            Controls.Add(grid);
+            Controls.Add(toolbarPanel);
+            Controls.Add(headerPanel);
+            Name = "PackagesForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Paketi";
+            ((System.ComponentModel.ISupportInitialize)grid).EndInit();
+            headerPanel.ResumeLayout(false);
+            toolbarPanel.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         private Button CreateModernButton(string text, Color color)
@@ -128,52 +120,67 @@ namespace TouristAgencyApp.Forms
                 Cursor = Cursors.Hand
             };
         }
-        private void DodajPaket()
+        private PackageAddContext DodajPaket()
         {
+            PackageAddContext context = new PackageAddContext();
             var f = new Form { Text = "Novi paket", Width = 440, Height = 700, StartPosition = FormStartPosition.CenterParent };
-
+            context.Form = f;
             var lblType = new Label { Text = "Tip paketa", Left = 20, Top = 20, Width = 200 };
             var cbType = new ComboBox { Left = 20, Top = 45, Width = 300, DropDownStyle = ComboBoxStyle.DropDownList };
+            context.CbType = cbType;
             cbType.Items.AddRange(new[] { "Sea", "Mountain", "Excursion", "Cruise" });
             cbType.SelectedIndex = 0;
 
             var lblName = new Label { Text = "Naziv paketa", Left = 20, Top = 80, Width = 200 };
             var txtName = new TextBox { Top = 105, Left = 20, Width = 300 };
+            context.TxtName = txtName;
 
             var lblPrice = new Label { Text = "Cena", Left = 20, Top = 140, Width = 200 };
             var numPrice = new NumericUpDown { Top = 165, Left = 20, Width = 300, DecimalPlaces = 2, Maximum = 1000000 };
+            context.NumPrice = numPrice;
 
             var lblDestination = new Label { Text = "Destinacija", Left = 20, Top = 200, Width = 200 };
             var txtDestination = new TextBox { Top = 225, Left = 20, Width = 300 };
+            context.TxtDestination = txtDestination;
 
             var lblAcc = new Label { Text = "Smeštaj", Left = 20, Top = 260, Width = 200 };
             var txtAcc = new TextBox { Top = 285, Left = 20, Width = 300 };
+            context.TxtAcc = txtAcc;
 
             var lblTransport = new Label { Text = "Prevoz", Left = 20, Top = 320, Width = 200 };
             var txtTransport = new TextBox { Top = 345, Left = 20, Width = 300 };
+            context.TxtTransport = txtTransport;
 
             var lblActivities = new Label { Text = "Dodatne aktivnosti", Left = 20, Top = 380, Width = 200 };
             var txtActivities = new TextBox { Top = 405, Left = 20, Width = 300 };
-
+            context.TxtActivities = txtActivities;
+            
             var lblGuide = new Label { Text = "Vodič", Left = 20, Top = 260, Width = 200 };
             var txtGuide = new TextBox { Top = 285, Left = 20, Width = 300 };
+            context.TxtGuide = txtGuide;
 
             var lblDuration = new Label { Text = "Trajanje (dani)", Left = 20, Top = 380, Width = 200 };
             var numDuration = new NumericUpDown { Top = 405, Left = 20, Width = 300, Maximum = 60, Minimum = 0 };
+            context.NumDuration = numDuration;
 
             var lblShip = new Label { Text = "Brod", Left = 20, Top = 200, Width = 200 };
             var txtShip = new TextBox { Top = 225, Left = 20, Width = 300 };
+            context.TxtShip = txtShip;
 
             var lblRoute = new Label { Text = "Ruta", Left = 20, Top = 260, Width = 200 };
             var txtRoute = new TextBox { Top = 285, Left = 20, Width = 300 };
+            context.TxtRoute = txtRoute;
 
             var lblDeparture = new Label { Text = "Datum polaska", Left = 20, Top = 320, Width = 200 };
             var dtDeparture = new DateTimePicker { Top = 345, Left = 20, Width = 300 };
+            context.DtDeparture = dtDeparture;
 
             var lblCabin = new Label { Text = "Tip kabine", Left = 20, Top = 380, Width = 200 };
             var txtCabin = new TextBox { Top = 405, Left = 20, Width = 300 };
+            context.TxtCabin = txtCabin;
 
             var btnSave = new Button { Text = "Sačuvaj", Top = 805, Left = 20, Width = 120, Height = 40, Font = new Font("Segoe UI", 11, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter };
+            context.BtnSave = btnSave;
 
             void UpdateFields()
             {
@@ -238,50 +245,11 @@ namespace TouristAgencyApp.Forms
             cbType.SelectedIndexChanged += (ss, ee) => UpdateFields();
             UpdateFields();
 
-            btnSave.Click += (ss, ee) =>
-            {
-                TravelPackage pkg = cbType.SelectedItem.ToString() switch
-                {
-                    "Sea" => PackageDirector.CreateSeaPackage(
-                        txtName.Text,
-                        numPrice.Value,
-                        txtDestination.Text,
-                        txtAcc.Text,
-                        txtTransport.Text),
-                    "Mountain" => PackageDirector.CreateMountainPackage(
-                        txtName.Text,
-                        numPrice.Value,
-                        txtDestination.Text,
-                        txtAcc.Text,
-                        txtTransport.Text,
-                        txtActivities.Text),
-                    "Excursion" => PackageDirector.CreateExcursionPackage(
-                        txtName.Text,
-                        numPrice.Value,
-                        txtDestination.Text,
-                        txtTransport.Text,
-                        txtGuide.Text,
-                        (int)numDuration.Value),
-                    "Cruise" => PackageDirector.CreateCruisePackage(
-                        txtName.Text,
-                        numPrice.Value,
-                        txtShip.Text,
-                        txtRoute.Text,
-                        dtDeparture.Value,
-                        txtCabin.Text),
-                    _ => throw new Exception("Unknown package type")
-                };
-                //TravelPackage packege = factory.GetHashCode("", "", "")
 
-                int id = _packageFacade.AddPackage(pkg);
-                f.Close();
-                btnUndo.Visible = true;
-                LoadPackages();
-            };
-
-            f.ShowDialog();
+            return context;
+            //f.ShowDialog();
         }
-
+        
         private PackageEditContext IzmeniPaket()
         {
             
@@ -451,145 +419,8 @@ namespace TouristAgencyApp.Forms
             if (grid.Columns.Contains("Details"))
                 grid.Columns["Details"].HeaderText = "Detalji";
         }
-        private Form CreateEditForm(TravelPackage pkg)
-        {
-            var f = new Form
-            {
-                Text = "Izmeni paket",
-                Width = 440,
-                StartPosition = FormStartPosition.CenterParent
-            };
-
-            var lblName = new Label { Text = "Naziv paketa", Left = 20, Top = 20, Width = 200 };
-            var txtName = new TextBox { Text = pkg.Name, Top = 45, Left = 20, Width = 300 };
-
-            var lblPrice = new Label { Text = "Cena", Left = 20, Top = 80, Width = 200 };
-            var numPrice = new NumericUpDown
-            {
-                Top = 105,
-                Left = 20,
-                Width = 300,
-                DecimalPlaces = 2,
-                Minimum = 0,
-                Maximum = 1000000,
-                Value = pkg.Price
-            };
-
-            var btnSave = new Button
-            {
-                Text = "Sačuvaj",
-                Left = 20,
-                Width = 120,
-                Height = 40,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-
-            // Common controls always added
-            f.Controls.AddRange(new Control[] { lblName, txtName, lblPrice, numPrice });
-
-            // Add package type specific controls and btnSave event
-            if (pkg.Type == "Sea" && pkg is SeaPackage sea)
-            {
-                var lblDestination = new Label { Text = "Destinacija", Left = 20, Top = 140, Width = 200 };
-                var txtDestination = new TextBox { Text = sea.Destination, Top = 165, Left = 20, Width = 300 };
-
-                var lblAcc = new Label { Text = "Smeštaj", Left = 20, Top = 200, Width = 200 };
-                var txtAcc = new TextBox { Text = sea.Accommodation, Top = 225, Left = 20, Width = 300 };
-
-                var lblTransport = new Label { Text = "Prevoz", Left = 20, Top = 260, Width = 200 };
-                var txtTransport = new TextBox { Text = sea.Transport, Top = 285, Left = 20, Width = 300 };
-
-                f.Controls.AddRange(new Control[] {
-            lblDestination, txtDestination,
-            lblAcc, txtAcc,
-            lblTransport, txtTransport,
-        });
-
-                btnSave.Top = txtTransport.Bottom + 30;
-                f.Height = btnSave.Top + btnSave.Height + 40;
-
-                
-            }
-            else if (pkg.Type == "Mountain" && pkg is MountainPackage mountain)
-            {
-                var lblDestination = new Label { Text = "Destinacija", Left = 20, Top = 140, Width = 200 };
-                var txtDestination = new TextBox { Text = mountain.Destination, Top = 165, Left = 20, Width = 300 };
-
-                var lblAcc = new Label { Text = "Smeštaj", Left = 20, Top = 200, Width = 200 };
-                var txtAcc = new TextBox { Text = mountain.Accommodation, Top = 225, Left = 20, Width = 300 };
-
-                var lblTransport = new Label { Text = "Prevoz", Left = 20, Top = 260, Width = 200 };
-                var txtTransport = new TextBox { Text = mountain.Transport, Top = 285, Left = 20, Width = 300 };
-
-                var lblActivities = new Label { Text = "Dodatne aktivnosti", Left = 20, Top = 320, Width = 200 };
-                var txtActivities = new TextBox { Text = mountain.Activities, Top = 345, Left = 20, Width = 300 };
-
-                f.Controls.AddRange(new Control[] {
-            lblDestination, txtDestination,
-            lblAcc, txtAcc,
-            lblTransport, txtTransport,
-            lblActivities, txtActivities,
-        });
-
-                btnSave.Top = txtActivities.Bottom + 30;
-                f.Height = btnSave.Top + btnSave.Height + 40;
-
-                
-            }
-            else if (pkg.Type == "Excursion" && pkg is ExcursionPackage excursion)
-            {
-                var lblDestination = new Label { Text = "Destinacija", Left = 20, Top = 140, Width = 200 };
-                var txtDestination = new TextBox { Text = excursion.Destination, Top = 165, Left = 20, Width = 300 };
-
-                var lblTransport = new Label { Text = "Prevoz", Left = 20, Top = 200, Width = 200 };
-                var txtTransport = new TextBox { Text = excursion.Transport, Top = 225, Left = 20, Width = 300 };
-
-                var lblGuide = new Label { Text = "Vodič", Left = 20, Top = 260, Width = 200 };
-                var txtGuide = new TextBox { Text = excursion.Guide, Top = 285, Left = 20, Width = 300 };
-
-                var lblDuration = new Label { Text = "Trajanje (dani)", Left = 20, Top = 320, Width = 200 };
-                var numDuration = new NumericUpDown { Value = excursion.Duration, Top = 345, Left = 20, Width = 300, Maximum = 60, Minimum = 0 };
-
-                f.Controls.AddRange(new Control[] {
-            lblDestination, txtDestination,
-            lblTransport, txtTransport,
-            lblGuide, txtGuide,
-            lblDuration, numDuration,
-        });
-
-                btnSave.Top = numDuration.Bottom + 30;
-                f.Height = btnSave.Top + btnSave.Height + 40;
-
-                
-            }
-            else if (pkg.Type == "Cruise" && pkg is CruisePackage cruise)
-            {
-                var lblShip = new Label { Text = "Brod", Left = 20, Top = 140, Width = 200 };
-                var txtShip = new TextBox { Text = cruise.Ship, Top = 165, Left = 20, Width = 300 };
-
-                var lblRoute = new Label { Text = "Ruta", Left = 20, Top = 200, Width = 200 };
-                var txtRoute = new TextBox { Text = cruise.Route, Top = 225, Left = 20, Width = 300 };
-
-                var lblDeparture = new Label { Text = "Datum polaska", Left = 20, Top = 260, Width = 200 };
-                var dtDeparture = new DateTimePicker { Value = cruise.DepartureDate, Top = 285, Left = 20, Width = 300 };
-
-                var lblCabin = new Label { Text = "Tip kabine", Left = 20, Top = 320, Width = 200 };
-                var txtCabin = new TextBox { Text = cruise.CabinType, Top = 345, Left = 20, Width = 300 };
-
-                f.Controls.AddRange(new Control[] {
-            lblShip, txtShip,
-            lblRoute, txtRoute,
-            lblDeparture, dtDeparture,
-            lblCabin, txtCabin,
-        });
-
-                
-            }
-
-            f.Controls.Add(btnSave);
-
-            return f;
-        }
+        private Panel headerPanel;
+        private Label lblTitle;
+        private Panel toolbarPanel;
     }
 }
