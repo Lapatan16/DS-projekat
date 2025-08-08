@@ -65,11 +65,7 @@ namespace TouristAgencyApp.Forms
             comboBoxMain.Top = 15;
             comboBoxMain.Items.AddRange(new string[] { "Svi paketi", "Sea", "Excursion", "Mountain", "Cruise" });
             comboBoxMain.SelectedIndex = 0;
-            comboBoxMain.SelectedIndexChanged += (s, e) =>
-            {
-                type = comboBoxMain.SelectedItem.ToString();
-                LoadPackages();
-            };
+            
 
             btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 165, 0));
             btnUndo.Location = new Point(600, 15);
