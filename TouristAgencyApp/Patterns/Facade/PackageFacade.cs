@@ -28,7 +28,18 @@ namespace TouristAgencyApp.Patterns
                 pkg.Details = pkg.ToString();
             return data;
         }
+        public List<TravelPackage> GetPackagesByType(string type)
+        {
+            var data = _dbService.GetAllPackages().ToList();
+            List<TravelPackage> lista = new List<TravelPackage>();
 
+            foreach (var pkg in data)
+            {
+                if (type == "Svi paketi" || type == pkg.Type)
+                    lista.Add(pkg);
+            }
+            return lista;
+        }
         public int AddPackage(TravelPackage package)
         {
             int id = _manager.AddPackage(package);

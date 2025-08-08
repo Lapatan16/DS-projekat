@@ -37,17 +37,10 @@ namespace TouristAgencyApp.Forms
         {
             grid.DataSource = null;
             grid.Columns.Clear();
-            
-            var data = _packageFacade.GetAllPackages();
-            List<TravelPackage> lista = new List<TravelPackage>();
 
-            foreach (var pkg in data)
-            {
-                if (type == "Svi paketi" || type == pkg.Type)
-                    lista.Add(pkg);
-            }
-            setupGrid(lista);
+            var data = _packageFacade.GetPackagesByType(type);
             
+            setupGrid(data);
         }
         private void OpozoviAkciju()
         {
