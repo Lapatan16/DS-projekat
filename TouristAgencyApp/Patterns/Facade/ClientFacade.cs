@@ -15,7 +15,7 @@ namespace TouristAgencyApp.Patterns
             _dbService = dbService;
             _clientManager = new ClientManager(dbService);
             _clientSubject = new ClientSubject();
-            
+            _clientSubject.SubscribeToManager(_clientManager);
             
             _clientSubject.Attach(new ClientLogger());
             _clientSubject.Attach(new ClientNotifier());
@@ -26,19 +26,19 @@ namespace TouristAgencyApp.Patterns
         public void AddClient(Client client)
         {
             int id = _clientManager.AddClient(client);
-            _clientSubject.AddClient(client, id);
+            //_clientSubject.AddClient(client, id);
         }
 
         public void UpdateClient(Client client)
         {
             _clientManager.updateClient(client);
-            _clientSubject.UpdateClient(client); 
+            //_clientSubject.UpdateClient(client); 
         }
 
         public void RemoveClient(int clientId)
         {
             _clientManager.RemoveClient(clientId);
-            _clientSubject.RemoveClient(clientId);
+            //_clientSubject.RemoveClient(clientId);
         }
 
         public void UndoLastAction()

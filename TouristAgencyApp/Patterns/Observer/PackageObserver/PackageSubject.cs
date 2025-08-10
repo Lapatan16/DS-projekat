@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Models;
+using TouristAgencyApp.Utils;
 
 namespace TouristAgencyApp.Patterns.Observer.PackageObserver
 {
@@ -16,7 +17,28 @@ namespace TouristAgencyApp.Patterns.Observer.PackageObserver
             if (!_observers.Contains(observer))
                 _observers.Add(observer);
         }
+        public void SubscribeToManager(PackageManager manager)
+        {
+            manager.PackageChanged += OnPackageChanged;
+        }
+        public void UnsubscribeToManager(PackageManager manager)
+        {
+            manager.PackageChanged -= OnPackageChanged;
+        }
+        private void OnPackageChanged(object? sender, PackageChangedEventArgs e)
+        {
+            string message = e.Action switch
+            {
+                "Added" => $"Novi paket dodat: {e.Package.Name} | id: {e.Id}",
+                "Updated" => $"Paket sa id = {e.Package.Id} je azuriran",
+                _ => "Nepoznata akcija"
+            };
 
+            foreach (var observer in _observers)
+            {
+                observer.Update(message);
+            }
+        }
         public void Detach(IObserver observer)
         {
             _observers.Remove(observer);

@@ -16,7 +16,9 @@ namespace TouristAgencyApp.Patterns
         {
             _dbService = dbService;
             _manager = new PackageManager(dbService);
+            
             _subject = new PackageSubject();
+            _subject.SubscribeToManager(_manager);
             _subject.Attach(new PackageLogger());
             _subject.Attach(new PackageNotifier());
         }
@@ -43,14 +45,14 @@ namespace TouristAgencyApp.Patterns
         public int AddPackage(TravelPackage package)
         {
             int id = _manager.AddPackage(package);
-            _subject.AddPackage(package, id);
+           // _subject.AddPackage(package, id);
             return id;
         }
 
         public void UpdatePackage(TravelPackage package)
         {
             _manager.UpdatePackage(package);
-            _subject.UpdatePackage(package);
+            //_subject.UpdatePackage(package);
         }
 
         public void Undo()
