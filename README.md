@@ -56,8 +56,8 @@ Reservations (Id, ClientId, PackageId, NumPersons, ReservationDate, ExtraService
 ## 🎨 Design Patterns
 
 ### Creational Patterns:
-1. **Singleton** - `ConfigManager` (konfiguracija aplikacije, povezivanje sa bazom, thread-safe je koristi se Lazy<T> klasa)
-2. **Factory** - `PackageFactory` (kreiranje različitih tipova paketa)
+1. **Singleton** - `AppSettings` (čita config.txt jednom; globalni pristup preko AppSettings.Instance)
+2. **Multiton**  - `DatabaseFactory` (po connection stringu vraća/kešira po jednu instancu IDatabaseService; Factory deo bira SQLiteDatabaseService ili MySQLDatabaseService)
 3. **Builder** - `ReservationBuilder.cs` (pravljenje rezervacije korak po korak)
 
 ### Structural Patterns:
@@ -83,7 +83,7 @@ dotnet run
 ```
 
 ### Konfiguracija:
-Uredite `config.txt` fajl:
+Uredite `config*.txt` fajl:
 ```
 Naziv agencije
 Connection string
@@ -133,6 +133,7 @@ TouristAgencyApp/
 │   ├── MySQLDatabaseService.cs
 │   └── ConfigManager.cs
 ├── Patterns/             # Design Patterns
+|   ├── AppSettings.cs 
 │   ├── ClientManager.cs
 │   ├── CommandPattern.cs
 │   ├── IBackupService.cs

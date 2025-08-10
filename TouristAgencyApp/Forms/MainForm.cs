@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TouristAgencyApp.Services;
 using TouristAgencyApp.Patterns.Facade;
+using TouristAgencyApp.Patterns;
 
 namespace TouristAgencyApp.Forms
 {
@@ -19,10 +20,9 @@ namespace TouristAgencyApp.Forms
         private readonly BackupFacade _backupFacade;
         private System.Windows.Forms.Timer backupTimer;
 
-        public MainForm(IDatabaseService dbService, string agencyName)
+        public MainForm(IDatabaseService dbService)
         {
             _dbService = dbService;
-            _agencyName = agencyName;
             _backupFacade = new BackupFacade("agencija.db");
             InitializeComponent();
             SetupBackupTimer();

@@ -43,12 +43,23 @@ namespace TouristAgencyApp.Forms
         {
             if (cmbConfigs.SelectedItem is ConfigItem selected)
             {
-                var config = new ConfigManager(selected.FullPath);
-                var db = DatabaseFactory.GetDatabaseService(selected.FullPath);
-                var mainForm = new MainForm(db, config.AgencyName);
-                this.Hide();
-                mainForm.ShowDialog();
-                this.Close();
+                try
+                {
+                    AppSettings.Instance.Load(selected.FullPath);
+
+                    var db = DatabaseFactory.GetDatabaseService(AppSettings.Instance.ConnectionString);
+
+                    var mainForm = new MainForm(db);
+
+                    this.Hide();
+                    mainForm.ShowDialog();
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Greška pri startu: {ex.Message}", "Greška",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
