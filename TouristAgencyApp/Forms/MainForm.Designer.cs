@@ -1,4 +1,5 @@
 ﻿using System.Drawing.Drawing2D;
+using TouristAgencyApp.Patterns;
 
 namespace TouristAgencyApp.Forms
 {
@@ -15,7 +16,7 @@ namespace TouristAgencyApp.Forms
         {
             this.SuspendLayout();
 
-            this.Text = _agencyName;
+            this.Text = AppSettings.Instance.AgencyName;
             this.Width = 800;
             this.Height = 600;
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -50,7 +51,7 @@ namespace TouristAgencyApp.Forms
 
             lblAgency = new Label
             {
-                Text = _agencyName,
+                Text = AppSettings.Instance.AgencyName,
                 Font = new Font("Segoe UI", 24, FontStyle.Bold),
                 ForeColor = Color.White,
                 Width = 800,

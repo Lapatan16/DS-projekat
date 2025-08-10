@@ -14,40 +14,40 @@ namespace TouristAgencyApp.Patterns
         private static readonly ConcurrentDictionary<string, IDatabaseService> _instances = new();
         private static readonly object _lock = new();
 
-        public static IDatabaseService GetDatabaseService(string configPath)
+        public static IDatabaseService GetDatabaseService(string connectionString)
         {
-            if (_instances.TryGetValue(configPath, out var existingInstance))
-            {
+            if (string.IsNullOrWhiteSpace(connectionString))
+                throw new ArgumentException("Prazan connection string.", nameof(connectionString));
+
+            var key = connectionString.Trim().ToLowerInvariant();
+
+            if (_instances.TryGetValue(key, out var existingInstance))
                 return existingInstance;
-            }
 
             lock (_lock)
             {
-                if (_instances.TryGetValue(configPath, out existingInstance))
+                if (_instances.TryGetValue(key, out existingInstance))
                 {
                     return existingInstance;
                 }
 
-                var config = new ConfigManager(configPath);
                 IDatabaseService dbService;
 
-                string connectionString = config.ConnectionString.ToLower();
-
-                if (connectionString.Contains("data source"))
+                if (key.Contains("data source"))
                 {
-                    dbService = new SQLiteDatabaseService(config.ConnectionString);
+                    dbService = new SQLiteDatabaseService(connectionString);
                 }
-                else if (connectionString.Contains("server") || connectionString.Contains("uid") || connectionString.Contains("mysql"))
+                else if (key.Contains("server") || key.Contains("uid") || key.Contains("user id") || key.Contains("mysql"))
                 {
-                    dbService = new MySQLDatabaseService(config.ConnectionString);
+                    dbService = new MySQLDatabaseService(connectionString);
                 }
                 else
                 {
-                    throw new InvalidOperationException("Nepoznata baza podataka u config fajlu.");
+                    throw new InvalidOperationException("Nepoznata baza (connection string ne prepoznatljiv).");
                 }
 
-                _instances[configPath] = dbService;
-                // MessageBox.Show($"Napravljen novi database service za: {Path.GetFileName(configPath)}");
+                _instances[key] = dbService;
+                // MessageBox.Show($"Napravljen novi database service za: {Path.GetFileName(key)}");
 
                 return dbService;
             }
