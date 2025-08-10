@@ -349,8 +349,6 @@ namespace TouristAgencyApp.Forms
             var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 170, Width = 180, Font = new Font("Segoe UI", 11) };
             var numPersons = new NumericUpDown { Left = 20, Top = 200, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
 
-            var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 240, Width = 180, Font = new Font("Segoe UI", 11) };
-            var txtExtra = new TextBox { Left = 20, Top = 270, Width = 360, Font = new Font("Segoe UI", 11) };
 
             var btnSave = new Button
             {
@@ -376,7 +374,7 @@ namespace TouristAgencyApp.Forms
                        .SetClient(c)
                        .SetPackage(pkg)
                        .SetNumPersons((int)numPersons.Value)
-                       .SetExtraServices(txtExtra.Text)
+                       .SetExtraServices("")
                        .SetReservationDate(DateTime.Now)
                        .Build();
 
@@ -418,7 +416,6 @@ namespace TouristAgencyApp.Forms
                 lblDestinations, cbDestinations,
                 lblPackages, cbPackages,
                 lblPersons, numPersons,
-                lblExtra, txtExtra,
                 btnSave
             });
 
@@ -457,8 +454,6 @@ namespace TouristAgencyApp.Forms
             var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 95, Width = 180, Font = new Font("Segoe UI", 11) };
             var numPersons = new NumericUpDown { Left = 20, Top = 125, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
             numPersons.Value = Convert.ToDecimal(grid.SelectedRows[0].Cells[1].Value);
-            var lblExtra = new Label { Text = "Dodatne usluge:", Left = 20, Top = 165, Width = 180, Font = new Font("Segoe UI", 11) };
-            var txtExtra = new TextBox { Text = grid.SelectedRows[0].Cells[3].Value.ToString(), Left = 20, Top = 195, Width = 360, Font = new Font("Segoe UI", 11) };
 
             var btnSave = new Button
             {
@@ -479,14 +474,14 @@ namespace TouristAgencyApp.Forms
             btnSave.Click += (ss, ee) =>
             {
                 int reservationId = Convert.ToInt32(grid.SelectedRows[0].Cells[4].Value);
-                _reservationFacade.UpdateReservation(reservationId, (int)numPersons.Value, txtExtra.Text);
+                _reservationFacade.UpdateReservation(reservationId, (int)numPersons.Value, "");
 
 
                 btnUndo.Visible = true;
                 LoadReservations();
                 f.Close();
             };
-            f.Controls.AddRange(new Control[] { lblPackages, lblPersons, numPersons, lblExtra, txtExtra, btnSave });
+            f.Controls.AddRange(new Control[] { lblPackages, lblPersons, numPersons, btnSave });
             f.ShowDialog();
 
 
