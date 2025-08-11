@@ -24,6 +24,7 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
             DepartureDate = departureDate;
             CabinType = cabinType;
             Destination = destination;
+            OriginatorType = typeof(ExcursionPackage);
         }
         public override TravelPackage GetState()
         {

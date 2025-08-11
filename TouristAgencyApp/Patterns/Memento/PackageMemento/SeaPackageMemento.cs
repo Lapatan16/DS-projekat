@@ -19,6 +19,7 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
             Destination = destination;
             Accommodation = accommodation;
             Transport = transport;
+            OriginatorType = typeof(SeaPackage);
         }
 
         public override TravelPackage GetState()

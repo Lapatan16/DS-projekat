@@ -20,6 +20,7 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
             Accommodation = accommodation;
             Transport = transport;
             Activities = activities;
+            OriginatorType = typeof(MountainPackage);
         }
         public override TravelPackage GetState()
         {
