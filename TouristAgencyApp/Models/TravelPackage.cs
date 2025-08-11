@@ -99,6 +99,7 @@ namespace TouristAgencyApp.Models
             Transport = memento.Transport;
             Details = memento.Details;
             Duration = memento.Duration;
+            Destination = memento.Destination;
         }
         public override string ToString()
         {
@@ -112,14 +113,13 @@ namespace TouristAgencyApp.Models
         public string Route { get; set; } = "";
         public DateTime DepartureDate { get; set; }
         public string CabinType { get; set; } = "";
-
         public override string ToString()
         {
             return $"Brod: {Ship}, Ruta: {Route}, Polazak: {DepartureDate:dd.MM.yyyy}, Kabina: {CabinType}";
         }
         public override TravelPackageMemento CreateMemento()
         {
-            return new CruisePackageMemento(Id, Name, Price, Type, Details, Ship, Route, DepartureDate, CabinType);
+            return new CruisePackageMemento(Id, Name, Price, Type, Details, Ship, Route, DepartureDate, CabinType, Destination);
         }
         public void Restore(CruisePackageMemento memento)
         {

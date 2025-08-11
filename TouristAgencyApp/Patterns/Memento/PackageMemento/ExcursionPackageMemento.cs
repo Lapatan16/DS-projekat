@@ -14,7 +14,7 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
         public string Guide { get; set; } = "";
         public int Duration { get; set; }
         public ExcursionPackageMemento(int id, string name, decimal price, string type, string destination, string details, string transport, string guide, int duration)
-            : base(id, name, price, type, details)
+            : base(id, name, price, type, details, destination)
         {
             Destination = destination;
             Transport = transport;

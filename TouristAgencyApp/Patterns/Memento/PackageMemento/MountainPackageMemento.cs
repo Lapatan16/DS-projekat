@@ -14,7 +14,7 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
         public string Transport { get; set; } = "";
         public string Activities { get; set; } = "";
         public MountainPackageMemento(int id, string name, decimal price, string type, string destination, string accommodation, string transport, string activities,string details)
-            : base(id, name, price, type, details)
+            : base(id, name, price, type, details,destination)
         {
             Destination = destination;
             Accommodation = accommodation;

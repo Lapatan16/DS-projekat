@@ -15,13 +15,15 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
         public string Route { get; set; } = "";
         public DateTime DepartureDate { get; set; }
         public string CabinType { get; set; } = "";
-        public CruisePackageMemento(int id, string name, decimal price, string type, string details, string ship, string route, DateTime departureDate, string cabinType)
-            :base(id,name,price,type,details)
+        public string Destination { get; set; }
+        public CruisePackageMemento(int id, string name, decimal price, string type, string details, string ship, string route, DateTime departureDate, string cabinType, string destination)
+            :base(id,name,price,type,details, destination)
         {
             Ship = ship;
             Route = route;
             DepartureDate = departureDate;
             CabinType = cabinType;
+            Destination = destination;
         }
         public override TravelPackage GetState()
         {
@@ -38,7 +40,8 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
                 Ship = Ship,
                 Route = Route,
                 DepartureDate = DepartureDate,
-                CabinType = CabinType
+                CabinType = CabinType,
+                Destination =Destination
             };
         }
     }

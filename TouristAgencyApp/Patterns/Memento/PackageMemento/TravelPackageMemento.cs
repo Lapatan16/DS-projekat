@@ -14,15 +14,15 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
         public decimal Price { get; }
         public string Type { get; }
         public string Details { get; }
-
-        protected TravelPackageMemento(int id, string name, decimal price, string type, string details  )
+        
+        protected TravelPackageMemento(int id, string name, decimal price, string type, string details, string destination  )
         {
             Id = id;
             Name = name;
             Price = price;
             Type = type;
             Details = details;
-
+          
         }
 
         public abstract TravelPackage GetState();

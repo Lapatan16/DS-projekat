@@ -230,6 +230,7 @@ VALUES ($fn, $ln, $pn, $bd, $em, $ph); SELECT last_insert_rowid()";
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
             var cmd = connection.CreateCommand();
+
             cmd.CommandText = @"INSERT INTO TravelPackages (Name, Price, Type, Destination, Details)
                               VALUES ($n, $p, $t, $des, $d); SELECT last_insert_rowid()";
             cmd.Parameters.AddWithValue("$n", package.Name);

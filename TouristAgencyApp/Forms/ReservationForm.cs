@@ -1,4 +1,5 @@
 ﻿using Org.BouncyCastle.Bcpg.OpenPgp;
+using System.Linq;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Patterns.Observer.ReservationObserver;
@@ -312,12 +313,22 @@ namespace TouristAgencyApp.Forms
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 11)
             };
-
+            
+            
             var uniqueDestinations = allPackages
                 .Select(p => p.Destination)
                 .Where(d => !string.IsNullOrWhiteSpace(d))
                 .Distinct()
                 .ToList();
+            foreach (var pk in allPackages)
+            {
+                if (pk is CruisePackage)
+                {
+                    string temp = ((CruisePackage)pk).Route.Split(',').Last();
+                    temp.Trim();
+                    if (!uniqueDestinations.Contains(temp)) uniqueDestinations.Add(temp);
+                }
+            }
 
             cbDestinations.DataSource = uniqueDestinations;
 
@@ -339,7 +350,16 @@ namespace TouristAgencyApp.Forms
                 var filteredPackages = allPackages
                     .Where(p => p.Destination == selectedDestination)
                     .ToList();
+                foreach(var pk in allPackages)
+                {
+                    if(pk is CruisePackage)
+                    {
+                        string temp = ((CruisePackage)pk).Route.Split(',').Last();
+                        temp.Trim();
+                        if ( temp == selectedDestination) filteredPackages.Add(pk);
 
+                    }
+                }
                 cbPackages.DataSource = filteredPackages;
                 cbPackages.DisplayMember = "Name";
             }
@@ -370,6 +390,17 @@ namespace TouristAgencyApp.Forms
             {
                 if (cbPackages.SelectedItem is TravelPackage pkg)
                 {
+                    if (cbDestinations.SelectedItem is not string selectedDestination || string.IsNullOrWhiteSpace(selectedDestination))
+                    {
+                        MessageBox.Show("Molimo odaberite destinaciju.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (numPersons.Value < 1 || numPersons.Value > numPersons.Maximum)
+                    {
+                        MessageBox.Show($"Broj osoba mora biti između 1 i {numPersons.Maximum}.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                     Reservation reservation = new Reservation
                     {
                         ClientId = c.Id,

@@ -262,6 +262,14 @@ namespace TouristAgencyApp.Patterns
             }
             return this;
         }
+        public CruisePackageBuilder SetDestination(string destination)
+        {
+            if (_package is CruisePackage cruisePackage)
+            {
+                cruisePackage.Destination = destination;
+            }
+            return this;
+        }
 
         public override TravelPackage Build()
         {
@@ -307,8 +315,9 @@ namespace TouristAgencyApp.Patterns
                 .Build();
         }
 
-        public static TravelPackage CreateCruisePackage(string name, decimal price, string ship, string route, DateTime departureDate, string cabinType)
+        public static TravelPackage CreateCruisePackage(string name, decimal price, string ship, string route, DateTime departureDate, string cabinType, string destination)
         {
+            destination = route.Split(',').Last().Trim();
             return new CruisePackageBuilder()
                 .SetName(name)
                 .SetPrice(price)
@@ -316,6 +325,7 @@ namespace TouristAgencyApp.Patterns
                 .SetRoute(route)
                 .SetDepartureDate(departureDate)
                 .SetCabinType(cabinType)
+                .SetDestination(destination)
                 .Build();
         }
 
@@ -341,9 +351,10 @@ namespace TouristAgencyApp.Patterns
             return package;
         }
 
-        public static TravelPackage CreateCruisePackageForUpdate(int id, string name, decimal price, string ship, string route, DateTime departureDate, string cabinType)
+        public static TravelPackage CreateCruisePackageForUpdate(int id, string name, decimal price, string ship, string route, DateTime departureDate, string cabinType, string destination)
         {
-            var package = CreateCruisePackage(name, price, ship, route, departureDate, cabinType);
+            destination = route.Split(',').Last().Trim();
+            var package = CreateCruisePackage(name, price, ship, route, departureDate, cabinType, destination);
             package.Id = id;
             return package;
         }
