@@ -29,7 +29,9 @@ namespace TouristAgencyApp.Patterns.Commands.ClientCommands
         public void Execute()
         {
             if (_executed) return;
-            int id = _db.AddClient(_memento.GetState());
+            var client = new Client();
+            client.Restore(_memento);
+            int id = _db.AddClient(client);
             _executed = true;
             _undone = false;
             _redone = false;
@@ -50,7 +52,9 @@ namespace TouristAgencyApp.Patterns.Commands.ClientCommands
         public void Redo()
         {
             if (!_executed || !_undone || _redone) return;
-            int id=_db.AddClient(_memento.GetState());
+            var client = new Client();
+            client.Restore(_memento);
+            int id=_db.AddClient(client);
             _clientId = id;
             _undone = false;
             _redone = true;

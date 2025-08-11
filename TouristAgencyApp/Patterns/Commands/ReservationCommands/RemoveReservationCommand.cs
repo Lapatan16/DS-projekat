@@ -40,7 +40,9 @@ namespace TouristAgencyApp.Patterns.Commands.ReservationCommands
         {
             if (!_executed || _undone)
                 return;
-            _reservationId = _db.AddReservation(_memento.GetState());
+            var reservation = new Reservation();
+            reservation.Restore(_memento);
+            _reservationId = _db.AddReservation(reservation);
             _undone = true;
             _redone = false;
         }
