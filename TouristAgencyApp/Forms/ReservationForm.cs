@@ -320,15 +320,7 @@ namespace TouristAgencyApp.Forms
                 .Where(d => !string.IsNullOrWhiteSpace(d))
                 .Distinct()
                 .ToList();
-            foreach (var pk in allPackages)
-            {
-                if (pk is CruisePackage)
-                {
-                    string temp = ((CruisePackage)pk).Route.Split(',').Last();
-                    temp.Trim();
-                    if (!uniqueDestinations.Contains(temp)) uniqueDestinations.Add(temp);
-                }
-            }
+            
 
             cbDestinations.DataSource = uniqueDestinations;
 
@@ -350,16 +342,7 @@ namespace TouristAgencyApp.Forms
                 var filteredPackages = allPackages
                     .Where(p => p.Destination == selectedDestination)
                     .ToList();
-                foreach(var pk in allPackages)
-                {
-                    if(pk is CruisePackage)
-                    {
-                        string temp = ((CruisePackage)pk).Route.Split(',').Last();
-                        temp.Trim();
-                        if ( temp == selectedDestination) filteredPackages.Add(pk);
-
-                    }
-                }
+                
                 cbPackages.DataSource = filteredPackages;
                 cbPackages.DisplayMember = "Name";
             }
