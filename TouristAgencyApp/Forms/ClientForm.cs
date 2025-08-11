@@ -68,16 +68,16 @@ namespace TouristAgencyApp.Forms
             };
 
             btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 255, 165, 0));
-            btnUndo.Location = new Point(880, 15);
+            btnUndo.Location = new Point(840, 15);
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Click += (s, e) => OpozoviAkciju();
-            btnUndo.Width = 100;
+            btnUndo.Width = 180;
 
             btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 255, 165, 0));
-            btnRedo.Location = new Point(1000, 15);
+            btnRedo.Location = new Point(1040, 15);
             btnRedo.TextAlign = ContentAlignment.MiddleCenter;
             btnRedo.Click += (s, e) => NapredAkcija();
-            btnRedo.Width = 100;
+            btnRedo.Width = 180;
 
             var btnAdd = CreateModernButton("➕ Dodaj klijenta", Color.FromArgb(46, 204, 113));
             btnAdd.Click += (s, e) => DodajKlijenta();
@@ -303,12 +303,51 @@ namespace TouristAgencyApp.Forms
 
             btnSave.Click += (ss, ee) =>
             {
-                if (string.IsNullOrWhiteSpace(txtIme.Text) || string.IsNullOrWhiteSpace(txtPrezime.Text))
+                //if (string.IsNullOrWhiteSpace(txtIme.Text) || string.IsNullOrWhiteSpace(txtPrezime.Text))
+                //{
+                //    MessageBox.Show("Ime i prezime su obavezni!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //    return;
+                //}
+                if (string.IsNullOrWhiteSpace(txtIme.Text) || txtIme.Text.Length < 2 || !System.Text.RegularExpressions.Regex.IsMatch(txtIme.Text, @"^[A-Za-zčćšđžČĆŠĐŽ\s]+$"))
                 {
-                    MessageBox.Show("Ime i prezime su obavezni!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Unesite ispravno ime (samo slova, min. 2 karaktera).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
+                if (string.IsNullOrWhiteSpace(txtPrezime.Text) || txtPrezime.Text.Length < 2 || !System.Text.RegularExpressions.Regex.IsMatch(txtPrezime.Text, @"^[A-Za-zčćšđžČĆŠĐŽ\s]+$"))
+                {
+                    MessageBox.Show("Unesite ispravno prezime (samo slova, min. 2 karaktera).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtPass.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtPass.Text, @"^[A-Za-z0-9]{6,9}$"))
+                {
+                    MessageBox.Show("Broj pasoša mora biti 6-9 alfanumeričkih karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtEmail.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                {
+                    MessageBox.Show("Unesite ispravan email.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtTel.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtTel.Text, @"^\+?[0-9]{6,15}$"))
+                {
+                    MessageBox.Show("Unesite ispravan broj telefona (6-15 cifara, opcionalno +).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (dtp.Value.Date >= DateTime.Today)
+                {
+                    MessageBox.Show("Datum rođenja mora biti u prošlosti.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (dtp.Value.Date < DateTime.Today.AddYears(-120))
+                {
+                    MessageBox.Show("Unesite realan datum rođenja (manje od 120 godina).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
                 var c = new Client
                 {
                     FirstName = txtIme.Text.Trim(),
@@ -392,6 +431,50 @@ namespace TouristAgencyApp.Forms
 
             btnSave.Click += (ss, ee) =>
             {
+                if (string.IsNullOrWhiteSpace(txtIme.Text) || txtIme.Text.Length < 2 || !System.Text.RegularExpressions.Regex.IsMatch(txtIme.Text, @"^[A-Za-zčćšđžČĆŠĐŽ\s]+$"))
+                {
+                    MessageBox.Show("Unesite ispravno ime (samo slova, min. 2 karaktera).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtPrezime.Text) || txtPrezime.Text.Length < 2 || !System.Text.RegularExpressions.Regex.IsMatch(txtPrezime.Text, @"^[A-Za-zčćšđžČĆŠĐŽ\s]+$"))
+                {
+                    MessageBox.Show("Unesite ispravno prezime (samo slova, min. 2 karaktera).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Pasoš - alfanumerički, 6-9 karaktera (prilagoditi po potrebi)
+                if (string.IsNullOrWhiteSpace(txtPass.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtPass.Text, @"^[A-Za-z0-9]{6,9}$"))
+                {
+                    MessageBox.Show("Broj pasoša mora biti 6-9 alfanumeričkih karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Email - osnovna validacija
+                if (string.IsNullOrWhiteSpace(txtEmail.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                {
+                    MessageBox.Show("Unesite ispravan email.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Telefon - samo brojevi, + na početku opcionalno
+                if (string.IsNullOrWhiteSpace(txtTel.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtTel.Text, @"^\+?[0-9]{6,15}$"))
+                {
+                    MessageBox.Show("Unesite ispravan broj telefona (6-15 cifara, opcionalno +).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Datum rođenja - mora biti prošlost i razumna granica
+                if (dtp.Value.Date >= DateTime.Today)
+                {
+                    MessageBox.Show("Datum rođenja mora biti u prošlosti.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (dtp.Value.Date < DateTime.Today.AddYears(-120))
+                {
+                    MessageBox.Show("Unesite realan datum rođenja (manje od 120 godina).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
                 client.FirstName = txtIme.Text;
                 client.LastName = txtPrezime.Text;
                 client.PassportNumber = txtPass.Text;

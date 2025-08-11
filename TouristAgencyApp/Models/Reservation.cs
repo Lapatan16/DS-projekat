@@ -16,6 +16,17 @@ namespace TouristAgencyApp.Models
         public DateTime ReservationDate { get; set; }
         public string ExtraServices { get; set; } = "";
         public string PackageName { get; set; } = "";
+        public string Destination { get; set; } = "";
+        //public Reservation(int clientId, int packageId, int numPersons, DateTime reservationDate, string extraServices, string packageName)
+        //{
+        //    ClientId = clientId;
+        //    PackageId = packageId;
+        //    NumPersons = numPersons;
+        //    ReservationDate = reservationDate;
+        //    ExtraServices = extraServices;
+        //    PackageName = packageName;
+        //}
+
         public ReservationMemento CreateMemento()
         {
             return new ReservationMemento(Id, ClientId, PackageId, NumPersons, ReservationDate, ExtraServices, PackageName);

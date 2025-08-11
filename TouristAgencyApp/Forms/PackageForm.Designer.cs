@@ -68,12 +68,12 @@ namespace TouristAgencyApp.Forms
             
 
             btnUndo = CreateModernButton("↩️ Undo", Color.FromArgb(255, 165, 0));
-            btnUndo.Location = new Point(600, 15);
+            btnUndo.Location = new Point(580, 10);
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Width = 100;
 
             btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 165, 0));
-            btnRedo.Location = new Point(720, 15);
+            btnRedo.Location = new Point(700, 10);
             btnRedo.TextAlign = ContentAlignment.MiddleCenter;
             btnRedo.Width = 100;
 
