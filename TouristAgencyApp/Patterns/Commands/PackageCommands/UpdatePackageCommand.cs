@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TouristAgencyApp.Models;
+using TouristAgencyApp.Patterns.Memento;
 using TouristAgencyApp.Patterns.Memento.PackageMemento;
 using TouristAgencyApp.Services;
 
@@ -35,7 +36,9 @@ namespace TouristAgencyApp.Patterns.Commands.PackageCommands
         public void Execute()
         {
             if (_executed) return;
-            _db.UpdatePackage(_afterMemento.GetState());
+            TravelPackage pk = (TravelPackage)Activator.CreateInstance(_afterMemento.OriginatorType);
+            pk.Restore(_afterMemento);
+            _db.UpdatePackage(pk);
             _executed = true;
             _undone = false;
             _redone = false;
@@ -45,7 +48,9 @@ namespace TouristAgencyApp.Patterns.Commands.PackageCommands
         {
             if (!_executed || _undone)
                 return;
-            _db.UpdatePackage(_beforeMemento.GetState());
+            TravelPackage pk = (TravelPackage)Activator.CreateInstance(_beforeMemento.OriginatorType);
+            pk.Restore(_beforeMemento);
+            _db.UpdatePackage(pk);
             _undone = true;
             _redone = false;
         }
@@ -53,7 +58,9 @@ namespace TouristAgencyApp.Patterns.Commands.PackageCommands
         {
             if (!_executed || !_undone || _redone)
                 return;
-            _db.UpdatePackage(_afterMemento.GetState());
+            TravelPackage pk = (TravelPackage)Activator.CreateInstance(_afterMemento.OriginatorType);
+            pk.Restore(_afterMemento);
+            _db.UpdatePackage(pk);
             _undone = false;
             _redone = true;
         }

@@ -30,7 +30,9 @@ namespace TouristAgencyApp.Patterns.Commands.PackageCommands
         public void Execute()
         {
             if (_executed) return;
-            int id = _db.AddPackage(_memento.GetState());
+            TravelPackage pk = (TravelPackage)Activator.CreateInstance(_memento.OriginatorType);
+            pk.Restore(_memento);
+            int id = _db.AddPackage(pk);
             _executed = true;
             _undone = false;
             _redone = false;
@@ -53,7 +55,9 @@ namespace TouristAgencyApp.Patterns.Commands.PackageCommands
         {
             if (!_executed || !_undone || _redone)
                 return;
-            _packageId = _db.AddPackage(_memento.GetState());
+            TravelPackage pk = (TravelPackage)Activator.CreateInstance(_memento.OriginatorType);
+            pk.Restore(_memento);
+            _packageId = _db.AddPackage(pk);
             _undone = false;
             _redone = true;
         }

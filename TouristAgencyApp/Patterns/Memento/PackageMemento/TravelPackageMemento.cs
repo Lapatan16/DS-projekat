@@ -14,7 +14,7 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
         public decimal Price { get; }
         public string Type { get; }
         public string Details { get; }
-        
+        public Type OriginatorType { get; set; }
         protected TravelPackageMemento(int id, string name, decimal price, string type, string details, string destination  )
         {
             Id = id;
@@ -22,7 +22,7 @@ namespace TouristAgencyApp.Patterns.Memento.PackageMemento
             Price = price;
             Type = type;
             Details = details;
-          
+            
         }
 
         public abstract TravelPackage GetState();
