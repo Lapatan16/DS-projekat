@@ -45,7 +45,6 @@ namespace TouristAgencyApp.Patterns.Commands.ReservationCommands
                 _undone = true;
                 _redone = false;
             }
-                
         }
         public void Redo()
         {

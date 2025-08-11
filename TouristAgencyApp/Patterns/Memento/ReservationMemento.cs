@@ -16,7 +16,10 @@ namespace TouristAgencyApp.Patterns.Memento
         public DateTime ReservationDate { get; }
         public string ExtraServices { get; }
         public string PackageName { get; }
-
+        public ReservationMemento(Reservation res)
+        {
+            //TODO
+        }
         public ReservationMemento(int id, int clientId, int packageId, int numPersons, DateTime reservationDate, string extraServices, string packageName)
         {
             Id = id;

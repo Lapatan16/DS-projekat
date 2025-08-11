@@ -18,7 +18,7 @@ namespace TouristAgencyApp.Patterns
             _subject = new ReservationSubject();
             _subject.Attach(new ReservationLogger());
             _subject.Attach(new ReservationNotifier());
-            _subject.Attach(new ReservationStatistics());
+            
             _subject.SubscribeToManager(_manager);
         }
 
@@ -31,6 +31,7 @@ namespace TouristAgencyApp.Patterns
             {
                 var pkg = packages.FirstOrDefault(p => p.Id == r.PackageId);
                 r.PackageName = pkg != null ? pkg.Name : "(nepoznato)";
+                r.Destination = pkg != null ? pkg.Destination : "(nepoznato)";
             }
 
             return list;

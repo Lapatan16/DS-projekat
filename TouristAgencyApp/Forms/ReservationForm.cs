@@ -1,4 +1,5 @@
-﻿using TouristAgencyApp.Models;
+﻿using Org.BouncyCastle.Bcpg.OpenPgp;
+using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Patterns.Observer.ReservationObserver;
 using TouristAgencyApp.Services;
@@ -27,7 +28,7 @@ namespace TouristAgencyApp.Forms
         private void InitializeForm()
         {
             this.Text = "🛎️ Upravljanje rezervacijama";
-            this.Width = 1100;
+            this.Width = 1260;
             this.Height = 600;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(248, 249, 250);
@@ -99,13 +100,13 @@ namespace TouristAgencyApp.Forms
             btnUndo.Location = new Point(880, 15);
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Click += (s, e) => OpozoviAkciju();
-            btnUndo.Width = 100;
+            btnUndo.Width = 160;
 
             btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 255, 165, 0));
-            btnRedo.Location = new Point(990, 15);
+            btnRedo.Location = new Point(1060, 15);
             btnRedo.TextAlign = ContentAlignment.MiddleCenter;
             btnRedo.Click += (s, e) => NazoviAkciju();
-            btnRedo.Width = 100;
+            btnRedo.Width = 160;
   
             toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo, btnRedo });
 
@@ -154,18 +155,17 @@ namespace TouristAgencyApp.Forms
             });
             grid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                DataPropertyName = "ExtraServices",
-                HeaderText = "Dodatne usluge",
-                Width = 200
-            });
-            grid.Columns.Add(new DataGridViewTextBoxColumn
-            {
                 DataPropertyName = "Id",
                 HeaderText = "Id",
                 Width = 0,
                 Visible = false,
             });
-
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Destination",
+                HeaderText = "Destinacija",
+                Width = 160
+            });
             var headerStyle = new DataGridViewCellStyle
             {
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
@@ -370,14 +370,15 @@ namespace TouristAgencyApp.Forms
             {
                 if (cbPackages.SelectedItem is TravelPackage pkg)
                 {
-                    Reservation reservation = new ReservationBuilder()
-                       .SetClient(c)
-                       .SetPackage(pkg)
-                       .SetNumPersons((int)numPersons.Value)
-                       .SetExtraServices("")
-                       .SetReservationDate(DateTime.Now)
-                       .Build();
-
+                    Reservation reservation = new Reservation
+                    {
+                        ClientId = c.Id,
+                        ExtraServices = "",
+                        NumPersons = (int)numPersons.Value,
+                        PackageId = pkg.Id,
+                        ReservationDate = DateTime.Now,
+                        PackageName = pkg.Name
+                    };
                     int id = _reservationFacade.AddReservation(reservation);
                     btnUndo.Visible = true;
                     f.Close();
@@ -473,7 +474,7 @@ namespace TouristAgencyApp.Forms
 
             btnSave.Click += (ss, ee) =>
             {
-                int reservationId = Convert.ToInt32(grid.SelectedRows[0].Cells[4].Value);
+                int reservationId = Convert.ToInt32(grid.SelectedRows[0].Cells[3].Value);
                 _reservationFacade.UpdateReservation(reservationId, (int)numPersons.Value, "");
 
 
