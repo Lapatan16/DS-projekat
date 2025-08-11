@@ -87,11 +87,13 @@ namespace TouristAgencyApp.Forms
                         context.TxtShip.Text,
                         context.TxtRoute.Text,
                         context.DtDeparture.Value,
-                        context.TxtCabin.Text),
+                        context.TxtCabin.Text,
+                        context.TxtDestination.Text
+                        ),
                     _ => throw new Exception("Unknown package type")
                 };
                 //TravelPackage packege = factory.GetHashCode("", "", "")
-
+                if (!Validate(context)) return;
                 int id = _packageFacade.AddPackage(pkg);
                 context.Form.Close();
                 LoadPackages();
@@ -100,7 +102,6 @@ namespace TouristAgencyApp.Forms
         }
         private void Izmeni()
         {
-
             PackageEditContext context = IzmeniPaket();
             TravelPackage pkg = context.Package;
             if (pkg.Type == "Sea" && pkg is SeaPackage sea)
@@ -114,7 +115,7 @@ namespace TouristAgencyApp.Forms
                         context.TxtDestination.Text,
                         context.TxtAcc.Text,
                         context.TxtTransport.Text);
-
+                    if (!Validate(context)) return;
                     _packageFacade.UpdatePackage(updatedPackage);
                     context.Form.Close();
                     LoadPackages();
@@ -132,7 +133,7 @@ namespace TouristAgencyApp.Forms
                         context.TxtAcc.Text,
                         context.TxtTransport.Text,
                         context.TxtActivities.Text);
-
+                    if (!Validate(context)) return;
                     _packageFacade.UpdatePackage(updatedPackage);
                     context.Form.Close();
                     LoadPackages();
@@ -149,8 +150,10 @@ namespace TouristAgencyApp.Forms
                         context.TxtShip.Text,
                         context.TxtRoute.Text,
                         context.DtDeparture.Value,
-                        context.TxtCabin.Text);
-
+                        context.TxtCabin.Text,
+                        context.TxtDestination.Text
+                        );
+                    if (!Validate(context)) return;
                     _packageFacade.UpdatePackage(updatedPackage);
                     context.Form.Close();
                     LoadPackages();
@@ -167,14 +170,172 @@ namespace TouristAgencyApp.Forms
                         context.TxtDestination.Text,
                         context.TxtTransport.Text,
                         context.TxtGuide.Text,
-                        (int)context.NumDuration.Value);
-
+                        (int)context.NumDuration.Value
+                        );
+                    if (!Validate(context)) return;
                     _packageFacade.UpdatePackage(updatedPackage);
                     context.Form.Close();
                     LoadPackages();
                 };
             }
             context.Form.ShowDialog();
+        }
+        private bool Validate(PackageAddContext context)
+        {
+            var type = context.CbType.Text;
+
+            if (string.IsNullOrWhiteSpace(context.TxtName.Text) || context.TxtName.Text.Length < 3)
+            {
+                MessageBox.Show("Naziv paketa mora imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (context.NumPrice.Value <= 0 || context.NumPrice.Value > 1_000_000)
+            {
+                MessageBox.Show("Cena mora biti veća od 0 i manja od 1.000.000.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type!="Cruise" && (string.IsNullOrWhiteSpace(context.TxtDestination.Text) || context.TxtDestination.Text.Length < 2 || !System.Text.RegularExpressions.Regex.IsMatch(context.TxtDestination.Text, @"^[A-Za-zčćšđžČĆŠĐŽ\s]+$")))
+            {
+                MessageBox.Show("Destinacija mora sadržati samo slova i imati najmanje 2 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if ((type =="Mountain" || type=="Sea") && (string.IsNullOrWhiteSpace(context.TxtAcc.Text) || context.TxtAcc.Text.Length < 3))
+            {
+                MessageBox.Show("Unesite smeštaj (min. 3 karaktera).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if ((type != "Cruise") && string.IsNullOrWhiteSpace(context.TxtTransport.Text) && context.TxtTransport.Text.Length < 3)
+            {
+                MessageBox.Show("Prevoz mora imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Mountain" && string.IsNullOrWhiteSpace(context.TxtActivities.Text) && context.TxtActivities.Text.Length < 3)
+            {
+                MessageBox.Show("Aktivnosti moraju imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type =="Excursion" && (string.IsNullOrWhiteSpace(context.TxtGuide.Text) && !System.Text.RegularExpressions.Regex.IsMatch(context.TxtGuide.Text, @"^[A-Za-zčćšđžČĆŠĐŽ\s]+$")))
+            {
+                MessageBox.Show("Vodič može sadržati samo slova i razmake.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Excursion" && (context.NumDuration.Value < 1 || context.NumDuration.Value > 365))
+            {
+                MessageBox.Show("Trajanje mora biti između 1 i 365 dana.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtShip.Text) && context.TxtShip.Text.Length < 2)
+            {
+                MessageBox.Show("Naziv broda mora imati najmanje 2 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtRoute.Text) && context.TxtRoute.Text.Length < 3)
+            {
+                MessageBox.Show("Ruta mora imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Cruise" && context.DtDeparture.Value.Date < DateTime.Today)
+            {
+                MessageBox.Show("Datum polaska ne može biti u prošlosti.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type =="Cruise" && string.IsNullOrWhiteSpace(context.TxtCabin.Text) && context.TxtCabin.Text.Length < 2)
+            {
+                MessageBox.Show("Kabina mora imati najmanje 2 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true;
+        }
+        private bool Validate(PackageEditContext context)
+        {
+            var type = context.Package.Type;
+            if (string.IsNullOrWhiteSpace(context.TxtName.Text) || context.TxtName.Text.Length < 3)
+            {
+                MessageBox.Show("Naziv paketa mora imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (context.NumPrice.Value <= 0 || context.NumPrice.Value > 1_000_000)
+            {
+                MessageBox.Show("Cena mora biti veća od 0 i manja od 1.000.000.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type != "Cruise" && (string.IsNullOrWhiteSpace(context.TxtDestination.Text) || context.TxtDestination.Text.Length < 2 || !System.Text.RegularExpressions.Regex.IsMatch(context.TxtDestination.Text, @"^[A-Za-zčćšđžČĆŠĐŽ\s]+$")))
+            {
+                MessageBox.Show("Destinacija mora sadržati samo slova i imati najmanje 2 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if ((type == "Mountain" || type == "Sea") && (string.IsNullOrWhiteSpace(context.TxtAcc.Text) || context.TxtAcc.Text.Length < 3))
+            {
+                MessageBox.Show("Unesite smeštaj (min. 3 karaktera).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if ((type != "Cruise") && string.IsNullOrWhiteSpace(context.TxtTransport.Text) && context.TxtTransport.Text.Length < 3)
+            {
+                MessageBox.Show("Prevoz mora imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Mountain" && string.IsNullOrWhiteSpace(context.TxtActivities.Text) && context.TxtActivities.Text.Length < 3)
+            {
+                MessageBox.Show("Aktivnosti moraju imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Excursion" && (string.IsNullOrWhiteSpace(context.TxtGuide.Text) && !System.Text.RegularExpressions.Regex.IsMatch(context.TxtGuide.Text, @"^[A-Za-zčćšđžČĆŠĐŽ\s]+$")))
+            {
+                MessageBox.Show("Vodič može sadržati samo slova i razmake.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Excursion" && (context.NumDuration.Value < 1 || context.NumDuration.Value > 365))
+            {
+                MessageBox.Show("Trajanje mora biti između 1 i 365 dana.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtShip.Text) && context.TxtShip.Text.Length < 2)
+            {
+                MessageBox.Show("Naziv broda mora imati najmanje 2 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtRoute.Text) && context.TxtRoute.Text.Length < 3)
+            {
+                MessageBox.Show("Ruta mora imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            // Departure date
+            if (type == "Cruise" && context.DtDeparture.Value.Date < DateTime.Today)
+            {
+                MessageBox.Show("Datum polaska ne može biti u prošlosti.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            // Cabin
+            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtCabin.Text) && context.TxtCabin.Text.Length < 2)
+            {
+                MessageBox.Show("Kabina mora imati najmanje 2 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true;
         }
     }
     

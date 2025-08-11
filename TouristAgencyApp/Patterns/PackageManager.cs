@@ -30,7 +30,6 @@ namespace TouristAgencyApp.Patterns
         {
             var addCommand = new AddPackageCommand(_dbService, package);
             _invoker.ExecuteCommand(addCommand);
-            MessageBox.Show("Package added.");
             OnPackageChanged(package, "Added", addCommand.PackageId);
             return addCommand.PackageId;
         }
@@ -38,7 +37,6 @@ namespace TouristAgencyApp.Patterns
         {
             var updateCommand = new UpdatePackageCommand(_dbService, package);
             _invoker.ExecuteCommand(updateCommand);
-            MessageBox.Show("Package updated.");
             OnPackageChanged(package, "Updated",0);
         }
         public void RemovePackage(int packageId)
@@ -49,12 +47,10 @@ namespace TouristAgencyApp.Patterns
         public void UndoLastAction()
         {
             _invoker.UndoLastCommand();
-            MessageBox.Show("Poslednja akcija uspesno opozvana!");
         }
         public void RedoLastAction()
         {
             _invoker.RedoLastAction();
-            MessageBox.Show("Poslednja akcija uspesno redo-ovana!");
         }
     }
 }
