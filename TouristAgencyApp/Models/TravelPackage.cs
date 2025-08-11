@@ -18,6 +18,7 @@ namespace TouristAgencyApp.Models
         public string Type { get; set; } = "";
         public string Destination { get; set; } = "";
         public string Details { get; set; } = "";
+        public abstract void Restore(TravelPackageMemento memento);
         public abstract TravelPackageMemento CreateMemento();
     }
 
@@ -31,16 +32,20 @@ namespace TouristAgencyApp.Models
             return new SeaPackageMemento(Id, Name, Price, Type, Destination, Accommodation, Transport, Details);
         }
 
-        public void Restore(SeaPackageMemento memento)
+        public override void Restore(TravelPackageMemento memento)
         {
-            Id = memento.Id;
-            Name = memento.Name;
-            Price = memento.Price;
-            Type = memento.Type;
-            Destination = memento.Destination;
-            Accommodation = memento.Accommodation;
-            Transport = memento.Transport;
-            Details = memento.Details;
+            if(memento is SeaPackageMemento mementoS)
+            {
+                Id = mementoS.Id;
+                Name = mementoS.Name;
+                Price = mementoS.Price;
+                Type = mementoS.Type;
+                Destination = mementoS.Destination;
+                Accommodation = mementoS.Accommodation;
+                Transport = mementoS.Transport;
+                Details = mementoS.Details;
+            }
+            
         }
         public override string ToString()
         {
@@ -59,17 +64,21 @@ namespace TouristAgencyApp.Models
             return new MountainPackageMemento(Id, Name, Price, Type, Destination, Accommodation, Transport, Activities,Details);
         }
 
-        public void Restore(MountainPackageMemento memento)
+        public override void Restore(TravelPackageMemento memento)
         {
-            Id = memento.Id;
-            Name = memento.Name;
-            Price = memento.Price;
-            Type = memento.Type;
-            Destination = memento.Destination;
-            Accommodation = memento.Accommodation;
-            Transport = memento.Transport;
-            Details = memento.Details;
-            Activities = memento.Activities;
+            if(memento is MountainPackageMemento mementoM)
+            {
+                Id = memento.Id;
+                Name = memento.Name;
+                Price = memento.Price;
+                Type = memento.Type;
+                Destination = mementoM.Destination;
+                Accommodation = mementoM.Accommodation;
+                Transport = mementoM.Transport;
+                Details = mementoM.Details;
+                Activities = mementoM.Activities;
+            }
+            
         }
         public override string ToString()
         {
@@ -88,18 +97,22 @@ namespace TouristAgencyApp.Models
             return new ExcursionPackageMemento(Id, Name, Price, Type, Destination, Details, Transport, Guide, Duration);
         }
 
-        public void Restore(ExcursionPackageMemento memento)
+        public override void Restore(TravelPackageMemento memento)
         {
-            Id = memento.Id;
-            Name = memento.Name;
-            Price = memento.Price;
-            Type = memento.Type;
-            Destination = memento.Destination;
-            Guide = memento.Guide;
-            Transport = memento.Transport;
-            Details = memento.Details;
-            Duration = memento.Duration;
-            Destination = memento.Destination;
+            if(memento is ExcursionPackageMemento mementoE)
+            {
+                Id = memento.Id;
+                Name = memento.Name;
+                Price = memento.Price;
+                Type = memento.Type;
+                Destination = mementoE.Destination;
+                Guide = mementoE.Guide;
+                Transport = mementoE.Transport;
+                Details = mementoE.Details;
+                Duration = mementoE.Duration;
+                Destination = mementoE.Destination;
+            }
+            
         }
         public override string ToString()
         {
@@ -121,16 +134,21 @@ namespace TouristAgencyApp.Models
         {
             return new CruisePackageMemento(Id, Name, Price, Type, Details, Ship, Route, DepartureDate, CabinType, Destination);
         }
-        public void Restore(CruisePackageMemento memento)
+        public override void Restore(TravelPackageMemento memento)
         {
-            Id = memento.Id;
-            Name = memento.Name;
-            Price = memento.Price;
-            Type = memento.Type;
-            Ship = memento.Ship;
-            Route = memento.Route;
-            DepartureDate = memento.DepartureDate;
-            CabinType = memento.CabinType;
+            if(memento is CruisePackageMemento mementoC)
+            {
+                Id = memento.Id;
+                Name = memento.Name;
+                Price = memento.Price;
+                Type = memento.Type;
+                Ship = mementoC.Ship;
+                Route = mementoC.Route;
+                DepartureDate = mementoC.DepartureDate;
+                CabinType = mementoC.CabinType;
+                Destination = mementoC.Destination;
+            }
+            
         }
     }
 }

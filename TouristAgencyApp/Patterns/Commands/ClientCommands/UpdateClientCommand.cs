@@ -28,7 +28,9 @@ namespace TouristAgencyApp.Patterns.Commands.ClientCommands
         public void Execute()
         {
             if (_executed) return;
-            _db.UpdateClient(_afterMemento.GetState());
+            var client = new Client();
+            client.Restore(_afterMemento);
+            _db.UpdateClient(client);
             _executed = true;
             _undone = false;
             _redone = false;
@@ -38,7 +40,9 @@ namespace TouristAgencyApp.Patterns.Commands.ClientCommands
         {
             if (!_executed || _undone)
                 return;
-            _db.UpdateClient(_beforeMemento.GetState());
+            var client = new Client();
+            client.Restore(_beforeMemento);
+            _db.UpdateClient(client);
             _undone = true;
             _redone = false;
         }
@@ -46,7 +50,9 @@ namespace TouristAgencyApp.Patterns.Commands.ClientCommands
         {
             if (!_executed || !_undone || _redone)
                 return;
-            _db.UpdateClient(_afterMemento.GetState());//Mada moze i _updated ja mislim, ali neka ga ovako.
+            var client = new Client();
+            client.Restore(_afterMemento);
+            _db.UpdateClient(client);//Mada moze i _updated ja mislim, ali neka ga ovako.
             _undone = false;
             _redone = true;
         }

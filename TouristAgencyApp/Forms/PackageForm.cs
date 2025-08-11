@@ -143,6 +143,7 @@ namespace TouristAgencyApp.Forms
             {
                 context.BtnSave.Click += (ss, ee) =>
                 {
+                    MessageBox.Show(context.TxtDestination.Text);
                     var updatedPackage = PackageDirector.CreateCruisePackageForUpdate(
                         cruise.Id,
                         context.TxtName.Text,

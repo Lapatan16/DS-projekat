@@ -375,6 +375,8 @@ namespace TouristAgencyApp.Forms
                 var lblCabin = new Label { Text = "Tip kabine", Left = 20, Top = 320, Width = 200 };
                 var txtCabin = new TextBox { Text = cruise.CabinType, Top = 345, Left = 20, Width = 300 };
                 context.TxtCabin = txtCabin;
+                context.TxtDestination = new TextBox();
+                context.TxtDestination.Text = cruise.Destination;
                 btnSave.Top = txtCabin.Bottom + 30;
                 f.Height = btnSave.Bottom + 70;
 

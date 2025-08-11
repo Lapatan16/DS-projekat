@@ -40,7 +40,8 @@ namespace TouristAgencyApp.Patterns.Commands.ReservationCommands
         public void Execute()
         {
             if (_executed) return;
-            var updated = _afterMemento.GetState();
+            var updated = new Reservation();
+            updated.Restore(_afterMemento);
             _db.UpdateReservation(updated.Id, updated.NumPersons, updated.ExtraServices);
             _executed = true;
             _undone = false;
@@ -51,7 +52,9 @@ namespace TouristAgencyApp.Patterns.Commands.ReservationCommands
         {
             if (!_executed || _undone)
                 return;
-            var before = _beforeMemento.GetState();
+            var before = new Reservation();
+            before.Restore(_beforeMemento);
+
             _db.UpdateReservation(before.Id, before.NumPersons, before.ExtraServices);
             _undone = true;
             _redone = false;
@@ -60,7 +63,8 @@ namespace TouristAgencyApp.Patterns.Commands.ReservationCommands
         {
             if (!_executed || !_undone || _redone)
                 return;
-            var after = _afterMemento.GetState();
+            var after = new Reservation();
+            after.Restore(_afterMemento); 
             _db.UpdateReservation(after.Id, after.NumPersons, after.ExtraServices);
             _undone = false;
             _redone = true;
