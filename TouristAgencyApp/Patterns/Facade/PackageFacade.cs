@@ -11,58 +11,60 @@ namespace TouristAgencyApp.Patterns
         private readonly IDatabaseService _dbService;
         private readonly PackageManager _manager;
         private readonly PackageSubject _subject;
+        private List<TravelPackage> _cachedPackages;
 
         public PackageFacade(IDatabaseService dbService)
         {
             _dbService = dbService;
             _manager = new PackageManager(dbService);
-            
             _subject = new PackageSubject();
             _subject.SubscribeToManager(_manager);
             _subject.Attach(new PackageLogger());
             _subject.Attach(new PackageNotifier());
+            RefreshCache();
         }
 
-        public List<TravelPackage> GetAllPackages()
+        private void RefreshCache()
         {
-            var data = _dbService.GetAllPackages().ToList();
-            foreach (var pkg in data)
+            _cachedPackages = _dbService.GetAllPackages().ToList();
+            foreach (var pkg in _cachedPackages)
                 pkg.Details = pkg.ToString();
-            return data;
         }
+
+        public List<TravelPackage> GetAllPackages() => _cachedPackages;
+
         public List<TravelPackage> GetPackagesByType(string type)
         {
-            var data = _dbService.GetAllPackages().ToList();
-            List<TravelPackage> lista = new List<TravelPackage>();
-
-            foreach (var pkg in data)
-            {
-                if (type == "Svi paketi" || type == pkg.Type)
-                    lista.Add(pkg);
-            }
-            return lista;
+            return type == "Svi paketi" 
+                ? _cachedPackages.ToList() 
+                : _cachedPackages.Where(p => p.Type == type).ToList();
         }
+
         public int AddPackage(TravelPackage package)
         {
             int id = _manager.AddPackage(package);
-           // _subject.AddPackage(package, id);
+            _subject.AddPackage(package, id);
+            RefreshCache();
             return id;
         }
 
         public void UpdatePackage(TravelPackage package)
         {
             _manager.UpdatePackage(package);
-            //_subject.UpdatePackage(package);
+            _subject.UpdatePackage(package);
+            RefreshCache();
         }
 
         public void Undo()
         {
             _manager.UndoLastAction();
+            RefreshCache();
         }
 
         public void Redo()
         {
             _manager.RedoLastAction();
+            RefreshCache();
         }
     }
 }

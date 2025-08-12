@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns.Observer.ReservationObserver;
 using TouristAgencyApp.Services;
@@ -10,6 +11,7 @@ namespace TouristAgencyApp.Patterns
         private readonly ReservationManager _manager;
         private readonly IDatabaseService _db;
         private readonly ReservationSubject _subject;
+        private List<TravelPackage> _cachedPackages;
 
         public ReservationFacade(IDatabaseService dbService)
         {
@@ -20,60 +22,69 @@ namespace TouristAgencyApp.Patterns
             _subject.Attach(new ReservationNotifier());
             
             _subject.SubscribeToManager(_manager);
+            _cachedPackages = _db.GetAllPackages(); // Initial cache load
         }
 
         public List<Reservation> GetReservationsByClient(int clientId)
         {
             var list = _db.GetReservationsByClient(clientId);
-            var packages = _db.GetAllPackages();
-
+            
             foreach (var r in list)
             {
-                var pkg = packages.FirstOrDefault(p => p.Id == r.PackageId);
-                r.PackageName = pkg != null ? pkg.Name : "(nepoznato)";
-                r.Destination = pkg != null ? pkg.Destination : "(nepoznato)";
+                var pkg = _cachedPackages.FirstOrDefault(p => p.Id == r.PackageId);
+                r.PackageName = pkg?.Name ?? "(nepoznato)";
+                r.Destination = pkg?.Destination ?? "(nepoznato)";
             }
 
             return list;
         }
 
-        public List<TravelPackage> GetAllPackages()
+        public List<TravelPackage> GetAllPackages() => _cachedPackages;
+
+        public List<string> GetUniqueDestinations()
         {
-            return _db.GetAllPackages();
+            return _cachedPackages
+                .Select(p => p.Destination)
+                .Where(d => !string.IsNullOrWhiteSpace(d))
+                .Distinct()
+                .ToList();
+        }
+
+        public List<TravelPackage> GetPackagesByDestination(string destination)
+        {
+            return _cachedPackages
+                .Where(p => p.Destination == destination)
+                .ToList();
         }
 
         public int AddReservation(Reservation reservation)
         {
             int id = _manager.AddReservation(reservation);
-            //_subject.AddReservation(reservation, id);
+            _subject.AddReservation(reservation, id);
             return id;
         }
 
         public void UpdateReservation(int reservationId, int numPersons, string extra)
         {
             _manager.UpdateReservation(reservationId, numPersons, extra);
-            //_subject.UpdateReservation(reservationId);
+            _subject.UpdateReservation(reservationId);
         }
 
         public void RemoveReservation(int reservationId)
         {
             _manager.RemoveReservation(reservationId);
-            //_subject.RemoveReservation(reservationId);
+            _subject.RemoveReservation(reservationId);
         }
 
-        public void Undo()
-        {
-            _manager.UndoLastAction();
-        }
+        public void Undo() => _manager.UndoLastAction();
 
-        public void Redo()
-        {
-            _manager.RedoLastAction();
-        }
+        public void Redo() => _manager.RedoLastAction();
 
-        public List<Client> GetAllClients()
+        public List<Client> GetAllClients() => _db.GetAllClients();
+
+        public void RefreshCache()
         {
-            return _db.GetAllClients();
+            _cachedPackages = _db.GetAllPackages();
         }
     }
 }

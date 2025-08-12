@@ -37,10 +37,8 @@ namespace TouristAgencyApp.Forms
         {
             grid.DataSource = null;
             grid.Columns.Clear();
-
             var data = _packageFacade.GetPackagesByType(type);
-            
-            setupGrid(data);
+            setupGrid(data); 
         }
         private void OpozoviAkciju()
         {
