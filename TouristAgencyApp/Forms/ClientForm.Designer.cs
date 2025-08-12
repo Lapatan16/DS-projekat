@@ -540,7 +540,6 @@ namespace TouristAgencyApp.Forms
                 NazivPaketa = _clientFacade.GetPackageName(r.PackageId) ?? "(nepoznato)",
                 DatumRezervacije = r.ReservationDate.ToString("dd.MM.yyyy"),
                 BrojOsoba = r.NumPersons,
-                DodatneUsluge = r.ExtraServices ?? ""
             }).ToList();
 
             gridRez.DataSource = data;
@@ -552,7 +551,6 @@ namespace TouristAgencyApp.Forms
                     "NazivPaketa" => "Naziv paketa",
                     "DatumRezervacije" => "Datum rezervacije",
                     "BrojOsoba" => "Broj osoba",
-                    "DodatneUsluge" => "Dodatne usluge",
                     _ => col.HeaderText
                 };
             }

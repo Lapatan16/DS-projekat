@@ -47,7 +47,7 @@ namespace TouristAgencyApp.Patterns
                 }
 
                 _instances[key] = dbService;
-                MessageBox.Show($"Napravljen novi database instance za: {Path.GetFileName(key)}");
+                //MessageBox.Show($"Napravljen novi database instance za: {Path.GetFileName(key)}");
 
                 return dbService;
             }
