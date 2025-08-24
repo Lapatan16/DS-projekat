@@ -65,9 +65,61 @@ Reservations (Id, ClientId, PackageId, NumPersons, ReservationDate, ExtraService
 2. **Facade** - `ReservationManager.cs` (jednostavan interfejs za sve operacije)
 
 ### Behavioral Patterns:
-1. **Command** - `CommandPattern.cs`, `AddReservationCommand`, `RemoveReservationCommand` (undo/execute funkcionalnosti)
-2. **Observer** - `ObserverPattern.cs`, `ReservationSubject` (praćenje promena rezervacija)
+1. **Command** - `CommandPattern.cs`, `AddReservationCommand`, `RemoveReservationCommand` (execute/undo/redo funkcionalnosti)
+2. **Observer** - `ObserverPattern.cs`, `ReservationSubject`, `PackageSubject`, `ClientSubject` (praćenje promena rezervacija, klijenata, paketa)
 3. **Strategy** - `ReservationManager.cs`, `IDatabaseService.cs`, `MySQLDatabaseService.cs`, `SQLiteDatabaseService.cs` (aptraktna, konkretne strategije i korisnik)
+4. **Memento** - `PackageMemento`, `ClientMemento`,`ReservationMemento` (pamćenje stanja objekta u trenutku izvršavanja određenih komandi)
+
+## COMMAND PATTERN
+
+### OPIS:
+Command pattern je implementiran za dodavanje/azuriranje/brisanje elemenata iz baze, kao i mogucnosti undo/redo akcija(uz memento). 
+Za implementaciju koristi se interface `ICommand`, svaka komanda je potrebno da implementira ovaj interface, a CommandInvoker je aktivira. 
+Komanda sadrzi bool vrednosti koje predstavljaju stanje izvrsavanja(`_executed`, `_undone`, `_redone`) kako ne bi doslo do loop-a. 
+Nakon izvrsavanje komande `CommandInvoker` je dodaje na `_undoStack` koji mogucava da se radi undo, 
+a nakon sto je komanda undo-ovana ona se dodaje na `_redoStack`. Komanda takodje sadrzi i memento objekta koji cuva kako bi mogla da uspesno izvrsi undo/redo. 
+Memento cuva stanje objekta pre izvrsavanja same komande.
+
+### Primer koriscenja:
+```csharp
+var addClientCommand = new AddClientCommand(dbService, client);
+
+// Izvršavanje
+invoker.ExecuteCommand(addClientCommand);
+
+// Undo (uklanja klijenta)
+invoker.UndoLastCommand();
+
+// Redo (ponovo dodaje klijenta)
+invoker.RedoLastAction();
+```
+
+## MEMENTO PATTERN
+
+### OPIS:
+Memento pattern je implementiran radi cuvanja stanja objekata prilikom izvrsavanja komandi, kako bi nam omogucio da koristimo undo/redo.
+Klasa koja ime svoj memento sadrzi metode:
+- **`CreateMemento()`** - Kreira memento na osnovu trenutnog stanja u objektu i vraca ga.
+- **`Restore(Memento memento)`** - Od prosledjenog mementa ucitava stanja i postavlja ga sebi.
+
+Dok sam memento ima:
+- **`GetState()`** - Vraca novi objekat sa stanjima koja su zabelezena priliom kreiranja mementa.
+
+
+## OBSERVER PATTERN
+
+### OPIS
+Observer pattern je implementiran kako bi bilo moguce beleziti u log fajlovima izmene u bazi.
+
+- **`ISubject`** : interface koji omogucava dodavanje, uklanjanje i obavestavanje observera.
+- **`ClientSubject`** - konkretan primer, ali vazi i za ostale subjecte:
+	- registruje observere(Attach, Detach)
+	- obavestava observere(Notify)
+	- reaguje na dogadjaj iz ClientManagera(OnClientChanged)
+- Svaka klasa koja zeli da prima obavestenja mora da implementira interface IObserver
+- **`ClientLogger`** - Konkretan observer, on belezi sve izmene na samoj bazi u fajlu (`clients.log`)
+- **`ClientManager`** - Sadrzi event ClientChanged, koji se poziva cim dodje do neke promene i tako automatski pokrece obavestenja svih observera.
+
 
 ## 🏗️ BUILDER PATTERN - TURISTIČKI PAKETI
 
