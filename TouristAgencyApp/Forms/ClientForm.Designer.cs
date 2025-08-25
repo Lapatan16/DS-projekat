@@ -317,19 +317,19 @@ namespace TouristAgencyApp.Forms
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(txtPass.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtPass.Text, @"^[A-Za-z0-9]{6,9}$"))
+                if (string.IsNullOrWhiteSpace(txtPass.Text) || !System.Text.RegularExpressions.Regex.IsMatch(txtPass.Text, @"^[A-Za-z0-9]{6,9}$"))
                 {
                     MessageBox.Show("Broj pasoša mora biti 6-9 alfanumeričkih karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(txtEmail.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                if (string.IsNullOrWhiteSpace(txtEmail.Text) || !System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
                 {
                     MessageBox.Show("Unesite ispravan email.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(txtTel.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtTel.Text, @"^\+?[0-9]{6,15}$"))
+                if (string.IsNullOrWhiteSpace(txtTel.Text) || !System.Text.RegularExpressions.Regex.IsMatch(txtTel.Text, @"^\+?[0-9]{6,15}$"))
                 {
                     MessageBox.Show("Unesite ispravan broj telefona (6-15 cifara, opcionalno +).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -442,21 +442,21 @@ namespace TouristAgencyApp.Forms
                 }
 
                 // Pasoš - alfanumerički, 6-9 karaktera (prilagoditi po potrebi)
-                if (string.IsNullOrWhiteSpace(txtPass.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtPass.Text, @"^[A-Za-z0-9]{6,9}$"))
+                if (string.IsNullOrWhiteSpace(txtPass.Text) || !System.Text.RegularExpressions.Regex.IsMatch(txtPass.Text, @"^[A-Za-z0-9]{6,9}$"))
                 {
                     MessageBox.Show("Broj pasoša mora biti 6-9 alfanumeričkih karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 // Email - osnovna validacija
-                if (string.IsNullOrWhiteSpace(txtEmail.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                if (string.IsNullOrWhiteSpace(txtEmail.Text) || !System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
                 {
                     MessageBox.Show("Unesite ispravan email.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 // Telefon - samo brojevi, + na početku opcionalno
-                if (string.IsNullOrWhiteSpace(txtTel.Text) && !System.Text.RegularExpressions.Regex.IsMatch(txtTel.Text, @"^\+?[0-9]{6,15}$"))
+                if (string.IsNullOrWhiteSpace(txtTel.Text) || !System.Text.RegularExpressions.Regex.IsMatch(txtTel.Text, @"^\+?[0-9]{6,15}$"))
                 {
                     MessageBox.Show("Unesite ispravan broj telefona (6-15 cifara, opcionalno +).", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
