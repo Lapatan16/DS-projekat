@@ -54,5 +54,24 @@ namespace TouristAgencyApp.Patterns.Observer.ReservationObserver
             }
         }
 
+        //public void AddReservation(Reservation reservation, int id)
+        //{
+        //    _reservations.Add(reservation);
+        //    Notify($"Nova rezervacija dodana: KorisnikId:{reservation.ClientId} | PaketId: {reservation.PackageId} | ReservacijaId: {id}");
+        //}
+        //public void UpdateReservation(int id)
+        //{
+        //    _reservations.Add(new Reservation { Id = id });
+        //    Notify($"Rezervacija sa id = {id} je azurirana");
+        //}
+        //public void RemoveReservation(int reservationId)
+        //{
+        //    var reservation = _reservations.Find(r => r.Id == reservationId);
+        //    if (reservation != null)
+        //    {
+        //        _reservations.Remove(reservation);
+        //        Notify($"Rezervacija uklonjena: {reservationId}");
+        //    }
+        //}
     }
 }
