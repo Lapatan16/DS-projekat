@@ -60,20 +60,20 @@ namespace TouristAgencyApp.Patterns
         public int AddReservation(Reservation reservation)
         {
             int id = _manager.AddReservation(reservation);
-            _subject.AddReservation(reservation, id);
+
             return id;
         }
 
         public void UpdateReservation(int reservationId, int numPersons, string extra)
         {
             _manager.UpdateReservation(reservationId, numPersons, extra);
-            _subject.UpdateReservation(reservationId);
+
         }
 
         public void RemoveReservation(int reservationId)
         {
             _manager.RemoveReservation(reservationId);
-            _subject.RemoveReservation(reservationId);
+
         }
 
         public void Undo() => _manager.UndoLastAction();

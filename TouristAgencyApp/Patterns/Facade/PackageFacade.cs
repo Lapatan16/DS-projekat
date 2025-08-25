@@ -43,7 +43,6 @@ namespace TouristAgencyApp.Patterns
         public int AddPackage(TravelPackage package)
         {
             int id = _manager.AddPackage(package);
-            _subject.AddPackage(package, id);
             RefreshCache();
             return id;
         }
@@ -51,7 +50,6 @@ namespace TouristAgencyApp.Patterns
         public void UpdatePackage(TravelPackage package)
         {
             _manager.UpdatePackage(package);
-            _subject.UpdatePackage(package);
             RefreshCache();
         }
 
