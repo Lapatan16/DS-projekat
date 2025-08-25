@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using TouristAgencyApp.Models;
 using TouristAgencyApp.Patterns;
 using TouristAgencyApp.Services;
+using TouristAgencyApp.Utils;
 
 namespace TouristAgencyApp.Forms
 {
@@ -15,10 +15,8 @@ namespace TouristAgencyApp.Forms
         public ReservationsForm(IDatabaseService dbService)
         {
             InitializeComponent();
-
             _reservationFacade = new ReservationFacade(dbService);
 
-            // Hook up event handlers
             cbClients.SelectedIndexChanged += (s, e) => LoadReservations();
             btnAdd.Click += (s, e) => DodajRezervaciju();
             btnRemove.Click += (s, e) => OtkaziRezervaciju();
@@ -35,10 +33,7 @@ namespace TouristAgencyApp.Forms
             cbClients.DataSource = clientsList;
             cbClients.DisplayMember = "FullName";
             cbClients.ValueMember = "Id";
-
-            if (cbClients.Items.Count > 0)
-                cbClients.SelectedIndex = 0;
-
+            if (cbClients.Items.Count > 0) cbClients.SelectedIndex = 0;
             LoadReservations();
         }
 
@@ -47,7 +42,6 @@ namespace TouristAgencyApp.Forms
             if (cbClients.SelectedItem is Client c)
             {
                 var reservations = _reservationFacade.GetReservationsByClient(c.Id);
-
                 grid.DataSource = null;
                 grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                 grid.DataSource = reservations;
@@ -70,153 +64,64 @@ namespace TouristAgencyApp.Forms
 
         private void DodajRezervaciju()
         {
-            if (!(cbClients.SelectedItem is Client c)) return;
-
+            _reservationFacade.RefreshCache();
+            if (cbClients.SelectedItem is not Client c) return;
             var allPackages = _reservationFacade.GetAllPackages();
-
             if (allPackages.Count == 0)
             {
                 MessageBox.Show("Nema dostupnih paketa.", "Upozorenje", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            var f = new Form
+            var destinations = _reservationFacade.GetUniqueDestinations();
+            var ctx = KreirajDodavanjeRezervacijeDialog(destinations);
+
+            void UpdatePackages()
             {
-                Text = "Nova rezervacija",
-                Width = 420,
-                Height = 420,
-                StartPosition = FormStartPosition.CenterParent,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                MaximizeBox = false,
-                MinimizeBox = false,
-                BackColor = Color.FromArgb(248, 249, 250)
-            };
-
-            // Destination selector
-            var lblDestinations = new Label { Text = "Destinacija:", Left = 20, Top = 20, Width = 180, Font = new Font("Segoe UI", 11) };
-            var cbDestinations = new ComboBox
-            {
-                Left = 20,
-                Top = 50,
-                Width = 360,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 11)
-            };
-
-
-            var uniqueDestinations = _reservationFacade.GetUniqueDestinations();
-
-
-            cbDestinations.DataSource = uniqueDestinations;
-
-            // Packages dropdown (filtered by selected destination)
-            var lblPackages = new Label { Text = "Paket:", Left = 20, Top = 95, Width = 180, Font = new Font("Segoe UI", 11) };
-            var cbPackages = new ComboBox
-            {
-                Left = 20,
-                Top = 125,
-                Width = 360,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 11)
-            };
-
-            void UpdatePackageDropdown()
-            {
-                if (cbDestinations.SelectedItem is not string selectedDestination) return;
-
-                var filteredPackages = _reservationFacade.GetPackagesByDestination(selectedDestination);
-
-                cbPackages.DataSource = filteredPackages;
-                cbPackages.DisplayMember = "Name";
+                if (ctx.CbDestinations.SelectedItem is not string d) return;
+                var filtered = _reservationFacade.GetPackagesByDestination(d);
+                ctx.CbPackages.DataSource = filtered;
+                ctx.CbPackages.DisplayMember = "Name";
             }
 
-            cbDestinations.SelectedIndexChanged += (s, e) => UpdatePackageDropdown();
+            ctx.CbDestinations.SelectedIndexChanged += (s, e) => UpdatePackages();
+            UpdatePackages();
 
-            var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 170, Width = 180, Font = new Font("Segoe UI", 11) };
-            var numPersons = new NumericUpDown { Left = 20, Top = 200, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
-
-
-            var btnSave = new Button
+            ctx.BtnSave.Click += (ss, ee) =>
             {
-                Text = "Sačuvaj",
-                Left = 20,
-                Top = 315,
-                Width = 150,
-                Height = 40,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                if (ctx.CbDestinations.SelectedItem is not string dest || string.IsNullOrWhiteSpace(dest))
+                {
+                    MessageBox.Show("Molimo odaberite destinaciju.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (ctx.CbPackages.SelectedItem is not TravelPackage pkg)
+                {
+                    MessageBox.Show("Molimo odaberite paket.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (ctx.NumPersons.Value < 1 || ctx.NumPersons.Value > ctx.NumPersons.Maximum)
+                {
+                    MessageBox.Show($"Broj osoba mora biti između 1 i {ctx.NumPersons.Maximum}.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var reservation = new Reservation
+                {
+                    ClientId = c.Id,
+                    ExtraServices = "",
+                    NumPersons = (int)ctx.NumPersons.Value,
+                    PackageId = pkg.Id,
+                    ReservationDate = DateTime.Now,
+                    PackageName = pkg.Name
+                };
+
+                _reservationFacade.AddReservation(reservation);
+                btnUndo.Visible = true;
+                ctx.Form.Close();
+                LoadReservations();
             };
 
-            btnSave.FlatAppearance.BorderSize = 0;
-
-            btnSave.Click += (ss, ee) =>
-            {
-                if (cbPackages.SelectedItem is TravelPackage pkg)
-                {
-                    if (cbDestinations.SelectedItem is not string selectedDestination || string.IsNullOrWhiteSpace(selectedDestination))
-                    {
-                        MessageBox.Show("Molimo odaberite destinaciju.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    if (numPersons.Value < 1 || numPersons.Value > numPersons.Maximum)
-                    {
-                        MessageBox.Show($"Broj osoba mora biti između 1 i {numPersons.Maximum}.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-                    Reservation reservation = new Reservation
-                    {
-                        ClientId = c.Id,
-                        ExtraServices = "",
-                        NumPersons = (int)numPersons.Value,
-                        PackageId = pkg.Id,
-                        ReservationDate = DateTime.Now,
-                        PackageName = pkg.Name
-                    };
-                    int id = _reservationFacade.AddReservation(reservation);
-                    btnUndo.Visible = true;
-                    f.Close();
-                    LoadReservations();
-                }
-            };
-
-            f.Shown += (s, e) =>
-            {
-
-                btnSave.Top = f.ClientSize.Height - btnSave.Height - 10;
-
-                if (cbDestinations.Items.Count > 0)
-                {
-                    cbDestinations.SelectedIndex = 0;  // Select first destination
-                    UpdatePackageDropdown();           // Filter packages for selected destination
-
-                    if (cbPackages.Items.Count > 0)
-                    {
-                        cbPackages.SelectedIndex = 0; // Select first package
-                        btnSave.Enabled = true;
-                    }
-                    else
-                    {
-                        btnSave.Enabled = false;      // No packages - disable save
-                    }
-                }
-                else
-                {
-                    btnSave.Enabled = false;          // No destinations - disable save
-                }
-            };
-
-            f.Controls.AddRange(new Control[] {
-                lblDestinations, cbDestinations,
-                lblPackages, cbPackages,
-                lblPersons, numPersons,
-                btnSave
-            });
-
-            f.ShowDialog();
+            ctx.Form.ShowDialog();
         }
 
         private void AzurirajRezervaciju()
@@ -226,53 +131,19 @@ namespace TouristAgencyApp.Forms
                 MessageBox.Show("Prvo izaberi rezervaciju za azuriranje!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            var f = new Form
+
+            var ctx = KreirajAzuriranjeRezervacijeDialog();
+            if (ctx == null) return;
+
+            ctx.BtnSave.Click += (ss, ee) =>
             {
-                Text = "Azuriraj rezervaciju",
-                Width = 420,
-                Height = 350,
-                StartPosition = FormStartPosition.CenterParent,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                MaximizeBox = false,
-                MinimizeBox = false,
-                BackColor = Color.FromArgb(248, 249, 250)
-            };
-
-            var lblPackages = new Label { Text = "Paket: " + grid.SelectedRows[0].Cells[0].Value.ToString(), Left = 20, Top = 20, Width = 180, Font = new Font("Segoe UI", 11) };
-
-            var packages = _reservationFacade.GetAllPackages();
-
-            var lblPersons = new Label { Text = "Broj osoba:", Left = 20, Top = 95, Width = 180, Font = new Font("Segoe UI", 11) };
-            var numPersons = new NumericUpDown { Left = 20, Top = 125, Width = 120, Minimum = 1, Maximum = 30, Value = 1, Font = new Font("Segoe UI", 11) };
-            numPersons.Value = Convert.ToDecimal(grid.SelectedRows[0].Cells[1].Value);
-
-            var btnSave = new Button
-            {
-                Text = "Sačuvaj",
-                Left = 20,
-                Top = 240,
-                Width = 150,
-                Height = 40,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-
-            btnSave.FlatAppearance.BorderSize = 0;
-
-            btnSave.Click += (ss, ee) =>
-            {
-                int reservationId = Convert.ToInt32(grid.SelectedRows[0].Cells[3].Value);
-                _reservationFacade.UpdateReservation(reservationId, (int)numPersons.Value, "");
-
+                _reservationFacade.UpdateReservation(ctx.ReservationId, (int)ctx.NumPersons.Value, "");
                 btnUndo.Visible = true;
                 LoadReservations();
-                f.Close();
+                ctx.Form.Close();
             };
-            f.Controls.AddRange(new Control[] { lblPackages, lblPersons, numPersons, btnSave });
-            f.ShowDialog();
+
+            ctx.Form.ShowDialog();
         }
 
         private void OtkaziRezervaciju()
