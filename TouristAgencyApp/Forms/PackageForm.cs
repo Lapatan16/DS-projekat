@@ -231,13 +231,13 @@ namespace TouristAgencyApp.Forms
                 return false;
             }
 
-            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtShip.Text) && context.TxtShip.Text.Length < 2)
+            if (type == "Cruise" && (string.IsNullOrWhiteSpace(context.TxtShip.Text) || context.TxtShip.Text.Length < 2))
             {
                 MessageBox.Show("Naziv broda mora imati najmanje 2 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtRoute.Text) && context.TxtRoute.Text.Length < 3)
+            if (type == "Cruise" && (string.IsNullOrWhiteSpace(context.TxtRoute.Text) || context.TxtRoute.Text.Length < 3))
             {
                 MessageBox.Show("Ruta mora imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
@@ -308,13 +308,13 @@ namespace TouristAgencyApp.Forms
                 return false;
             }
 
-            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtShip.Text) && context.TxtShip.Text.Length < 2)
+            if (type == "Cruise" && (string.IsNullOrWhiteSpace(context.TxtShip.Text) || context.TxtShip.Text.Length < 2))
             {
                 MessageBox.Show("Naziv broda mora imati najmanje 2 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            if (type == "Cruise" && string.IsNullOrWhiteSpace(context.TxtRoute.Text) && context.TxtRoute.Text.Length < 3)
+            if (type == "Cruise" && (string.IsNullOrWhiteSpace(context.TxtRoute.Text) || context.TxtRoute.Text.Length < 3))
             {
                 MessageBox.Show("Ruta mora imati najmanje 3 karaktera.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;

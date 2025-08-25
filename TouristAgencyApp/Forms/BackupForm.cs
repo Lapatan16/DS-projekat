@@ -7,6 +7,7 @@ namespace TouristAgencyApp.Forms
 {
     public partial class BackupForm : Form
     {
+        BackupFacade _backupFacade;
         public BackupForm()
         {
             InitializeComponent();
@@ -15,8 +16,8 @@ namespace TouristAgencyApp.Forms
         private void btnBackup_Click(object sender, EventArgs e)
         {
             string dbFile = "agencija.db";
-            IBackupService backup = new LoggingBackupService(new BackupService(dbFile));
-            backup.CreateBackup();
+            _backupFacade = new BackupFacade(dbFile);
+            _backupFacade.CreateBackup();
             MessageBox.Show("Backup kreiran!");
         }
     }
