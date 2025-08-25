@@ -407,7 +407,8 @@ namespace TouristAgencyApp.Forms
 
             if (grid.Columns.Contains("Id"))
                 grid.Columns["Id"].Visible = false;
-
+            if (grid.Columns.Contains("Destination"))
+                grid.Columns["Destination"].HeaderText = "Destinacija";
             if (grid.Columns.Contains("Name"))
                 grid.Columns["Name"].HeaderText = "Naziv";
             if (grid.Columns.Contains("Price"))

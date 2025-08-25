@@ -56,13 +56,13 @@ namespace TouristAgencyApp.Forms
             btnUndo.Location = new Point(880, 15);
             btnUndo.TextAlign = ContentAlignment.MiddleCenter;
             btnUndo.Width = 160;
-            btnUndo.Visible = false;
+            
 
             btnRedo = CreateModernButton("Redo ↪️", Color.FromArgb(255, 165, 0));
             btnRedo.Location = new Point(1060, 15);
             btnRedo.TextAlign = ContentAlignment.MiddleCenter;
             btnRedo.Width = 160;
-            btnRedo.Visible = false;
+            
 
             toolbarPanel.Controls.AddRange(new Control[] { cbClients, btnAdd, btnRemove, btnEdit, btnUndo, btnRedo });
 
