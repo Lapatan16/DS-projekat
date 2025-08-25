@@ -51,25 +51,5 @@ namespace TouristAgencyApp.Patterns.Observer.ClientObserver
                 observer.Update(message);
             }
         }
-
-        public void AddClient(Client client, int id)
-        {
-            _clients.Add(client);
-            Notify($"Novi klijent dodat: email: {client.Email} | id: {id} ");
-        }
-        public void UpdateClient(Client client)
-        {
-            _clients.Add(client);
-            Notify($"Klijent sa id = {client.Id} je azuriran");
-        }
-        public void RemoveClient(int clientId)
-        {
-            var client = _clients.Find(c => c.Id == clientId);
-            if (client != null)
-            {
-                _clients.Remove(client);
-                Notify($"Klijent uklonjen: {clientId}");
-            }
-        }
     }
 }
