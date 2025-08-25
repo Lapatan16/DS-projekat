@@ -121,6 +121,32 @@ Observer pattern je implementiran kako bi bilo moguce beleziti u log fajlovima i
 - **`ClientManager`** - Sadrzi event ClientChanged, koji se poziva cim dodje do neke promene i tako automatski pokrece obavestenja svih observera.
 
 
+## 🏢 Facade Patterns
+
+U aplikaciji su implementirane sledeće **fasade** koje pojednostavljuju rad sa različitim domenima i skrivanje složenosti ispod:
+
+| Naziv fasade     | Opis                                    | Glavni fajl                   |
+|------------------|-----------------------------------------|------------------------------|
+| **ClientFacade** | Upravljanje klijentima (dodavanje, izmena, brisanje, pretraga, rezervacije) | `Patterns/ClientFacade.cs`    |
+| **PackageFacade** | Upravljanje turističkim paketima (dodavanje, izmena, keširanje, filtriranje) | `Patterns/PackageFacade.cs`   |
+| **ReservationFacade** | Upravljanje rezervacijama (kreiranje, otkazivanje, update, logovanje) | `Patterns/ReservationFacade.cs` |
+| **BackupFacade**  | Kreiranje i upravljanje backup-om baze sa logovanjem i porukama | `Patterns/Facade/BackupFacade.cs` |
+| **StartupFacade** | Pokretanje aplikacije i učitavanje konfiguracije | `Patterns/StartupFacade.cs`   |
+
+### Kratak opis svake fasade
+
+- **ClientFacade** olakšava rad sa klijentima koristeći interne menadžere i observer pattern za logovanje i notifikacije.
+- **PackageFacade** enkapsulira kompleksnost upravljanja paketima i keširanjem.
+- **ReservationFacade** omogućava rad sa rezervacijama i obezbeđuje observer funkcionalnosti za logovanje promena.
+- **BackupFacade** pruža jednostavan interfejs za kreiranje rezervnih kopija baze podataka sa prikazom poruka korisniku.
+- **StartupFacade** upravlja inicijalizacijom aplikacije, učitavanjem konfiguracije i pravljenjem glavnog prozora.
+
+---
+
+Ovaj pattern omogućava jasnu separaciju odgovornosti i pojednostavljuje korišćenje kompleksnih sistema u aplikaciji.
+
+
+
 ## 🏗️ BUILDER PATTERN - TURISTIČKI PAKETI
 
 ### 📋 OPIS:

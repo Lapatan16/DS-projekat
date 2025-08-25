@@ -48,12 +48,12 @@ namespace TouristAgencyApp.Patterns
         public void UndoLastAction()
         {
             _invoker.UndoLastCommand();
-            MessageBox.Show("Poslednja akcija uspesno opozvana!");
+            //MessageBox.Show("Poslednja akcija uspesno opozvana!");
         }
         public void RedoLastAction()
         {
             _invoker.RedoLastAction();
-            MessageBox.Show("Poslednja akcija uspesno redo-ovana!");
+            //MessageBox.Show("Poslednja akcija uspesno redo-ovana!");
         }
     }
 }

@@ -31,7 +31,7 @@ namespace TouristAgencyApp.Patterns
         {
             var addCommand = new AddReservationCommand(_dbService, reservation);
             _invoker.ExecuteCommand(addCommand);
-            MessageBox.Show("Reservation added.");
+            //MessageBox.Show("Reservation added.");
             OnPackageChanged(reservation, "Added", addCommand.ReservationId);
             return addCommand.ReservationId;
         }
@@ -40,24 +40,24 @@ namespace TouristAgencyApp.Patterns
             var updateCommand = new UpdateReservationCommand(_dbService, reservationId, numPersons, txtExtra);
             _invoker.ExecuteCommand(updateCommand);
             OnPackageChanged(new Reservation { Id=reservationId}, "Updated", reservationId);
-            MessageBox.Show("Reservation updated.");
+            //MessageBox.Show("Reservation updated.");
         }
         public void RemoveReservation(int reservationId)
         {
             var removeCommand = new RemoveReservationCommand(_dbService, reservationId);
             _invoker.ExecuteCommand(removeCommand);
             OnPackageChanged(new Reservation { Id = reservationId }, "Removed", reservationId);
-            MessageBox.Show("Reservation removed!");
+            //MessageBox.Show("Reservation removed!");
         }
         public void UndoLastAction()
         {
             _invoker.UndoLastCommand();
-            MessageBox.Show("Last action undone!");
+            //MessageBox.Show("Last action undone!");
         }
         public void RedoLastAction()
         {
             _invoker.RedoLastAction();
-            MessageBox.Show("Last action redone!");
+            //MessageBox.Show("Last action redone!");
         }
     }
 }
