@@ -51,25 +51,5 @@ namespace TouristAgencyApp.Patterns.Observer.PackageObserver
                 observer.Update(message);
             }
         }
-
-        public void AddPackage(TravelPackage package, int id)
-        {
-            _packages.Add(package);
-            Notify($"Novi paket dodat: {package.Name} | id: {id}");
-        }
-        public void UpdatePackage(TravelPackage package)
-        {
-            _packages.Add(package);
-            Notify($"Paket sa id = {package.Id} je azuriran");
-        }
-        public void RemovePackage(int reservationId)
-        {
-            var package = _packages.Find(r => r.Id == reservationId);
-            if (package != null)
-            {
-                _packages.Remove(package);
-                Notify($"Paket uklonjen: {reservationId}");
-            }
-        }
     }
 }
